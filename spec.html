@@ -9222,6 +9222,99 @@
       1. Return Completion { [[Type]]: ~return~, [[Value]]: _promiseCapability_.[[Promise]], [[Target]]: ~empty~ }.
     </emu-alg>
   </emu-clause>
+
+  <emu-clause id="sec-runtime-semantics-instantiatefunctionobject" type="sdo" aoid="InstantiateFunctionObject">
+    <h1>Runtime Semantics: InstantiateFunctionObject</h1>
+    <p>With parameter _scope_.</p>
+    <emu-grammar>FunctionDeclaration : `function` BindingIdentifier `(` FormalParameters `)` `{` FunctionBody `}`</emu-grammar>
+    <emu-alg>
+      1. Let _name_ be StringValue of |BindingIdentifier|.
+      1. Let _sourceText_ be the source text matched by |FunctionDeclaration|.
+      1. Let _F_ be OrdinaryFunctionCreate(%Function.prototype%, _sourceText_, |FormalParameters|, |FunctionBody|, ~non-lexical-this~, _scope_).
+      1. Perform SetFunctionName(_F_, _name_).
+      1. Perform MakeConstructor(_F_).
+      1. Return _F_.
+    </emu-alg>
+    <emu-grammar>FunctionDeclaration : `function` `(` FormalParameters `)` `{` FunctionBody `}`</emu-grammar>
+    <emu-alg>
+      1. Let _sourceText_ be the source text matched by |FunctionDeclaration|.
+      1. Let _F_ be OrdinaryFunctionCreate(%Function.prototype%, _sourceText_, |FormalParameters|, |FunctionBody|, ~non-lexical-this~, _scope_).
+      1. Perform SetFunctionName(_F_, *"default"*).
+      1. Perform MakeConstructor(_F_).
+      1. Return _F_.
+    </emu-alg>
+    <emu-note>
+      <p>An anonymous |FunctionDeclaration| can only occur as part of an `export default` declaration, and its function code is therefore always strict mode code.</p>
+    </emu-note>
+    <emu-grammar>GeneratorDeclaration : `function` `*` BindingIdentifier `(` FormalParameters `)` `{` GeneratorBody `}`</emu-grammar>
+    <emu-alg>
+      1. Let _name_ be StringValue of |BindingIdentifier|.
+      1. Let _sourceText_ be the source text matched by |GeneratorDeclaration|.
+      1. Let _F_ be OrdinaryFunctionCreate(%GeneratorFunction.prototype%, _sourceText_, |FormalParameters|, |GeneratorBody|, ~non-lexical-this~, _scope_).
+      1. Perform SetFunctionName(_F_, _name_).
+      1. Let _prototype_ be ! OrdinaryObjectCreate(%GeneratorFunction.prototype.prototype%).
+      1. Perform DefinePropertyOrThrow(_F_, *"prototype"*, PropertyDescriptor { [[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false* }).
+      1. Return _F_.
+    </emu-alg>
+    <emu-grammar>GeneratorDeclaration : `function` `*` `(` FormalParameters `)` `{` GeneratorBody `}`</emu-grammar>
+    <emu-alg>
+      1. Let _sourceText_ be the source text matched by |GeneratorDeclaration|.
+      1. Let _F_ be OrdinaryFunctionCreate(%GeneratorFunction.prototype%, _sourceText_, |FormalParameters|, |GeneratorBody|, ~non-lexical-this~, _scope_).
+      1. Perform SetFunctionName(_F_, *"default"*).
+      1. Let _prototype_ be ! OrdinaryObjectCreate(%GeneratorFunction.prototype.prototype%).
+      1. Perform DefinePropertyOrThrow(_F_, *"prototype"*, PropertyDescriptor { [[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false* }).
+      1. Return _F_.
+    </emu-alg>
+    <emu-note>
+      <p>An anonymous |GeneratorDeclaration| can only occur as part of an `export default` declaration, and its function code is therefore always strict mode code.</p>
+    </emu-note>
+    <emu-grammar>
+      AsyncGeneratorDeclaration : `async` `function` `*` BindingIdentifier `(` FormalParameters `)` `{` AsyncGeneratorBody `}`
+    </emu-grammar>
+    <emu-alg>
+      1. Let _name_ be StringValue of |BindingIdentifier|.
+      1. Let _sourceText_ be the source text matched by |AsyncGeneratorDeclaration|.
+      1. Let _F_ be ! OrdinaryFunctionCreate(%AsyncGeneratorFunction.prototype%, _sourceText_, |FormalParameters|, |AsyncGeneratorBody|, ~non-lexical-this~, _scope_).
+      1. Perform ! SetFunctionName(_F_, _name_).
+      1. Let _prototype_ be ! OrdinaryObjectCreate(%AsyncGeneratorFunction.prototype.prototype%).
+      1. Perform ! DefinePropertyOrThrow(_F_, *"prototype"*, PropertyDescriptor { [[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false* }).
+      1. Return _F_.
+    </emu-alg>
+
+    <emu-grammar>
+      AsyncGeneratorDeclaration : `async` `function` `*` `(` FormalParameters `)` `{` AsyncGeneratorBody `}`
+    </emu-grammar>
+    <emu-alg>
+      1. Let _sourceText_ be the source text matched by |AsyncGeneratorDeclaration|.
+      1. Let _F_ be OrdinaryFunctionCreate(%AsyncGeneratorFunction.prototype%, _sourceText_, |FormalParameters|, |AsyncGeneratorBody|, ~non-lexical-this~, _scope_).
+      1. Perform SetFunctionName(_F_, *"default"*).
+      1. Let _prototype_ be ! OrdinaryObjectCreate(%AsyncGeneratorFunction.prototype.prototype%).
+      1. Perform DefinePropertyOrThrow(_F_, *"prototype"*, PropertyDescriptor { [[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false* }).
+      1. Return _F_.
+    </emu-alg>
+    <emu-note>
+      <p>An anonymous |AsyncGeneratorDeclaration| can only occur as part of an `export default` declaration.</p>
+    </emu-note>
+    <emu-grammar>
+      AsyncFunctionDeclaration : `async` `function` BindingIdentifier `(` FormalParameters `)` `{` AsyncFunctionBody `}`
+    </emu-grammar>
+    <emu-alg>
+      1. Let _name_ be StringValue of |BindingIdentifier|.
+      1. Let _sourceText_ be the source text matched by |AsyncFunctionDeclaration|.
+      1. Let _F_ be ! OrdinaryFunctionCreate(%AsyncFunction.prototype%, _sourceText_, |FormalParameters|, |AsyncFunctionBody|, ~non-lexical-this~, _scope_).
+      1. Perform ! SetFunctionName(_F_, _name_).
+      1. Return _F_.
+    </emu-alg>
+    <emu-grammar>
+      AsyncFunctionDeclaration : `async` `function` `(` FormalParameters `)` `{` AsyncFunctionBody `}`
+    </emu-grammar>
+    <emu-alg>
+      1. Let _sourceText_ be the source text matched by |AsyncFunctionDeclaration|.
+      1. Let _F_ be ! OrdinaryFunctionCreate(%AsyncFunction.prototype%, _sourceText_, |FormalParameters|, |AsyncFunctionBody|, ~non-lexical-this~, _scope_).
+      1. Perform ! SetFunctionName(_F_, *"default"*).
+      1. Return _F_.
+    </emu-alg>
+  </emu-clause>
 <!-- insert sdos here -->
 </emu-clause>
 
@@ -19911,32 +20004,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-function-definitions-runtime-semantics-instantiatefunctionobject">
-      <h1>Runtime Semantics: InstantiateFunctionObject</h1>
-      <p>With parameter _scope_.</p>
-      <emu-see-also-para op="InstantiateFunctionObject"></emu-see-also-para>
-      <emu-grammar>FunctionDeclaration : `function` BindingIdentifier `(` FormalParameters `)` `{` FunctionBody `}`</emu-grammar>
-      <emu-alg>
-        1. Let _name_ be StringValue of |BindingIdentifier|.
-        1. Let _sourceText_ be the source text matched by |FunctionDeclaration|.
-        1. Let _F_ be OrdinaryFunctionCreate(%Function.prototype%, _sourceText_, |FormalParameters|, |FunctionBody|, ~non-lexical-this~, _scope_).
-        1. Perform SetFunctionName(_F_, _name_).
-        1. Perform MakeConstructor(_F_).
-        1. Return _F_.
-      </emu-alg>
-      <emu-grammar>FunctionDeclaration : `function` `(` FormalParameters `)` `{` FunctionBody `}`</emu-grammar>
-      <emu-alg>
-        1. Let _sourceText_ be the source text matched by |FunctionDeclaration|.
-        1. Let _F_ be OrdinaryFunctionCreate(%Function.prototype%, _sourceText_, |FormalParameters|, |FunctionBody|, ~non-lexical-this~, _scope_).
-        1. Perform SetFunctionName(_F_, *"default"*).
-        1. Perform MakeConstructor(_F_).
-        1. Return _F_.
-      </emu-alg>
-      <emu-note>
-        <p>An anonymous |FunctionDeclaration| can only occur as part of an `export default` declaration, and its function code is therefore always strict mode code.</p>
-      </emu-note>
-    </emu-clause>
-
     <emu-clause id="sec-function-definitions-runtime-semantics-evaluation">
       <h1>Runtime Semantics: Evaluation</h1>
       <emu-grammar>FunctionDeclaration : `function` BindingIdentifier `(` FormalParameters `)` `{` FunctionBody `}`</emu-grammar>
@@ -20269,34 +20336,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-generator-function-definitions-runtime-semantics-instantiatefunctionobject">
-      <h1>Runtime Semantics: InstantiateFunctionObject</h1>
-      <p>With parameter _scope_.</p>
-      <emu-see-also-para op="InstantiateFunctionObject"></emu-see-also-para>
-      <emu-grammar>GeneratorDeclaration : `function` `*` BindingIdentifier `(` FormalParameters `)` `{` GeneratorBody `}`</emu-grammar>
-      <emu-alg>
-        1. Let _name_ be StringValue of |BindingIdentifier|.
-        1. Let _sourceText_ be the source text matched by |GeneratorDeclaration|.
-        1. Let _F_ be OrdinaryFunctionCreate(%GeneratorFunction.prototype%, _sourceText_, |FormalParameters|, |GeneratorBody|, ~non-lexical-this~, _scope_).
-        1. Perform SetFunctionName(_F_, _name_).
-        1. Let _prototype_ be ! OrdinaryObjectCreate(%GeneratorFunction.prototype.prototype%).
-        1. Perform DefinePropertyOrThrow(_F_, *"prototype"*, PropertyDescriptor { [[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false* }).
-        1. Return _F_.
-      </emu-alg>
-      <emu-grammar>GeneratorDeclaration : `function` `*` `(` FormalParameters `)` `{` GeneratorBody `}`</emu-grammar>
-      <emu-alg>
-        1. Let _sourceText_ be the source text matched by |GeneratorDeclaration|.
-        1. Let _F_ be OrdinaryFunctionCreate(%GeneratorFunction.prototype%, _sourceText_, |FormalParameters|, |GeneratorBody|, ~non-lexical-this~, _scope_).
-        1. Perform SetFunctionName(_F_, *"default"*).
-        1. Let _prototype_ be ! OrdinaryObjectCreate(%GeneratorFunction.prototype.prototype%).
-        1. Perform DefinePropertyOrThrow(_F_, *"prototype"*, PropertyDescriptor { [[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false* }).
-        1. Return _F_.
-      </emu-alg>
-      <emu-note>
-        <p>An anonymous |GeneratorDeclaration| can only occur as part of an `export default` declaration, and its function code is therefore always strict mode code.</p>
-      </emu-note>
-    </emu-clause>
-
     <emu-clause id="sec-generator-function-definitions-runtime-semantics-evaluation">
       <h1>Runtime Semantics: Evaluation</h1>
       <emu-grammar>GeneratorExpression : `function` `*` `(` FormalParameters `)` `{` GeneratorBody `}`</emu-grammar>
@@ -20453,38 +20492,6 @@
         1. If |UniqueFormalParameters| Contains |SuperCall| is *true*, return *true*.
         1. Return |AsyncGeneratorBody| Contains |SuperCall|.
       </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-asyncgenerator-definitions-instantiatefunctionobject">
-      <h1>Runtime Semantics: InstantiateFunctionObject</h1>
-      <p>With parameter _scope_.</p>
-      <emu-grammar>
-        AsyncGeneratorDeclaration : `async` `function` `*` BindingIdentifier `(` FormalParameters `)` `{` AsyncGeneratorBody `}`
-      </emu-grammar>
-      <emu-alg>
-        1. Let _name_ be StringValue of |BindingIdentifier|.
-        1. Let _sourceText_ be the source text matched by |AsyncGeneratorDeclaration|.
-        1. Let _F_ be ! OrdinaryFunctionCreate(%AsyncGeneratorFunction.prototype%, _sourceText_, |FormalParameters|, |AsyncGeneratorBody|, ~non-lexical-this~, _scope_).
-        1. Perform ! SetFunctionName(_F_, _name_).
-        1. Let _prototype_ be ! OrdinaryObjectCreate(%AsyncGeneratorFunction.prototype.prototype%).
-        1. Perform ! DefinePropertyOrThrow(_F_, *"prototype"*, PropertyDescriptor { [[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false* }).
-        1. Return _F_.
-      </emu-alg>
-
-      <emu-grammar>
-        AsyncGeneratorDeclaration : `async` `function` `*` `(` FormalParameters `)` `{` AsyncGeneratorBody `}`
-      </emu-grammar>
-      <emu-alg>
-        1. Let _sourceText_ be the source text matched by |AsyncGeneratorDeclaration|.
-        1. Let _F_ be OrdinaryFunctionCreate(%AsyncGeneratorFunction.prototype%, _sourceText_, |FormalParameters|, |AsyncGeneratorBody|, ~non-lexical-this~, _scope_).
-        1. Perform SetFunctionName(_F_, *"default"*).
-        1. Let _prototype_ be ! OrdinaryObjectCreate(%AsyncGeneratorFunction.prototype.prototype%).
-        1. Perform DefinePropertyOrThrow(_F_, *"prototype"*, PropertyDescriptor { [[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false* }).
-        1. Return _F_.
-      </emu-alg>
-      <emu-note>
-        <p>An anonymous |AsyncGeneratorDeclaration| can only occur as part of an `export default` declaration.</p>
-      </emu-note>
     </emu-clause>
 
     <emu-clause id="sec-asyncgenerator-definitions-evaluation">
@@ -20868,30 +20875,6 @@
       <emu-alg>
         1. If |UniqueFormalParameters| Contains |SuperCall| is *true*, return *true*.
         1. Return |AsyncFunctionBody| Contains |SuperCall|.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-async-function-definitions-InstantiateFunctionObject">
-      <h1>Runtime Semantics: InstantiateFunctionObject</h1>
-      <p>With parameter _scope_.</p>
-      <emu-grammar>
-        AsyncFunctionDeclaration : `async` `function` BindingIdentifier `(` FormalParameters `)` `{` AsyncFunctionBody `}`
-      </emu-grammar>
-      <emu-alg>
-        1. Let _name_ be StringValue of |BindingIdentifier|.
-        1. Let _sourceText_ be the source text matched by |AsyncFunctionDeclaration|.
-        1. Let _F_ be ! OrdinaryFunctionCreate(%AsyncFunction.prototype%, _sourceText_, |FormalParameters|, |AsyncFunctionBody|, ~non-lexical-this~, _scope_).
-        1. Perform ! SetFunctionName(_F_, _name_).
-        1. Return _F_.
-      </emu-alg>
-      <emu-grammar>
-        AsyncFunctionDeclaration : `async` `function` `(` FormalParameters `)` `{` AsyncFunctionBody `}`
-      </emu-grammar>
-      <emu-alg>
-        1. Let _sourceText_ be the source text matched by |AsyncFunctionDeclaration|.
-        1. Let _F_ be ! OrdinaryFunctionCreate(%AsyncFunction.prototype%, _sourceText_, |FormalParameters|, |AsyncFunctionBody|, ~non-lexical-this~, _scope_).
-        1. Perform ! SetFunctionName(_F_, *"default"*).
-        1. Return _F_.
       </emu-alg>
     </emu-clause>
 
