@@ -9117,6 +9117,56 @@
       1. Return *false*.
     </emu-alg>
   </emu-clause>
+
+  <emu-clause id="sec-static-semantics-expectedargumentcount" type="sdo" aoid="ExpectedArgumentCount">
+    <h1>Static Semantics: ExpectedArgumentCount</h1>
+    <emu-grammar>
+      FormalParameters :
+        [empty]
+        FunctionRestParameter
+    </emu-grammar>
+    <emu-alg>
+      1. Return 0.
+    </emu-alg>
+    <emu-grammar>FormalParameters : FormalParameterList `,` FunctionRestParameter</emu-grammar>
+    <emu-alg>
+      1. Return ExpectedArgumentCount of |FormalParameterList|.
+    </emu-alg>
+    <emu-note>
+      <p>The ExpectedArgumentCount of a |FormalParameterList| is the number of |FormalParameters| to the left of either the rest parameter or the first |FormalParameter| with an Initializer. A |FormalParameter| without an initializer is allowed after the first parameter with an initializer but such parameters are considered to be optional with *undefined* as their default value.</p>
+    </emu-note>
+    <emu-grammar>FormalParameterList : FormalParameter</emu-grammar>
+    <emu-alg>
+      1. If HasInitializer of |FormalParameter| is *true*, return 0.
+      1. Return 1.
+    </emu-alg>
+    <emu-grammar>FormalParameterList : FormalParameterList `,` FormalParameter</emu-grammar>
+    <emu-alg>
+      1. Let _count_ be ExpectedArgumentCount of |FormalParameterList|.
+      1. If HasInitializer of |FormalParameterList| is *true* or HasInitializer of |FormalParameter| is *true*, return _count_.
+      1. Return _count_ + 1.
+    </emu-alg>
+    <emu-grammar>ArrowParameters : BindingIdentifier</emu-grammar>
+    <emu-alg>
+      1. Return 1.
+    </emu-alg>
+    <emu-grammar>ArrowParameters : CoverParenthesizedExpressionAndArrowParameterList</emu-grammar>
+    <emu-alg>
+      1. Let _formals_ be CoveredFormalsList of |CoverParenthesizedExpressionAndArrowParameterList|.
+      1. Return ExpectedArgumentCount of _formals_.
+    </emu-alg>
+    <emu-grammar>PropertySetParameterList : FormalParameter</emu-grammar>
+    <emu-alg>
+      1. If HasInitializer of |FormalParameter| is *true*, return 0.
+      1. Return 1.
+    </emu-alg>
+    <emu-grammar>
+      AsyncArrowBindingIdentifier : BindingIdentifier
+    </emu-grammar>
+    <emu-alg>
+      1. Return 1.
+    </emu-alg>
+  </emu-clause>
 <!-- insert sdos here -->
 </emu-clause>
 
@@ -19795,37 +19845,6 @@
       </ul>
     </emu-clause>
 
-    <emu-clause id="sec-function-definitions-static-semantics-expectedargumentcount">
-      <h1>Static Semantics: ExpectedArgumentCount</h1>
-      <emu-see-also-para op="ExpectedArgumentCount"></emu-see-also-para>
-      <emu-grammar>
-        FormalParameters :
-          [empty]
-          FunctionRestParameter
-      </emu-grammar>
-      <emu-alg>
-        1. Return 0.
-      </emu-alg>
-      <emu-grammar>FormalParameters : FormalParameterList `,` FunctionRestParameter</emu-grammar>
-      <emu-alg>
-        1. Return ExpectedArgumentCount of |FormalParameterList|.
-      </emu-alg>
-      <emu-note>
-        <p>The ExpectedArgumentCount of a |FormalParameterList| is the number of |FormalParameters| to the left of either the rest parameter or the first |FormalParameter| with an Initializer. A |FormalParameter| without an initializer is allowed after the first parameter with an initializer but such parameters are considered to be optional with *undefined* as their default value.</p>
-      </emu-note>
-      <emu-grammar>FormalParameterList : FormalParameter</emu-grammar>
-      <emu-alg>
-        1. If HasInitializer of |FormalParameter| is *true*, return 0.
-        1. Return 1.
-      </emu-alg>
-      <emu-grammar>FormalParameterList : FormalParameterList `,` FormalParameter</emu-grammar>
-      <emu-alg>
-        1. Let _count_ be ExpectedArgumentCount of |FormalParameterList|.
-        1. If HasInitializer of |FormalParameterList| is *true* or HasInitializer of |FormalParameter| is *true*, return _count_.
-        1. Return _count_ + 1.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-isanonymousfunctiondefinition" aoid="IsAnonymousFunctionDefinition">
       <h1>Static Semantics: IsAnonymousFunctionDefinition ( _expr_ )</h1>
       <p>The abstract operation IsAnonymousFunctionDefinition takes argument _expr_ (a Parse Node for |AssignmentExpression| or a Parse Node for |Initializer|). It determines if its argument is a function definition that does not bind a name. It performs the following steps when called:</p>
@@ -19974,20 +19993,6 @@
       </ul>
     </emu-clause>
 
-    <emu-clause id="sec-arrow-function-definitions-static-semantics-expectedargumentcount">
-      <h1>Static Semantics: ExpectedArgumentCount</h1>
-      <emu-see-also-para op="ExpectedArgumentCount"></emu-see-also-para>
-      <emu-grammar>ArrowParameters : BindingIdentifier</emu-grammar>
-      <emu-alg>
-        1. Return 1.
-      </emu-alg>
-      <emu-grammar>ArrowParameters : CoverParenthesizedExpressionAndArrowParameterList</emu-grammar>
-      <emu-alg>
-        1. Let _formals_ be CoveredFormalsList of |CoverParenthesizedExpressionAndArrowParameterList|.
-        1. Return ExpectedArgumentCount of _formals_.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-static-semantics-coveredformalslist">
       <h1>Static Semantics: CoveredFormalsList</h1>
       <emu-grammar>ArrowParameters : BindingIdentifier</emu-grammar>
@@ -20074,16 +20079,6 @@
           It is a Syntax Error if any element of the BoundNames of |PropertySetParameterList| also occurs in the LexicallyDeclaredNames of |FunctionBody|.
         </li>
       </ul>
-    </emu-clause>
-
-    <emu-clause id="sec-method-definitions-static-semantics-expectedargumentcount">
-      <h1>Static Semantics: ExpectedArgumentCount</h1>
-      <emu-see-also-para op="ExpectedArgumentCount"></emu-see-also-para>
-      <emu-grammar>PropertySetParameterList : FormalParameter</emu-grammar>
-      <emu-alg>
-        1. If HasInitializer of |FormalParameter| is *true*, return 0.
-        1. Return 1.
-      </emu-alg>
     </emu-clause>
 
     <emu-clause id="sec-method-definitions-static-semantics-hasdirectsuper">
@@ -21018,16 +21013,6 @@
       </emu-grammar>
       <emu-alg>
         1. Return the |AsyncArrowHead| that is covered by |CoverCallExpressionAndAsyncArrowHead|.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-async-arrow-function-definitions-static-semantics-ExpectedArgumentCount">
-      <h1>Static Semantics: ExpectedArgumentCount</h1>
-      <emu-grammar>
-        AsyncArrowBindingIdentifier : BindingIdentifier
-      </emu-grammar>
-      <emu-alg>
-        1. Return 1.
       </emu-alg>
     </emu-clause>
 
