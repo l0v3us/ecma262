@@ -8663,6 +8663,74 @@
       1. Return a List whose sole element is |FunctionDeclaration|.
     </emu-alg>
   </emu-clause>
+
+  <emu-clause id="sec-static-semantics-isconstantdeclaration" type="sdo" aoid="IsConstantDeclaration">
+    <h1>Static Semantics: IsConstantDeclaration</h1>
+    <emu-grammar>LexicalDeclaration : LetOrConst BindingList `;`</emu-grammar>
+    <emu-alg>
+      1. Return IsConstantDeclaration of |LetOrConst|.
+    </emu-alg>
+    <emu-grammar>LetOrConst : `let`</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>LetOrConst : `const`</emu-grammar>
+    <emu-alg>
+      1. Return *true*.
+    </emu-alg>
+    <emu-grammar>
+      FunctionDeclaration : `function` BindingIdentifier `(` FormalParameters `)` `{` FunctionBody `}`
+
+      FunctionDeclaration : `function` `(` FormalParameters `)` `{` FunctionBody `}`
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>
+      GeneratorDeclaration : `function` `*` BindingIdentifier `(` FormalParameters `)` `{` GeneratorBody `}`
+
+      GeneratorDeclaration : `function` `*` `(` FormalParameters `)` `{` GeneratorBody `}`
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>
+      AsyncGeneratorDeclaration : `async` `function` `*` BindingIdentifier `(` FormalParameters `)` `{` AsyncGeneratorBody `}`
+
+      AsyncGeneratorDeclaration : `async` `function` `*` `(` FormalParameters `)` `{` AsyncGeneratorBody `}`
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>
+      ClassDeclaration : `class` BindingIdentifier ClassTail
+
+      ClassDeclaration : `class` ClassTail
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>
+      AsyncFunctionDeclaration : `async` `function` BindingIdentifier `(` FormalParameters `)` `{` AsyncFunctionBody `}`
+
+      AsyncFunctionDeclaration : `async` `function` `(` FormalParameters `)` `{` AsyncFunctionBody `}`
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>
+      ExportDeclaration :
+        `export` ExportFromClause FromClause `;`
+        `export` NamedExports `;`
+        `export` `default` AssignmentExpression `;`
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-note>
+      <p>It is not necessary to treat `export default` |AssignmentExpression| as a constant declaration because there is no syntax that permits assignment to the internal bound name used to reference a module's default object.</p>
+    </emu-note>
+  </emu-clause>
 <!-- insert sdos here -->
 </emu-clause>
 
@@ -17955,23 +18023,6 @@
         </ul>
       </emu-clause>
 
-      <emu-clause id="sec-let-and-const-declarations-static-semantics-isconstantdeclaration">
-        <h1>Static Semantics: IsConstantDeclaration</h1>
-        <emu-see-also-para op="IsConstantDeclaration"></emu-see-also-para>
-        <emu-grammar>LexicalDeclaration : LetOrConst BindingList `;`</emu-grammar>
-        <emu-alg>
-          1. Return IsConstantDeclaration of |LetOrConst|.
-        </emu-alg>
-        <emu-grammar>LetOrConst : `let`</emu-grammar>
-        <emu-alg>
-          1. Return *false*.
-        </emu-alg>
-        <emu-grammar>LetOrConst : `const`</emu-grammar>
-        <emu-alg>
-          1. Return *true*.
-        </emu-alg>
-      </emu-clause>
-
       <emu-clause id="sec-let-and-const-declarations-runtime-semantics-evaluation">
         <h1>Runtime Semantics: Evaluation</h1>
         <emu-grammar>LexicalDeclaration : LetOrConst BindingList `;`</emu-grammar>
@@ -19680,19 +19731,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-function-definitions-static-semantics-isconstantdeclaration">
-      <h1>Static Semantics: IsConstantDeclaration</h1>
-      <emu-see-also-para op="IsConstantDeclaration"></emu-see-also-para>
-      <emu-grammar>
-        FunctionDeclaration : `function` BindingIdentifier `(` FormalParameters `)` `{` FunctionBody `}`
-
-        FunctionDeclaration : `function` `(` FormalParameters `)` `{` FunctionBody `}`
-      </emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-function-definitions-static-semantics-issimpleparameterlist">
       <h1>Static Semantics: IsSimpleParameterList</h1>
       <emu-see-also-para op="IsSimpleParameterList"></emu-see-also-para>
@@ -20211,19 +20249,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-generator-function-definitions-static-semantics-isconstantdeclaration">
-      <h1>Static Semantics: IsConstantDeclaration</h1>
-      <emu-see-also-para op="IsConstantDeclaration"></emu-see-also-para>
-      <emu-grammar>
-        GeneratorDeclaration : `function` `*` BindingIdentifier `(` FormalParameters `)` `{` GeneratorBody `}`
-
-        GeneratorDeclaration : `function` `*` `(` FormalParameters `)` `{` GeneratorBody `}`
-      </emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-generator-function-definitions-runtime-semantics-evaluatebody">
       <h1>Runtime Semantics: EvaluateBody</h1>
       <p>With parameters _functionObject_ and List _argumentsList_.</p>
@@ -20423,19 +20448,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-async-generator-function-definitions-static-semantics-isconstantdeclaration">
-      <h1>Static Semantics: IsConstantDeclaration</h1>
-      <emu-see-also-para op="IsConstantDeclaration"></emu-see-also-para>
-      <emu-grammar>
-        AsyncGeneratorDeclaration : `async` `function` `*` BindingIdentifier `(` FormalParameters `)` `{` AsyncGeneratorBody `}`
-
-        AsyncGeneratorDeclaration : `async` `function` `*` `(` FormalParameters `)` `{` AsyncGeneratorBody `}`
-      </emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-asyncgenerator-definitions-evaluatebody">
       <h1>Runtime Semantics: EvaluateBody</h1>
       <p>With parameters _functionObject_ and List _argumentsList_.</p>
@@ -20620,19 +20632,6 @@
       <emu-note>
         <p>Early Error rules ensure that there is only one method definition named *"constructor"* and that it is not an accessor property or generator definition.</p>
       </emu-note>
-    </emu-clause>
-
-    <emu-clause id="sec-class-definitions-static-semantics-isconstantdeclaration">
-      <h1>Static Semantics: IsConstantDeclaration</h1>
-      <emu-see-also-para op="IsConstantDeclaration"></emu-see-also-para>
-      <emu-grammar>
-        ClassDeclaration : `class` BindingIdentifier ClassTail
-
-        ClassDeclaration : `class` ClassTail
-      </emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
     </emu-clause>
 
     <emu-clause id="sec-static-semantics-isstatic">
@@ -20876,18 +20875,6 @@
       <emu-alg>
         1. If |UniqueFormalParameters| Contains |SuperCall| is *true*, return *true*.
         1. Return |AsyncFunctionBody| Contains |SuperCall|.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-async-function-definitions-static-semantics-IsConstantDeclaration">
-      <h1>Static Semantics: IsConstantDeclaration</h1>
-      <emu-grammar>
-        AsyncFunctionDeclaration : `async` `function` BindingIdentifier `(` FormalParameters `)` `{` AsyncFunctionBody `}`
-
-        AsyncFunctionDeclaration : `async` `function` `(` FormalParameters `)` `{` AsyncFunctionBody `}`
-      </emu-grammar>
-      <emu-alg>
-        1. Return *false*.
       </emu-alg>
     </emu-clause>
 
@@ -23541,23 +23528,6 @@
             1. Let _importName_ be _sourceName_.
           1. Return a List whose sole element is the ExportEntry Record { [[ModuleRequest]]: _module_, [[ImportName]]: _importName_, [[LocalName]]: _localName_, [[ExportName]]: _exportName_ }.
         </emu-alg>
-      </emu-clause>
-
-      <emu-clause id="sec-exports-static-semantics-isconstantdeclaration">
-        <h1>Static Semantics: IsConstantDeclaration</h1>
-        <emu-see-also-para op="IsConstantDeclaration"></emu-see-also-para>
-        <emu-grammar>
-          ExportDeclaration :
-            `export` ExportFromClause FromClause `;`
-            `export` NamedExports `;`
-            `export` `default` AssignmentExpression `;`
-        </emu-grammar>
-        <emu-alg>
-          1. Return *false*.
-        </emu-alg>
-        <emu-note>
-          <p>It is not necessary to treat `export default` |AssignmentExpression| as a constant declaration because there is no syntax that permits assignment to the internal bound name used to reference a module's default object.</p>
-        </emu-note>
       </emu-clause>
 
       <emu-clause id="sec-exports-static-semantics-modulerequests">
