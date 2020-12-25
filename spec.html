@@ -6332,6 +6332,72 @@
       </emu-alg>
     </emu-clause>
   </emu-clause>
+
+  <emu-clause id="sec-static-semantics-hasname" type="sdo" aoid="HasName">
+    <h1>Static Semantics: HasName</h1>
+    <emu-grammar>PrimaryExpression : CoverParenthesizedExpressionAndArrowParameterList</emu-grammar>
+    <emu-alg>
+      1. Let _expr_ be CoveredParenthesizedExpression of |CoverParenthesizedExpressionAndArrowParameterList|.
+      1. If IsFunctionDefinition of _expr_ is *false*, return *false*.
+      1. Return HasName of _expr_.
+    </emu-alg>
+    <emu-grammar>FunctionExpression : `function` `(` FormalParameters `)` `{` FunctionBody `}`</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>FunctionExpression : `function` BindingIdentifier `(` FormalParameters `)` `{` FunctionBody `}`</emu-grammar>
+    <emu-alg>
+      1. Return *true*.
+    </emu-alg>
+    <emu-grammar>ArrowFunction : ArrowParameters `=&gt;` ConciseBody</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>GeneratorExpression : `function` `*` `(` FormalParameters `)` `{` GeneratorBody `}`</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>GeneratorExpression : `function` `*` BindingIdentifier `(` FormalParameters `)` `{` GeneratorBody `}`</emu-grammar>
+    <emu-alg>
+      1. Return *true*.
+    </emu-alg>
+    <emu-grammar>AsyncGeneratorExpression : `async` `function` `*` `(` FormalParameters `)` `{` AsyncGeneratorBody `}`</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>AsyncGeneratorExpression : `async` `function` `*` BindingIdentifier `(` FormalParameters `)` `{` AsyncGeneratorBody `}`</emu-grammar>
+    <emu-alg>
+      1. Return *true*.
+    </emu-alg>
+    <emu-grammar>ClassExpression : `class` ClassTail</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>ClassExpression : `class` BindingIdentifier ClassTail</emu-grammar>
+    <emu-alg>
+      1. Return *true*.
+    </emu-alg>
+    <emu-grammar>
+      AsyncFunctionExpression : `async` `function` `(` FormalParameters `)` `{` AsyncFunctionBody `}`
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>
+      AsyncFunctionExpression : `async` `function` BindingIdentifier `(` FormalParameters `)` `{` AsyncFunctionBody `}`
+    </emu-grammar>
+    <emu-alg>
+      1. Return *true*.
+    </emu-alg>
+    <emu-grammar>
+      AsyncArrowFunction : `async` AsyncArrowBindingIdentifier `=>` AsyncConciseBody
+
+      AsyncArrowFunction : CoverCallExpressionAndAsyncArrowHead `=>` AsyncConciseBody
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+  </emu-clause>
 <!-- insert sdos here -->
 </emu-clause>
 
@@ -12765,17 +12831,6 @@
         <emu-grammar>CoverParenthesizedExpressionAndArrowParameterList : `(` Expression `)`</emu-grammar>
         <emu-alg>
           1. Return the |ParenthesizedExpression| that is covered by |CoverParenthesizedExpressionAndArrowParameterList|.
-        </emu-alg>
-      </emu-clause>
-
-      <emu-clause id="sec-semantics-static-semantics-hasname">
-        <h1>Static Semantics: HasName</h1>
-        <emu-see-also-para op="HasName"></emu-see-also-para>
-        <emu-grammar>PrimaryExpression : CoverParenthesizedExpressionAndArrowParameterList</emu-grammar>
-        <emu-alg>
-          1. Let _expr_ be CoveredParenthesizedExpression of |CoverParenthesizedExpressionAndArrowParameterList|.
-          1. If IsFunctionDefinition of _expr_ is *false*, return *false*.
-          1. Return HasName of _expr_.
         </emu-alg>
       </emu-clause>
 
@@ -19562,19 +19617,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-function-definitions-static-semantics-hasname">
-      <h1>Static Semantics: HasName</h1>
-      <emu-see-also-para op="HasName"></emu-see-also-para>
-      <emu-grammar>FunctionExpression : `function` `(` FormalParameters `)` `{` FunctionBody `}`</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-      <emu-grammar>FunctionExpression : `function` BindingIdentifier `(` FormalParameters `)` `{` FunctionBody `}`</emu-grammar>
-      <emu-alg>
-        1. Return *true*.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-isanonymousfunctiondefinition" aoid="IsAnonymousFunctionDefinition">
       <h1>Static Semantics: IsAnonymousFunctionDefinition ( _expr_ )</h1>
       <p>The abstract operation IsAnonymousFunctionDefinition takes argument _expr_ (a Parse Node for |AssignmentExpression| or a Parse Node for |Initializer|). It determines if its argument is a function definition that does not bind a name. It performs the following steps when called:</p>
@@ -19914,15 +19956,6 @@
       <emu-alg>
         1. Let _formals_ be CoveredFormalsList of |CoverParenthesizedExpressionAndArrowParameterList|.
         1. Return ExpectedArgumentCount of _formals_.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-arrow-function-definitions-static-semantics-hasname">
-      <h1>Static Semantics: HasName</h1>
-      <emu-see-also-para op="HasName"></emu-see-also-para>
-      <emu-grammar>ArrowFunction : ArrowParameters `=&gt;` ConciseBody</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
       </emu-alg>
     </emu-clause>
 
@@ -20370,19 +20403,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-generator-function-definitions-static-semantics-hasname">
-      <h1>Static Semantics: HasName</h1>
-      <emu-see-also-para op="HasName"></emu-see-also-para>
-      <emu-grammar>GeneratorExpression : `function` `*` `(` FormalParameters `)` `{` GeneratorBody `}`</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-      <emu-grammar>GeneratorExpression : `function` `*` BindingIdentifier `(` FormalParameters `)` `{` GeneratorBody `}`</emu-grammar>
-      <emu-alg>
-        1. Return *true*.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-generator-function-definitions-static-semantics-isconstantdeclaration">
       <h1>Static Semantics: IsConstantDeclaration</h1>
       <emu-see-also-para op="IsConstantDeclaration"></emu-see-also-para>
@@ -20677,19 +20697,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-async-generator-function-definitions-static-semantics-hasname">
-      <h1>Static Semantics: HasName</h1>
-      <emu-see-also-para op="HasName"></emu-see-also-para>
-      <emu-grammar>AsyncGeneratorExpression : `async` `function` `*` `(` FormalParameters `)` `{` AsyncGeneratorBody `}`</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-      <emu-grammar>AsyncGeneratorExpression : `async` `function` `*` BindingIdentifier `(` FormalParameters `)` `{` AsyncGeneratorBody `}`</emu-grammar>
-      <emu-alg>
-        1. Return *true*.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-async-generator-function-definitions-static-semantics-isconstantdeclaration">
       <h1>Static Semantics: IsConstantDeclaration</h1>
       <emu-see-also-para op="IsConstantDeclaration"></emu-see-also-para>
@@ -20976,19 +20983,6 @@
       <emu-grammar>ClassElement : `;`</emu-grammar>
       <emu-alg>
         1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-class-definitions-static-semantics-hasname">
-      <h1>Static Semantics: HasName</h1>
-      <emu-see-also-para op="HasName"></emu-see-also-para>
-      <emu-grammar>ClassExpression : `class` ClassTail</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-      <emu-grammar>ClassExpression : `class` BindingIdentifier ClassTail</emu-grammar>
-      <emu-alg>
-        1. Return *true*.
       </emu-alg>
     </emu-clause>
 
@@ -21310,22 +21304,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-async-function-definitions-static-semantics-HasName">
-      <h1>Static Semantics: HasName</h1>
-      <emu-grammar>
-        AsyncFunctionExpression : `async` `function` `(` FormalParameters `)` `{` AsyncFunctionBody `}`
-      </emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-      <emu-grammar>
-        AsyncFunctionExpression : `async` `function` BindingIdentifier `(` FormalParameters `)` `{` AsyncFunctionBody `}`
-      </emu-grammar>
-      <emu-alg>
-        1. Return *true*.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-async-function-definitions-static-semantics-IsConstantDeclaration">
       <h1>Static Semantics: IsConstantDeclaration</h1>
       <emu-grammar>
@@ -21595,18 +21573,6 @@
       </emu-grammar>
       <emu-alg>
         1. Return 1.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-async-arrow-function-definitions-static-semantics-HasName">
-      <h1>Static Semantics: HasName</h1>
-      <emu-grammar>
-        AsyncArrowFunction : `async` AsyncArrowBindingIdentifier `=>` AsyncConciseBody
-
-        AsyncArrowFunction : CoverCallExpressionAndAsyncArrowHead `=>` AsyncConciseBody
-      </emu-grammar>
-      <emu-alg>
-        1. Return *false*.
       </emu-alg>
     </emu-clause>
 
