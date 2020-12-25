@@ -6820,6 +6820,66 @@
       <p>Static semantic rules that depend upon substructure generally do not look into function definitions. However, Contains is used to detect `new.target`, `this`, and `super` usage within an |AsyncArrowFunction|.</p>
     </emu-note>
   </emu-clause>
+
+  <emu-clause id="sec-static-semantics-propname" type="sdo" aoid="PropName">
+    <h1>Static Semantics: PropName</h1>
+    <emu-grammar>PropertyDefinition : IdentifierReference</emu-grammar>
+    <emu-alg>
+      1. Return StringValue of |IdentifierReference|.
+    </emu-alg>
+    <emu-grammar>PropertyDefinition : `...` AssignmentExpression</emu-grammar>
+    <emu-alg>
+      1. Return ~empty~.
+    </emu-alg>
+    <emu-grammar>PropertyDefinition : PropertyName `:` AssignmentExpression</emu-grammar>
+    <emu-alg>
+      1. Return PropName of |PropertyName|.
+    </emu-alg>
+    <emu-grammar>LiteralPropertyName : IdentifierName</emu-grammar>
+    <emu-alg>
+      1. Return StringValue of |IdentifierName|.
+    </emu-alg>
+    <emu-grammar>LiteralPropertyName : StringLiteral</emu-grammar>
+    <emu-alg>
+      1. Return the SV of |StringLiteral|.
+    </emu-alg>
+    <emu-grammar>LiteralPropertyName : NumericLiteral</emu-grammar>
+    <emu-alg>
+      1. Let _nbr_ be the NumericValue of |NumericLiteral|.
+      1. Return ! ToString(_nbr_).
+    </emu-alg>
+    <emu-grammar>ComputedPropertyName : `[` AssignmentExpression `]`</emu-grammar>
+    <emu-alg>
+      1. Return ~empty~.
+    </emu-alg>
+    <emu-grammar>
+      MethodDefinition :
+        PropertyName `(` UniqueFormalParameters `)` `{` FunctionBody `}`
+        `get` PropertyName `(` `)` `{` FunctionBody `}`
+        `set` PropertyName `(` PropertySetParameterList `)` `{` FunctionBody `}`
+    </emu-grammar>
+    <emu-alg>
+      1. Return PropName of |PropertyName|.
+    </emu-alg>
+    <emu-grammar>GeneratorMethod : `*` PropertyName `(` UniqueFormalParameters `)` `{` GeneratorBody `}`</emu-grammar>
+    <emu-alg>
+      1. Return PropName of |PropertyName|.
+    </emu-alg>
+    <emu-grammar>AsyncGeneratorMethod : `async` `*` PropertyName `(` UniqueFormalParameters `)` `{` AsyncGeneratorBody `}`</emu-grammar>
+    <emu-alg>
+      1. Return PropName of |PropertyName|.
+    </emu-alg>
+    <emu-grammar>ClassElement : `;`</emu-grammar>
+    <emu-alg>
+      1. Return ~empty~.
+    </emu-alg>
+    <emu-grammar>
+      AsyncMethod : `async` PropertyName `(` UniqueFormalParameters `)` `{` AsyncFunctionBody `}`
+    </emu-grammar>
+    <emu-alg>
+      1. Return PropName of |PropertyName|.
+    </emu-alg>
+  </emu-clause>
 <!-- insert sdos here -->
 </emu-clause>
 
@@ -13513,40 +13573,6 @@
         </emu-alg>
       </emu-clause>
 
-      <emu-clause id="sec-object-initializer-static-semantics-propname">
-        <h1>Static Semantics: PropName</h1>
-        <emu-see-also-para op="PropName"></emu-see-also-para>
-        <emu-grammar>PropertyDefinition : IdentifierReference</emu-grammar>
-        <emu-alg>
-          1. Return StringValue of |IdentifierReference|.
-        </emu-alg>
-        <emu-grammar>PropertyDefinition : `...` AssignmentExpression</emu-grammar>
-        <emu-alg>
-          1. Return ~empty~.
-        </emu-alg>
-        <emu-grammar>PropertyDefinition : PropertyName `:` AssignmentExpression</emu-grammar>
-        <emu-alg>
-          1. Return PropName of |PropertyName|.
-        </emu-alg>
-        <emu-grammar>LiteralPropertyName : IdentifierName</emu-grammar>
-        <emu-alg>
-          1. Return StringValue of |IdentifierName|.
-        </emu-alg>
-        <emu-grammar>LiteralPropertyName : StringLiteral</emu-grammar>
-        <emu-alg>
-          1. Return the SV of |StringLiteral|.
-        </emu-alg>
-        <emu-grammar>LiteralPropertyName : NumericLiteral</emu-grammar>
-        <emu-alg>
-          1. Let _nbr_ be the NumericValue of |NumericLiteral|.
-          1. Return ! ToString(_nbr_).
-        </emu-alg>
-        <emu-grammar>ComputedPropertyName : `[` AssignmentExpression `]`</emu-grammar>
-        <emu-alg>
-          1. Return ~empty~.
-        </emu-alg>
-      </emu-clause>
-
       <emu-clause id="sec-static-semantics-propertynamelist">
         <h1>Static Semantics: PropertyNameList</h1>
         <emu-grammar>PropertyDefinitionList : PropertyDefinition</emu-grammar>
@@ -20189,20 +20215,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-method-definitions-static-semantics-propname">
-      <h1>Static Semantics: PropName</h1>
-      <emu-see-also-para op="PropName"></emu-see-also-para>
-      <emu-grammar>
-        MethodDefinition :
-          PropertyName `(` UniqueFormalParameters `)` `{` FunctionBody `}`
-          `get` PropertyName `(` `)` `{` FunctionBody `}`
-          `set` PropertyName `(` PropertySetParameterList `)` `{` FunctionBody `}`
-      </emu-grammar>
-      <emu-alg>
-        1. Return PropName of |PropertyName|.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-static-semantics-specialmethod">
       <h1>Static Semantics: SpecialMethod</h1>
       <emu-grammar>MethodDefinition : PropertyName `(` UniqueFormalParameters `)` `{` FunctionBody `}`</emu-grammar>
@@ -20387,15 +20399,6 @@
       </emu-grammar>
       <emu-alg>
         1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-generator-function-definitions-static-semantics-propname">
-      <h1>Static Semantics: PropName</h1>
-      <emu-see-also-para op="PropName"></emu-see-also-para>
-      <emu-grammar>GeneratorMethod : `*` PropertyName `(` UniqueFormalParameters `)` `{` GeneratorBody `}`</emu-grammar>
-      <emu-alg>
-        1. Return PropName of |PropertyName|.
       </emu-alg>
     </emu-clause>
 
@@ -20643,15 +20646,6 @@
       </emu-grammar>
       <emu-alg>
         1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-async-generator-function-definitions-static-semantics-propname">
-      <h1>Static Semantics: PropName</h1>
-      <emu-see-also-para op="PropName"></emu-see-also-para>
-      <emu-grammar>AsyncGeneratorMethod : `async` `*` PropertyName `(` UniqueFormalParameters `)` `{` AsyncGeneratorBody `}`</emu-grammar>
-      <emu-alg>
-        1. Return PropName of |PropertyName|.
       </emu-alg>
     </emu-clause>
 
@@ -20943,15 +20937,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-class-definitions-static-semantics-propname">
-      <h1>Static Semantics: PropName</h1>
-      <emu-see-also-para op="PropName"></emu-see-also-para>
-      <emu-grammar>ClassElement : `;`</emu-grammar>
-      <emu-alg>
-        1. Return ~empty~.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-runtime-semantics-classdefinitionevaluation">
       <h1>Runtime Semantics: ClassDefinitionEvaluation</h1>
       <p>With parameters _classBinding_ and _className_.</p>
@@ -21166,16 +21151,6 @@
       </emu-grammar>
       <emu-alg>
         1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-async-function-definitions-static-semantics-PropName">
-      <h1>Static Semantics: PropName</h1>
-      <emu-grammar>
-        AsyncMethod : `async` PropertyName `(` UniqueFormalParameters `)` `{` AsyncFunctionBody `}`
-      </emu-grammar>
-      <emu-alg>
-        1. Return PropName of |PropertyName|.
       </emu-alg>
     </emu-clause>
 
