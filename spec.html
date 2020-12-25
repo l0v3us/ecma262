@@ -6634,6 +6634,52 @@
       1. Return *false*.
     </emu-alg>
   </emu-clause>
+
+  <emu-clause id="sec-static-semantics-computedpropertycontains" type="sdo" aoid="ComputedPropertyContains">
+    <h1>Static Semantics: ComputedPropertyContains</h1>
+    <p>With parameter _symbol_.</p>
+    <emu-grammar>PropertyName : LiteralPropertyName</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>PropertyName : ComputedPropertyName</emu-grammar>
+    <emu-alg>
+      1. Return the result of |ComputedPropertyName| Contains _symbol_.
+    </emu-alg>
+    <emu-grammar>
+      MethodDefinition :
+        PropertyName `(` UniqueFormalParameters `)` `{` FunctionBody `}`
+        `get` PropertyName `(` `)` `{` FunctionBody `}`
+        `set` PropertyName `(` PropertySetParameterList `)` `{` FunctionBody `}`
+    </emu-grammar>
+    <emu-alg>
+      1. Return the result of ComputedPropertyContains for |PropertyName| with argument _symbol_.
+    </emu-alg>
+    <emu-grammar>GeneratorMethod : `*` PropertyName `(` UniqueFormalParameters `)` `{` GeneratorBody `}`</emu-grammar>
+    <emu-alg>
+      1. Return the result of ComputedPropertyContains for |PropertyName| with argument _symbol_.
+    </emu-alg>
+    <emu-grammar>AsyncGeneratorMethod : `async` `*` PropertyName `(` UniqueFormalParameters `)` `{` AsyncGeneratorBody `}`</emu-grammar>
+    <emu-alg>
+      1. Return the result of ComputedPropertyContains for |PropertyName| with argument _symbol_.
+    </emu-alg>
+    <emu-grammar>ClassElementList : ClassElementList ClassElement</emu-grammar>
+    <emu-alg>
+      1. Let _inList_ be ComputedPropertyContains of |ClassElementList| with argument _symbol_.
+      1. If _inList_ is *true*, return *true*.
+      1. Return the result of ComputedPropertyContains for |ClassElement| with argument _symbol_.
+    </emu-alg>
+    <emu-grammar>ClassElement : `;`</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>
+      AsyncMethod : `async` PropertyName `(` UniqueFormalParameters `)` `{` AsyncFunctionBody `}`
+    </emu-grammar>
+    <emu-alg>
+      1. Return the result of ComputedPropertyContains for |PropertyName| with argument _symbol_.
+    </emu-alg>
+  </emu-clause>
 <!-- insert sdos here -->
 </emu-clause>
 
@@ -13313,20 +13359,6 @@
         <emu-note>
           <p>This production exists so that |ObjectLiteral| can serve as a cover grammar for |ObjectAssignmentPattern|. It cannot occur in an actual object initializer.</p>
         </emu-note>
-      </emu-clause>
-
-      <emu-clause id="sec-object-initializer-static-semantics-computedpropertycontains">
-        <h1>Static Semantics: ComputedPropertyContains</h1>
-        <p>With parameter _symbol_.</p>
-        <emu-see-also-para op="ComputedPropertyContains"></emu-see-also-para>
-        <emu-grammar>PropertyName : LiteralPropertyName</emu-grammar>
-        <emu-alg>
-          1. Return *false*.
-        </emu-alg>
-        <emu-grammar>PropertyName : ComputedPropertyName</emu-grammar>
-        <emu-alg>
-          1. Return the result of |ComputedPropertyName| Contains _symbol_.
-        </emu-alg>
       </emu-clause>
 
       <emu-clause id="sec-object-initializer-static-semantics-contains">
@@ -20075,21 +20107,6 @@
       </ul>
     </emu-clause>
 
-    <emu-clause id="sec-method-definitions-static-semantics-computedpropertycontains">
-      <h1>Static Semantics: ComputedPropertyContains</h1>
-      <p>With parameter _symbol_.</p>
-      <emu-see-also-para op="ComputedPropertyContains"></emu-see-also-para>
-      <emu-grammar>
-        MethodDefinition :
-          PropertyName `(` UniqueFormalParameters `)` `{` FunctionBody `}`
-          `get` PropertyName `(` `)` `{` FunctionBody `}`
-          `set` PropertyName `(` PropertySetParameterList `)` `{` FunctionBody `}`
-      </emu-grammar>
-      <emu-alg>
-        1. Return the result of ComputedPropertyContains for |PropertyName| with argument _symbol_.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-method-definitions-static-semantics-expectedargumentcount">
       <h1>Static Semantics: ExpectedArgumentCount</h1>
       <emu-see-also-para op="ExpectedArgumentCount"></emu-see-also-para>
@@ -20295,16 +20312,6 @@
           It is a Syntax Error if |GeneratorBody| Contains |SuperCall| is *true*.
         </li>
       </ul>
-    </emu-clause>
-
-    <emu-clause id="sec-generator-function-definitions-static-semantics-computedpropertycontains">
-      <h1>Static Semantics: ComputedPropertyContains</h1>
-      <p>With parameter _symbol_.</p>
-      <emu-see-also-para op="ComputedPropertyContains"></emu-see-also-para>
-      <emu-grammar>GeneratorMethod : `*` PropertyName `(` UniqueFormalParameters `)` `{` GeneratorBody `}`</emu-grammar>
-      <emu-alg>
-        1. Return the result of ComputedPropertyContains for |PropertyName| with argument _symbol_.
-      </emu-alg>
     </emu-clause>
 
     <emu-clause id="sec-generator-function-definitions-static-semantics-contains">
@@ -20580,16 +20587,6 @@
         <li>It is a Syntax Error if |FormalParameters| Contains |SuperCall| is *true*.</li>
         <li>It is a Syntax Error if |AsyncGeneratorBody| Contains |SuperCall| is *true*.</li>
       </ul>
-    </emu-clause>
-
-    <emu-clause id="sec-async-generator-function-definitions-static-semantics-computedpropertycontains">
-      <h1>Static Semantics: ComputedPropertyContains</h1>
-      <p>With parameter _symbol_.</p>
-      <emu-see-also-para op="ComputedPropertyContains"></emu-see-also-para>
-      <emu-grammar>AsyncGeneratorMethod : `async` `*` PropertyName `(` UniqueFormalParameters `)` `{` AsyncGeneratorBody `}`</emu-grammar>
-      <emu-alg>
-        1. Return the result of ComputedPropertyContains for |PropertyName| with argument _symbol_.
-      </emu-alg>
     </emu-clause>
 
     <emu-clause id="sec-async-generator-function-definitions-static-semantics-contains">
@@ -20885,22 +20882,6 @@
       </emu-note>
     </emu-clause>
 
-    <emu-clause id="sec-class-definitions-static-semantics-computedpropertycontains">
-      <h1>Static Semantics: ComputedPropertyContains</h1>
-      <p>With parameter _symbol_.</p>
-      <emu-see-also-para op="ComputedPropertyContains"></emu-see-also-para>
-      <emu-grammar>ClassElementList : ClassElementList ClassElement</emu-grammar>
-      <emu-alg>
-        1. Let _inList_ be ComputedPropertyContains of |ClassElementList| with argument _symbol_.
-        1. If _inList_ is *true*, return *true*.
-        1. Return the result of ComputedPropertyContains for |ClassElement| with argument _symbol_.
-      </emu-alg>
-      <emu-grammar>ClassElement : `;`</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-class-definitions-static-semantics-isconstantdeclaration">
       <h1>Static Semantics: IsConstantDeclaration</h1>
       <emu-see-also-para op="IsConstantDeclaration"></emu-see-also-para>
@@ -21166,17 +21147,6 @@
         <li>It is a Syntax Error if |FormalParameters| Contains |SuperCall| is *true*.</li>
         <li>It is a Syntax Error if |AsyncFunctionBody| Contains |SuperCall| is *true*.</li>
       </ul>
-    </emu-clause>
-
-    <emu-clause id="sec-async-function-definitions-static-semantics-ComputedPropertyContains">
-      <h1>Static Semantics: ComputedPropertyContains</h1>
-      <p>With parameter _symbol_.</p>
-      <emu-grammar>
-        AsyncMethod : `async` PropertyName `(` UniqueFormalParameters `)` `{` AsyncFunctionBody `}`
-      </emu-grammar>
-      <emu-alg>
-        1. Return the result of ComputedPropertyContains for |PropertyName| with argument _symbol_.
-      </emu-alg>
     </emu-clause>
 
     <emu-clause id="sec-async-function-definitions-static-semantics-Contains">
