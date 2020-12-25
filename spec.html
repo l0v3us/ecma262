@@ -8861,6 +8861,69 @@
       1. Return HasInitializer of |FormalParameter|.
     </emu-alg>
   </emu-clause>
+
+  <emu-clause id="sec-static-semantics-issimpleparameterlist" type="sdo" aoid="IsSimpleParameterList">
+    <h1>Static Semantics: IsSimpleParameterList</h1>
+    <emu-grammar>BindingElement : BindingPattern</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>BindingElement : BindingPattern Initializer</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>SingleNameBinding : BindingIdentifier</emu-grammar>
+    <emu-alg>
+      1. Return *true*.
+    </emu-alg>
+    <emu-grammar>SingleNameBinding : BindingIdentifier Initializer</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>FormalParameters : [empty]</emu-grammar>
+    <emu-alg>
+      1. Return *true*.
+    </emu-alg>
+    <emu-grammar>FormalParameters : FunctionRestParameter</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>FormalParameters : FormalParameterList `,` FunctionRestParameter</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>FormalParameterList : FormalParameterList `,` FormalParameter</emu-grammar>
+    <emu-alg>
+      1. If IsSimpleParameterList of |FormalParameterList| is *false*, return *false*.
+      1. Return IsSimpleParameterList of |FormalParameter|.
+    </emu-alg>
+    <emu-grammar>FormalParameter : BindingElement</emu-grammar>
+    <emu-alg>
+      1. Return IsSimpleParameterList of |BindingElement|.
+    </emu-alg>
+    <emu-grammar>ArrowParameters : BindingIdentifier</emu-grammar>
+    <emu-alg>
+      1. Return *true*.
+    </emu-alg>
+    <emu-grammar>ArrowParameters : CoverParenthesizedExpressionAndArrowParameterList</emu-grammar>
+    <emu-alg>
+      1. Let _formals_ be CoveredFormalsList of |CoverParenthesizedExpressionAndArrowParameterList|.
+      1. Return IsSimpleParameterList of _formals_.
+    </emu-alg>
+    <emu-grammar>
+      AsyncArrowBindingIdentifier[Yield] : BindingIdentifier[?Yield, +Await]
+    </emu-grammar>
+    <emu-alg>
+      1. Return *true*.
+    </emu-alg>
+    <emu-grammar>
+      CoverCallExpressionAndAsyncArrowHead : MemberExpression Arguments
+    </emu-grammar>
+    <emu-alg>
+      1. Let _head_ be CoveredAsyncArrowHead of |CoverCallExpressionAndAsyncArrowHead|.
+      1. Return IsSimpleParameterList of _head_.
+    </emu-alg>
+  </emu-clause>
 <!-- insert sdos here -->
 </emu-clause>
 
@@ -18305,27 +18368,6 @@
           `...` BindingPattern[?Yield, ?Await]
       </emu-grammar>
 
-      <emu-clause id="sec-destructuring-binding-patterns-static-semantics-issimpleparameterlist">
-        <h1>Static Semantics: IsSimpleParameterList</h1>
-        <emu-see-also-para op="IsSimpleParameterList"></emu-see-also-para>
-        <emu-grammar>BindingElement : BindingPattern</emu-grammar>
-        <emu-alg>
-          1. Return *false*.
-        </emu-alg>
-        <emu-grammar>BindingElement : BindingPattern Initializer</emu-grammar>
-        <emu-alg>
-          1. Return *false*.
-        </emu-alg>
-        <emu-grammar>SingleNameBinding : BindingIdentifier</emu-grammar>
-        <emu-alg>
-          1. Return *true*.
-        </emu-alg>
-        <emu-grammar>SingleNameBinding : BindingIdentifier Initializer</emu-grammar>
-        <emu-alg>
-          1. Return *false*.
-        </emu-alg>
-      </emu-clause>
-
       <emu-clause id="sec-destructuring-binding-patterns-runtime-semantics-propertybindinginitialization">
         <h1>Runtime Semantics: PropertyBindingInitialization</h1>
         <p>With parameters _value_ and _environment_.</p>
@@ -19734,32 +19776,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-function-definitions-static-semantics-issimpleparameterlist">
-      <h1>Static Semantics: IsSimpleParameterList</h1>
-      <emu-see-also-para op="IsSimpleParameterList"></emu-see-also-para>
-      <emu-grammar>FormalParameters : [empty]</emu-grammar>
-      <emu-alg>
-        1. Return *true*.
-      </emu-alg>
-      <emu-grammar>FormalParameters : FunctionRestParameter</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-      <emu-grammar>FormalParameters : FormalParameterList `,` FunctionRestParameter</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-      <emu-grammar>FormalParameterList : FormalParameterList `,` FormalParameter</emu-grammar>
-      <emu-alg>
-        1. If IsSimpleParameterList of |FormalParameterList| is *false*, return *false*.
-        1. Return IsSimpleParameterList of |FormalParameter|.
-      </emu-alg>
-      <emu-grammar>FormalParameter : BindingElement</emu-grammar>
-      <emu-alg>
-        1. Return IsSimpleParameterList of |BindingElement|.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-function-definitions-runtime-semantics-evaluatebody">
       <h1>Runtime Semantics: EvaluateBody</h1>
       <p>With parameters _functionObject_ and List _argumentsList_.</p>
@@ -19940,20 +19956,6 @@
       <emu-alg>
         1. Let _formals_ be CoveredFormalsList of |CoverParenthesizedExpressionAndArrowParameterList|.
         1. Return ExpectedArgumentCount of _formals_.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-arrow-function-definitions-static-semantics-issimpleparameterlist">
-      <h1>Static Semantics: IsSimpleParameterList</h1>
-      <emu-see-also-para op="IsSimpleParameterList"></emu-see-also-para>
-      <emu-grammar>ArrowParameters : BindingIdentifier</emu-grammar>
-      <emu-alg>
-        1. Return *true*.
-      </emu-alg>
-      <emu-grammar>ArrowParameters : CoverParenthesizedExpressionAndArrowParameterList</emu-grammar>
-      <emu-alg>
-        1. Let _formals_ be CoveredFormalsList of |CoverParenthesizedExpressionAndArrowParameterList|.
-        1. Return IsSimpleParameterList of _formals_.
       </emu-alg>
     </emu-clause>
 
@@ -21034,23 +21036,6 @@
       </emu-grammar>
       <emu-alg>
         1. Return 1.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-async-arrow-function-definitions-static-semantics-IsSimpleParameterList">
-      <h1>Static Semantics: IsSimpleParameterList</h1>
-      <emu-grammar>
-        AsyncArrowBindingIdentifier[Yield] : BindingIdentifier[?Yield, +Await]
-      </emu-grammar>
-      <emu-alg>
-        1. Return *true*.
-      </emu-alg>
-      <emu-grammar>
-        CoverCallExpressionAndAsyncArrowHead : MemberExpression Arguments
-      </emu-grammar>
-      <emu-alg>
-        1. Let _head_ be CoveredAsyncArrowHead of |CoverCallExpressionAndAsyncArrowHead|.
-        1. Return IsSimpleParameterList of _head_.
       </emu-alg>
     </emu-clause>
 
