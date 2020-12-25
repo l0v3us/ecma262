@@ -197,8 +197,8 @@ async function go() {
     newLines.push(...lines);
   }
   newLines.push(...footer);
-  let openTag = `    <emu-clause id="${makeId(eles[0].ele.querySelector('h1').innerHTML)}" type="sdo" aoid="${eles[0].name}">`;
-  let newContents = openTag + '\n' + newLines.map(l => l === '' ? '' : '      ' + l).join('\n') + '\n    </emu-clause>\n';
+  let openTag = `  <emu-clause id="${makeId(eles[0].ele.querySelector('h1').innerHTML)}" type="sdo" aoid="${eles[0].name}">`;
+  let newContents = openTag + '\n' + newLines.map(l => l === '' ? '' : '    ' + l).join('\n') + '\n  </emu-clause>\n';
 
   toRemove.sort((a, b) => b.start - a.start);
   for (let { start, end } of toRemove) {
