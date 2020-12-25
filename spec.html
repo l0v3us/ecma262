@@ -7550,6 +7550,187 @@
       1. Return *false*.
     </emu-alg>
   </emu-clause>
+
+  <emu-clause id="sec-static-semantics-containsundefinedcontinuetarget" type="sdo" aoid="ContainsUndefinedContinueTarget">
+    <h1>Static Semantics: ContainsUndefinedContinueTarget</h1>
+    <p>With parameters _iterationSet_ and _labelSet_.</p>
+    <emu-grammar>
+      Statement :
+        VariableStatement
+        EmptyStatement
+        ExpressionStatement
+        BreakStatement
+        ReturnStatement
+        ThrowStatement
+        DebuggerStatement
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>BreakableStatement : IterationStatement</emu-grammar>
+    <emu-alg>
+      1. Let _newIterationSet_ be a copy of _iterationSet_ with all the elements of _labelSet_ appended.
+      1. Return ContainsUndefinedContinueTarget of |IterationStatement| with arguments _newIterationSet_ and &laquo; &raquo;.
+    </emu-alg>
+    <emu-grammar>Block : `{` `}`</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>StatementList : StatementList StatementListItem</emu-grammar>
+    <emu-alg>
+      1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of |StatementList| with arguments _iterationSet_ and &laquo; &raquo;.
+      1. If _hasUndefinedLabels_ is *true*, return *true*.
+      1. Return ContainsUndefinedContinueTarget of |StatementListItem| with arguments _iterationSet_ and &laquo; &raquo;.
+    </emu-alg>
+    <emu-grammar>StatementListItem : Declaration</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>IfStatement : `if` `(` Expression `)` Statement `else` Statement</emu-grammar>
+    <emu-alg>
+      1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of the first |Statement| with arguments _iterationSet_ and &laquo; &raquo;.
+      1. If _hasUndefinedLabels_ is *true*, return *true*.
+      1. Return ContainsUndefinedContinueTarget of the second |Statement| with arguments _iterationSet_ and &laquo; &raquo;.
+    </emu-alg>
+    <emu-grammar>IfStatement : `if` `(` Expression `)` Statement</emu-grammar>
+    <emu-alg>
+      1. Return ContainsUndefinedContinueTarget of |Statement| with arguments _iterationSet_ and &laquo; &raquo;.
+    </emu-alg>
+    <emu-grammar>IterationStatement : `do` Statement `while` `(` Expression `)` `;`</emu-grammar>
+    <emu-alg>
+      1. Return ContainsUndefinedContinueTarget of |Statement| with arguments _iterationSet_ and &laquo; &raquo;.
+    </emu-alg>
+    <emu-grammar>IterationStatement : `while` `(` Expression `)` Statement</emu-grammar>
+    <emu-alg>
+      1. Return ContainsUndefinedContinueTarget of |Statement| with arguments _iterationSet_ and &laquo; &raquo;.
+    </emu-alg>
+    <emu-grammar>
+      IterationStatement :
+        `for` `(` Expression? `;` Expression? `;` Expression? `)` Statement
+        `for` `(` `var` VariableDeclarationList `;` Expression? `;` Expression? `)` Statement
+        `for` `(` LexicalDeclaration Expression? `;` Expression? `)` Statement
+    </emu-grammar>
+    <emu-alg>
+      1. Return ContainsUndefinedContinueTarget of |Statement| with arguments _iterationSet_ and &laquo; &raquo;.
+    </emu-alg>
+    <emu-grammar>
+      IterationStatement :
+        `for` `(` LeftHandSideExpression `in` Expression `)` Statement
+        `for` `(` `var` ForBinding `in` Expression `)` Statement
+        `for` `(` ForDeclaration `in` Expression `)` Statement
+        `for` `(` LeftHandSideExpression `of` AssignmentExpression `)` Statement
+        `for` `(` `var` ForBinding `of` AssignmentExpression `)` Statement
+        `for` `(` ForDeclaration `of` AssignmentExpression `)` Statement
+        `for` `await` `(` LeftHandSideExpression `of` AssignmentExpression `)` Statement
+        `for` `await` `(` `var` ForBinding `of` AssignmentExpression `)` Statement
+        `for` `await` `(` ForDeclaration `of` AssignmentExpression `)` Statement
+    </emu-grammar>
+    <emu-alg>
+      1. Return ContainsUndefinedContinueTarget of |Statement| with arguments _iterationSet_ and &laquo; &raquo;.
+    </emu-alg>
+    <emu-note>
+      <p>This section is extended by Annex <emu-xref href="#sec-initializers-in-forin-statement-heads"></emu-xref>.</p>
+    </emu-note>
+    <emu-grammar>ContinueStatement : `continue` `;`</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>ContinueStatement : `continue` LabelIdentifier `;`</emu-grammar>
+    <emu-alg>
+      1. If the StringValue of |LabelIdentifier| is not an element of _iterationSet_, return *true*.
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>WithStatement : `with` `(` Expression `)` Statement</emu-grammar>
+    <emu-alg>
+      1. Return ContainsUndefinedContinueTarget of |Statement| with arguments _iterationSet_ and &laquo; &raquo;.
+    </emu-alg>
+    <emu-grammar>SwitchStatement : `switch` `(` Expression `)` CaseBlock</emu-grammar>
+    <emu-alg>
+      1. Return ContainsUndefinedContinueTarget of |CaseBlock| with arguments _iterationSet_ and &laquo; &raquo;.
+    </emu-alg>
+    <emu-grammar>CaseBlock : `{` `}`</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>CaseBlock : `{` CaseClauses? DefaultClause CaseClauses? `}`</emu-grammar>
+    <emu-alg>
+      1. If the first |CaseClauses| is present, then
+        1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of the first |CaseClauses| with arguments _iterationSet_ and &laquo; &raquo;.
+        1. If _hasUndefinedLabels_ is *true*, return *true*.
+      1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of |DefaultClause| with arguments _iterationSet_ and &laquo; &raquo;.
+      1. If _hasUndefinedLabels_ is *true*, return *true*.
+      1. If the second |CaseClauses| is not present, return *false*.
+      1. Return ContainsUndefinedContinueTarget of the second |CaseClauses| with arguments _iterationSet_ and &laquo; &raquo;.
+    </emu-alg>
+    <emu-grammar>CaseClauses : CaseClauses CaseClause</emu-grammar>
+    <emu-alg>
+      1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of |CaseClauses| with arguments _iterationSet_ and &laquo; &raquo;.
+      1. If _hasUndefinedLabels_ is *true*, return *true*.
+      1. Return ContainsUndefinedContinueTarget of |CaseClause| with arguments _iterationSet_ and &laquo; &raquo;.
+    </emu-alg>
+    <emu-grammar>CaseClause : `case` Expression `:` StatementList?</emu-grammar>
+    <emu-alg>
+      1. If the |StatementList| is present, return ContainsUndefinedContinueTarget of |StatementList| with arguments _iterationSet_ and &laquo; &raquo;.
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>DefaultClause : `default` `:` StatementList?</emu-grammar>
+    <emu-alg>
+      1. If the |StatementList| is present, return ContainsUndefinedContinueTarget of |StatementList| with arguments _iterationSet_ and &laquo; &raquo;.
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>LabelledStatement : LabelIdentifier `:` LabelledItem</emu-grammar>
+    <emu-alg>
+      1. Let _label_ be the StringValue of |LabelIdentifier|.
+      1. Let _newLabelSet_ be a copy of _labelSet_ with _label_ appended.
+      1. Return ContainsUndefinedContinueTarget of |LabelledItem| with arguments _iterationSet_ and _newLabelSet_.
+    </emu-alg>
+    <emu-grammar>LabelledItem : FunctionDeclaration</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>TryStatement : `try` Block Catch</emu-grammar>
+    <emu-alg>
+      1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of |Block| with arguments _iterationSet_ and &laquo; &raquo;.
+      1. If _hasUndefinedLabels_ is *true*, return *true*.
+      1. Return ContainsUndefinedContinueTarget of |Catch| with arguments _iterationSet_ and &laquo; &raquo;.
+    </emu-alg>
+    <emu-grammar>TryStatement : `try` Block Finally</emu-grammar>
+    <emu-alg>
+      1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of |Block| with arguments _iterationSet_ and &laquo; &raquo;.
+      1. If _hasUndefinedLabels_ is *true*, return *true*.
+      1. Return ContainsUndefinedContinueTarget of |Finally| with arguments _iterationSet_ and &laquo; &raquo;.
+    </emu-alg>
+    <emu-grammar>TryStatement : `try` Block Catch Finally</emu-grammar>
+    <emu-alg>
+      1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of |Block| with arguments _iterationSet_ and &laquo; &raquo;.
+      1. If _hasUndefinedLabels_ is *true*, return *true*.
+      1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of |Catch| with arguments _iterationSet_ and &laquo; &raquo;.
+      1. If _hasUndefinedLabels_ is *true*, return *true*.
+      1. Return ContainsUndefinedContinueTarget of |Finally| with arguments _iterationSet_ and &laquo; &raquo;.
+    </emu-alg>
+    <emu-grammar>Catch : `catch` `(` CatchParameter `)` Block</emu-grammar>
+    <emu-alg>
+      1. Return ContainsUndefinedContinueTarget of |Block| with arguments _iterationSet_ and &laquo; &raquo;.
+    </emu-alg>
+    <emu-grammar>FunctionStatementList : [empty]</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>ModuleItemList : ModuleItemList ModuleItem</emu-grammar>
+    <emu-alg>
+      1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of |ModuleItemList| with arguments _iterationSet_ and &laquo; &raquo;.
+      1. If _hasUndefinedLabels_ is *true*, return *true*.
+      1. Return ContainsUndefinedContinueTarget of |ModuleItem| with arguments _iterationSet_ and &laquo; &raquo;.
+    </emu-alg>
+    <emu-grammar>
+      ModuleItem :
+        ImportDeclaration
+        ExportDeclaration
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+  </emu-clause>
 <!-- insert sdos here -->
 </emu-clause>
 
@@ -16644,30 +16825,6 @@
   <emu-clause id="sec-statement-semantics">
     <h1>Statement Semantics</h1>
 
-    <emu-clause id="sec-statement-semantics-static-semantics-containsundefinedcontinuetarget">
-      <h1>Static Semantics: ContainsUndefinedContinueTarget</h1>
-      <p>With parameters _iterationSet_ and _labelSet_.</p>
-      <emu-see-also-para op="ContainsUndefinedContinueTarget"></emu-see-also-para>
-      <emu-grammar>
-        Statement :
-          VariableStatement
-          EmptyStatement
-          ExpressionStatement
-          BreakStatement
-          ReturnStatement
-          ThrowStatement
-          DebuggerStatement
-      </emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-      <emu-grammar>BreakableStatement : IterationStatement</emu-grammar>
-      <emu-alg>
-        1. Let _newIterationSet_ be a copy of _iterationSet_ with all the elements of _labelSet_ appended.
-        1. Return ContainsUndefinedContinueTarget of |IterationStatement| with arguments _newIterationSet_ and &laquo; &raquo;.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-static-semantics-declarationpart">
       <h1>Static Semantics: DeclarationPart</h1>
       <emu-grammar>HoistableDeclaration : FunctionDeclaration</emu-grammar>
@@ -16818,26 +16975,6 @@
           It is a Syntax Error if any element of the LexicallyDeclaredNames of |StatementList| also occurs in the VarDeclaredNames of |StatementList|.
         </li>
       </ul>
-    </emu-clause>
-
-    <emu-clause id="sec-block-static-semantics-containsundefinedcontinuetarget">
-      <h1>Static Semantics: ContainsUndefinedContinueTarget</h1>
-      <p>With parameters _iterationSet_ and _labelSet_.</p>
-      <emu-see-also-para op="ContainsUndefinedContinueTarget"></emu-see-also-para>
-      <emu-grammar>Block : `{` `}`</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-      <emu-grammar>StatementList : StatementList StatementListItem</emu-grammar>
-      <emu-alg>
-        1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of |StatementList| with arguments _iterationSet_ and &laquo; &raquo;.
-        1. If _hasUndefinedLabels_ is *true*, return *true*.
-        1. Return ContainsUndefinedContinueTarget of |StatementListItem| with arguments _iterationSet_ and &laquo; &raquo;.
-      </emu-alg>
-      <emu-grammar>StatementListItem : Declaration</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
     </emu-clause>
 
     <emu-clause id="sec-block-static-semantics-lexicallydeclarednames">
@@ -17712,22 +17849,6 @@
       </emu-note>
     </emu-clause>
 
-    <emu-clause id="sec-if-statement-static-semantics-containsundefinedcontinuetarget">
-      <h1>Static Semantics: ContainsUndefinedContinueTarget</h1>
-      <p>With parameters _iterationSet_ and _labelSet_.</p>
-      <emu-see-also-para op="ContainsUndefinedContinueTarget"></emu-see-also-para>
-      <emu-grammar>IfStatement : `if` `(` Expression `)` Statement `else` Statement</emu-grammar>
-      <emu-alg>
-        1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of the first |Statement| with arguments _iterationSet_ and &laquo; &raquo;.
-        1. If _hasUndefinedLabels_ is *true*, return *true*.
-        1. Return ContainsUndefinedContinueTarget of the second |Statement| with arguments _iterationSet_ and &laquo; &raquo;.
-      </emu-alg>
-      <emu-grammar>IfStatement : `if` `(` Expression `)` Statement</emu-grammar>
-      <emu-alg>
-        1. Return ContainsUndefinedContinueTarget of |Statement| with arguments _iterationSet_ and &laquo; &raquo;.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-if-statement-static-semantics-vardeclarednames">
       <h1>Static Semantics: VarDeclaredNames</h1>
       <emu-see-also-para op="VarDeclaredNames"></emu-see-also-para>
@@ -17865,16 +17986,6 @@
     <emu-clause id="sec-do-while-statement">
       <h1>The `do`-`while` Statement</h1>
 
-      <emu-clause id="sec-do-while-statement-static-semantics-containsundefinedcontinuetarget">
-        <h1>Static Semantics: ContainsUndefinedContinueTarget</h1>
-        <p>With parameters _iterationSet_ and _labelSet_.</p>
-        <emu-see-also-para op="ContainsUndefinedContinueTarget"></emu-see-also-para>
-        <emu-grammar>IterationStatement : `do` Statement `while` `(` Expression `)` `;`</emu-grammar>
-        <emu-alg>
-          1. Return ContainsUndefinedContinueTarget of |Statement| with arguments _iterationSet_ and &laquo; &raquo;.
-        </emu-alg>
-      </emu-clause>
-
       <emu-clause id="sec-do-while-statement-static-semantics-vardeclarednames">
         <h1>Static Semantics: VarDeclaredNames</h1>
         <emu-see-also-para op="VarDeclaredNames"></emu-see-also-para>
@@ -17913,16 +18024,6 @@
 
     <emu-clause id="sec-while-statement">
       <h1>The `while` Statement</h1>
-
-      <emu-clause id="sec-while-statement-static-semantics-containsundefinedcontinuetarget">
-        <h1>Static Semantics: ContainsUndefinedContinueTarget</h1>
-        <p>With parameters _iterationSet_ and _labelSet_.</p>
-        <emu-see-also-para op="ContainsUndefinedContinueTarget"></emu-see-also-para>
-        <emu-grammar>IterationStatement : `while` `(` Expression `)` Statement</emu-grammar>
-        <emu-alg>
-          1. Return ContainsUndefinedContinueTarget of |Statement| with arguments _iterationSet_ and &laquo; &raquo;.
-        </emu-alg>
-      </emu-clause>
 
       <emu-clause id="sec-while-statement-static-semantics-vardeclarednames">
         <h1>Static Semantics: VarDeclaredNames</h1>
@@ -17971,21 +18072,6 @@
             It is a Syntax Error if any element of the BoundNames of |LexicalDeclaration| also occurs in the VarDeclaredNames of |Statement|.
           </li>
         </ul>
-      </emu-clause>
-
-      <emu-clause id="sec-for-statement-static-semantics-containsundefinedcontinuetarget">
-        <h1>Static Semantics: ContainsUndefinedContinueTarget</h1>
-        <p>With parameters _iterationSet_ and _labelSet_.</p>
-        <emu-see-also-para op="ContainsUndefinedContinueTarget"></emu-see-also-para>
-        <emu-grammar>
-          IterationStatement :
-            `for` `(` Expression? `;` Expression? `;` Expression? `)` Statement
-            `for` `(` `var` VariableDeclarationList `;` Expression? `;` Expression? `)` Statement
-            `for` `(` LexicalDeclaration Expression? `;` Expression? `)` Statement
-        </emu-grammar>
-        <emu-alg>
-          1. Return ContainsUndefinedContinueTarget of |Statement| with arguments _iterationSet_ and &laquo; &raquo;.
-        </emu-alg>
       </emu-clause>
 
       <emu-clause id="sec-for-statement-static-semantics-vardeclarednames">
@@ -18149,30 +18235,6 @@
             It is a Syntax Error if the BoundNames of |ForDeclaration| contains any duplicate entries.
           </li>
         </ul>
-      </emu-clause>
-
-      <emu-clause id="sec-for-in-and-for-of-statements-static-semantics-containsundefinedcontinuetarget">
-        <h1>Static Semantics: ContainsUndefinedContinueTarget</h1>
-        <p>With parameters _iterationSet_ and _labelSet_.</p>
-        <emu-see-also-para op="ContainsUndefinedContinueTarget"></emu-see-also-para>
-        <emu-grammar>
-          IterationStatement :
-            `for` `(` LeftHandSideExpression `in` Expression `)` Statement
-            `for` `(` `var` ForBinding `in` Expression `)` Statement
-            `for` `(` ForDeclaration `in` Expression `)` Statement
-            `for` `(` LeftHandSideExpression `of` AssignmentExpression `)` Statement
-            `for` `(` `var` ForBinding `of` AssignmentExpression `)` Statement
-            `for` `(` ForDeclaration `of` AssignmentExpression `)` Statement
-            `for` `await` `(` LeftHandSideExpression `of` AssignmentExpression `)` Statement
-            `for` `await` `(` `var` ForBinding `of` AssignmentExpression `)` Statement
-            `for` `await` `(` ForDeclaration `of` AssignmentExpression `)` Statement
-        </emu-grammar>
-        <emu-alg>
-          1. Return ContainsUndefinedContinueTarget of |Statement| with arguments _iterationSet_ and &laquo; &raquo;.
-        </emu-alg>
-        <emu-note>
-          <p>This section is extended by Annex <emu-xref href="#sec-initializers-in-forin-statement-heads"></emu-xref>.</p>
-        </emu-note>
       </emu-clause>
 
       <emu-clause id="sec-for-in-and-for-of-statements-static-semantics-vardeclarednames">
@@ -18601,21 +18663,6 @@
       </ul>
     </emu-clause>
 
-    <emu-clause id="sec-continue-statement-static-semantics-containsundefinedcontinuetarget">
-      <h1>Static Semantics: ContainsUndefinedContinueTarget</h1>
-      <p>With parameters _iterationSet_ and _labelSet_.</p>
-      <emu-see-also-para op="ContainsUndefinedContinueTarget"></emu-see-also-para>
-      <emu-grammar>ContinueStatement : `continue` `;`</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-      <emu-grammar>ContinueStatement : `continue` LabelIdentifier `;`</emu-grammar>
-      <emu-alg>
-        1. If the StringValue of |LabelIdentifier| is not an element of _iterationSet_, return *true*.
-        1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-continue-statement-runtime-semantics-evaluation">
       <h1>Runtime Semantics: Evaluation</h1>
       <emu-grammar>ContinueStatement : `continue` `;`</emu-grammar>
@@ -18718,16 +18765,6 @@
       </emu-note>
     </emu-clause>
 
-    <emu-clause id="sec-with-statement-static-semantics-containsundefinedcontinuetarget">
-      <h1>Static Semantics: ContainsUndefinedContinueTarget</h1>
-      <p>With parameters _iterationSet_ and _labelSet_.</p>
-      <emu-see-also-para op="ContainsUndefinedContinueTarget"></emu-see-also-para>
-      <emu-grammar>WithStatement : `with` `(` Expression `)` Statement</emu-grammar>
-      <emu-alg>
-        1. Return ContainsUndefinedContinueTarget of |Statement| with arguments _iterationSet_ and &laquo; &raquo;.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-with-statement-static-semantics-vardeclarednames">
       <h1>Static Semantics: VarDeclaredNames</h1>
       <emu-see-also-para op="VarDeclaredNames"></emu-see-also-para>
@@ -18799,46 +18836,6 @@
           It is a Syntax Error if any element of the LexicallyDeclaredNames of |CaseBlock| also occurs in the VarDeclaredNames of |CaseBlock|.
         </li>
       </ul>
-    </emu-clause>
-
-    <emu-clause id="sec-switch-statement-static-semantics-containsundefinedcontinuetarget">
-      <h1>Static Semantics: ContainsUndefinedContinueTarget</h1>
-      <p>With parameters _iterationSet_ and _labelSet_.</p>
-      <emu-see-also-para op="ContainsUndefinedContinueTarget"></emu-see-also-para>
-      <emu-grammar>SwitchStatement : `switch` `(` Expression `)` CaseBlock</emu-grammar>
-      <emu-alg>
-        1. Return ContainsUndefinedContinueTarget of |CaseBlock| with arguments _iterationSet_ and &laquo; &raquo;.
-      </emu-alg>
-      <emu-grammar>CaseBlock : `{` `}`</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-      <emu-grammar>CaseBlock : `{` CaseClauses? DefaultClause CaseClauses? `}`</emu-grammar>
-      <emu-alg>
-        1. If the first |CaseClauses| is present, then
-          1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of the first |CaseClauses| with arguments _iterationSet_ and &laquo; &raquo;.
-          1. If _hasUndefinedLabels_ is *true*, return *true*.
-        1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of |DefaultClause| with arguments _iterationSet_ and &laquo; &raquo;.
-        1. If _hasUndefinedLabels_ is *true*, return *true*.
-        1. If the second |CaseClauses| is not present, return *false*.
-        1. Return ContainsUndefinedContinueTarget of the second |CaseClauses| with arguments _iterationSet_ and &laquo; &raquo;.
-      </emu-alg>
-      <emu-grammar>CaseClauses : CaseClauses CaseClause</emu-grammar>
-      <emu-alg>
-        1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of |CaseClauses| with arguments _iterationSet_ and &laquo; &raquo;.
-        1. If _hasUndefinedLabels_ is *true*, return *true*.
-        1. Return ContainsUndefinedContinueTarget of |CaseClause| with arguments _iterationSet_ and &laquo; &raquo;.
-      </emu-alg>
-      <emu-grammar>CaseClause : `case` Expression `:` StatementList?</emu-grammar>
-      <emu-alg>
-        1. If the |StatementList| is present, return ContainsUndefinedContinueTarget of |StatementList| with arguments _iterationSet_ and &laquo; &raquo;.
-        1. Return *false*.
-      </emu-alg>
-      <emu-grammar>DefaultClause : `default` `:` StatementList?</emu-grammar>
-      <emu-alg>
-        1. If the |StatementList| is present, return ContainsUndefinedContinueTarget of |StatementList| with arguments _iterationSet_ and &laquo; &raquo;.
-        1. Return *false*.
-      </emu-alg>
     </emu-clause>
 
     <emu-clause id="sec-switch-statement-static-semantics-lexicallydeclarednames">
@@ -19121,22 +19118,6 @@
       </emu-note>
     </emu-clause>
 
-    <emu-clause id="sec-labelled-statements-static-semantics-containsundefinedcontinuetarget">
-      <h1>Static Semantics: ContainsUndefinedContinueTarget</h1>
-      <p>With parameters _iterationSet_ and _labelSet_.</p>
-      <emu-see-also-para op="ContainsUndefinedContinueTarget"></emu-see-also-para>
-      <emu-grammar>LabelledStatement : LabelIdentifier `:` LabelledItem</emu-grammar>
-      <emu-alg>
-        1. Let _label_ be the StringValue of |LabelIdentifier|.
-        1. Let _newLabelSet_ be a copy of _labelSet_ with _label_ appended.
-        1. Return ContainsUndefinedContinueTarget of |LabelledItem| with arguments _iterationSet_ and _newLabelSet_.
-      </emu-alg>
-      <emu-grammar>LabelledItem : FunctionDeclaration</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-islabelledfunction" aoid="IsLabelledFunction">
       <h1>Static Semantics: IsLabelledFunction ( _stmt_ )</h1>
       <p>The abstract operation IsLabelledFunction takes argument _stmt_. It performs the following steps when called:</p>
@@ -19359,36 +19340,6 @@
       <emu-note>
         <p>An alternative static semantics for this production is given in <emu-xref href="#sec-variablestatements-in-catch-blocks"></emu-xref>.</p>
       </emu-note>
-    </emu-clause>
-
-    <emu-clause id="sec-try-statement-static-semantics-containsundefinedcontinuetarget">
-      <h1>Static Semantics: ContainsUndefinedContinueTarget</h1>
-      <p>With parameters _iterationSet_ and _labelSet_.</p>
-      <emu-see-also-para op="ContainsUndefinedContinueTarget"></emu-see-also-para>
-      <emu-grammar>TryStatement : `try` Block Catch</emu-grammar>
-      <emu-alg>
-        1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of |Block| with arguments _iterationSet_ and &laquo; &raquo;.
-        1. If _hasUndefinedLabels_ is *true*, return *true*.
-        1. Return ContainsUndefinedContinueTarget of |Catch| with arguments _iterationSet_ and &laquo; &raquo;.
-      </emu-alg>
-      <emu-grammar>TryStatement : `try` Block Finally</emu-grammar>
-      <emu-alg>
-        1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of |Block| with arguments _iterationSet_ and &laquo; &raquo;.
-        1. If _hasUndefinedLabels_ is *true*, return *true*.
-        1. Return ContainsUndefinedContinueTarget of |Finally| with arguments _iterationSet_ and &laquo; &raquo;.
-      </emu-alg>
-      <emu-grammar>TryStatement : `try` Block Catch Finally</emu-grammar>
-      <emu-alg>
-        1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of |Block| with arguments _iterationSet_ and &laquo; &raquo;.
-        1. If _hasUndefinedLabels_ is *true*, return *true*.
-        1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of |Catch| with arguments _iterationSet_ and &laquo; &raquo;.
-        1. If _hasUndefinedLabels_ is *true*, return *true*.
-        1. Return ContainsUndefinedContinueTarget of |Finally| with arguments _iterationSet_ and &laquo; &raquo;.
-      </emu-alg>
-      <emu-grammar>Catch : `catch` `(` CatchParameter `)` Block</emu-grammar>
-      <emu-alg>
-        1. Return ContainsUndefinedContinueTarget of |Block| with arguments _iterationSet_ and &laquo; &raquo;.
-      </emu-alg>
     </emu-clause>
 
     <emu-clause id="sec-try-statement-static-semantics-vardeclarednames">
@@ -19661,16 +19612,6 @@
       <emu-alg>
         1. If ContainsExpression of |FormalParameterList| is *true*, return *true*.
         1. Return ContainsExpression of |FormalParameter|.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-function-definitions-static-semantics-containsundefinedcontinuetarget">
-      <h1>Static Semantics: ContainsUndefinedContinueTarget</h1>
-      <p>With parameters _iterationSet_ and _labelSet_.</p>
-      <emu-see-also-para op="ContainsUndefinedContinueTarget"></emu-see-also-para>
-      <emu-grammar>FunctionStatementList : [empty]</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
       </emu-alg>
     </emu-clause>
 
@@ -22019,26 +21960,6 @@
         <emu-note>
           <p>The duplicate ExportedNames rule implies that multiple `export default` |ExportDeclaration| items within a |ModuleBody| is a Syntax Error. Additional error conditions relating to conflicting or duplicate declarations are checked during module linking prior to evaluation of a |Module|. If any such errors are detected the |Module| is not evaluated.</p>
         </emu-note>
-      </emu-clause>
-
-      <emu-clause id="sec-module-semantics-static-semantics-containsundefinedcontinuetarget">
-        <h1>Static Semantics: ContainsUndefinedContinueTarget</h1>
-        <p>With parameters _iterationSet_ and _labelSet_.</p>
-        <emu-see-also-para op="ContainsUndefinedContinueTarget"></emu-see-also-para>
-        <emu-grammar>ModuleItemList : ModuleItemList ModuleItem</emu-grammar>
-        <emu-alg>
-          1. Let _hasUndefinedLabels_ be ContainsUndefinedContinueTarget of |ModuleItemList| with arguments _iterationSet_ and &laquo; &raquo;.
-          1. If _hasUndefinedLabels_ is *true*, return *true*.
-          1. Return ContainsUndefinedContinueTarget of |ModuleItem| with arguments _iterationSet_ and &laquo; &raquo;.
-        </emu-alg>
-        <emu-grammar>
-          ModuleItem :
-            ImportDeclaration
-            ExportDeclaration
-        </emu-grammar>
-        <emu-alg>
-          1. Return *false*.
-        </emu-alg>
       </emu-clause>
 
       <emu-clause id="sec-module-semantics-static-semantics-exportedbindings">
