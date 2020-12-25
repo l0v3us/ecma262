@@ -8624,6 +8624,45 @@
       1. Return BoundNames of |FunctionDeclaration|.
     </emu-alg>
   </emu-clause>
+
+  <emu-clause id="sec-static-semantics-toplevelvarscopeddeclarations" type="sdo" aoid="TopLevelVarScopedDeclarations">
+    <h1>Static Semantics: TopLevelVarScopedDeclarations</h1>
+    <emu-grammar>Block : `{` `}`</emu-grammar>
+    <emu-alg>
+      1. Return a new empty List.
+    </emu-alg>
+    <emu-grammar>StatementList : StatementList StatementListItem</emu-grammar>
+    <emu-alg>
+      1. Let _declarations_ be TopLevelVarScopedDeclarations of |StatementList|.
+      1. Append to _declarations_ the elements of the TopLevelVarScopedDeclarations of |StatementListItem|.
+      1. Return _declarations_.
+    </emu-alg>
+    <emu-grammar>StatementListItem : Statement</emu-grammar>
+    <emu-alg>
+      1. If |Statement| is <emu-grammar>Statement : LabelledStatement</emu-grammar> , return TopLevelVarScopedDeclarations of |Statement|.
+      1. Return VarScopedDeclarations of |Statement|.
+    </emu-alg>
+    <emu-grammar>StatementListItem : Declaration</emu-grammar>
+    <emu-alg>
+      1. If |Declaration| is <emu-grammar>Declaration : HoistableDeclaration</emu-grammar> , then
+        1. Let _declaration_ be DeclarationPart of |HoistableDeclaration|.
+        1. Return &laquo; _declaration_ &raquo;.
+      1. Return a new empty List.
+    </emu-alg>
+    <emu-grammar>LabelledStatement : LabelIdentifier `:` LabelledItem</emu-grammar>
+    <emu-alg>
+      1. Return the TopLevelVarScopedDeclarations of |LabelledItem|.
+    </emu-alg>
+    <emu-grammar>LabelledItem : Statement</emu-grammar>
+    <emu-alg>
+      1. If |Statement| is <emu-grammar>Statement : LabelledStatement</emu-grammar> , return TopLevelVarScopedDeclarations of |Statement|.
+      1. Return VarScopedDeclarations of |Statement|.
+    </emu-alg>
+    <emu-grammar>LabelledItem : FunctionDeclaration</emu-grammar>
+    <emu-alg>
+      1. Return a List whose sole element is |FunctionDeclaration|.
+    </emu-alg>
+  </emu-clause>
 <!-- insert sdos here -->
 </emu-clause>
 
@@ -17807,33 +17846,6 @@
       </ul>
     </emu-clause>
 
-    <emu-clause id="sec-block-static-semantics-toplevelvarscopeddeclarations">
-      <h1>Static Semantics: TopLevelVarScopedDeclarations</h1>
-      <emu-see-also-para op="TopLevelVarScopedDeclarations"></emu-see-also-para>
-      <emu-grammar>Block : `{` `}`</emu-grammar>
-      <emu-alg>
-        1. Return a new empty List.
-      </emu-alg>
-      <emu-grammar>StatementList : StatementList StatementListItem</emu-grammar>
-      <emu-alg>
-        1. Let _declarations_ be TopLevelVarScopedDeclarations of |StatementList|.
-        1. Append to _declarations_ the elements of the TopLevelVarScopedDeclarations of |StatementListItem|.
-        1. Return _declarations_.
-      </emu-alg>
-      <emu-grammar>StatementListItem : Statement</emu-grammar>
-      <emu-alg>
-        1. If |Statement| is <emu-grammar>Statement : LabelledStatement</emu-grammar> , return TopLevelVarScopedDeclarations of |Statement|.
-        1. Return VarScopedDeclarations of |Statement|.
-      </emu-alg>
-      <emu-grammar>StatementListItem : Declaration</emu-grammar>
-      <emu-alg>
-        1. If |Declaration| is <emu-grammar>Declaration : HoistableDeclaration</emu-grammar> , then
-          1. Let _declaration_ be DeclarationPart of |HoistableDeclaration|.
-          1. Return &laquo; _declaration_ &raquo;.
-        1. Return a new empty List.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-block-runtime-semantics-evaluation">
       <h1>Runtime Semantics: Evaluation</h1>
       <emu-grammar>Block : `{` `}`</emu-grammar>
@@ -19315,24 +19327,6 @@
         1. If _item_ is <emu-grammar>LabelledItem : FunctionDeclaration</emu-grammar> , return *true*.
         1. Let _subStmt_ be the |Statement| of _item_.
         1. Return IsLabelledFunction(_subStmt_).
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-labelled-statements-static-semantics-toplevelvarscopeddeclarations">
-      <h1>Static Semantics: TopLevelVarScopedDeclarations</h1>
-      <emu-see-also-para op="TopLevelVarScopedDeclarations"></emu-see-also-para>
-      <emu-grammar>LabelledStatement : LabelIdentifier `:` LabelledItem</emu-grammar>
-      <emu-alg>
-        1. Return the TopLevelVarScopedDeclarations of |LabelledItem|.
-      </emu-alg>
-      <emu-grammar>LabelledItem : Statement</emu-grammar>
-      <emu-alg>
-        1. If |Statement| is <emu-grammar>Statement : LabelledStatement</emu-grammar> , return TopLevelVarScopedDeclarations of |Statement|.
-        1. Return VarScopedDeclarations of |Statement|.
-      </emu-alg>
-      <emu-grammar>LabelledItem : FunctionDeclaration</emu-grammar>
-      <emu-alg>
-        1. Return a List whose sole element is |FunctionDeclaration|.
       </emu-alg>
     </emu-clause>
 
