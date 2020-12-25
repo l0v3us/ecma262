@@ -7205,6 +7205,175 @@
       <p>This section is extended by Annex <emu-xref href="#sec-initializers-in-forin-statement-heads"></emu-xref>.</p>
     </emu-note>
   </emu-clause>
+
+  <emu-clause id="sec-static-semantics-containsduplicatelabels" type="sdo" aoid="ContainsDuplicateLabels">
+    <h1>Static Semantics: ContainsDuplicateLabels</h1>
+    <p>With parameter _labelSet_.</p>
+    <emu-grammar>
+      Statement :
+        VariableStatement
+        EmptyStatement
+        ExpressionStatement
+        ContinueStatement
+        BreakStatement
+        ReturnStatement
+        ThrowStatement
+        DebuggerStatement
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>Block : `{` `}`</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>StatementList : StatementList StatementListItem</emu-grammar>
+    <emu-alg>
+      1. Let _hasDuplicates_ be ContainsDuplicateLabels of |StatementList| with argument _labelSet_.
+      1. If _hasDuplicates_ is *true*, return *true*.
+      1. Return ContainsDuplicateLabels of |StatementListItem| with argument _labelSet_.
+    </emu-alg>
+    <emu-grammar>StatementListItem : Declaration</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>IfStatement : `if` `(` Expression `)` Statement `else` Statement</emu-grammar>
+    <emu-alg>
+      1. Let _hasDuplicate_ be ContainsDuplicateLabels of the first |Statement| with argument _labelSet_.
+      1. If _hasDuplicate_ is *true*, return *true*.
+      1. Return ContainsDuplicateLabels of the second |Statement| with argument _labelSet_.
+    </emu-alg>
+    <emu-grammar>IfStatement : `if` `(` Expression `)` Statement</emu-grammar>
+    <emu-alg>
+      1. Return ContainsDuplicateLabels of |Statement| with argument _labelSet_.
+    </emu-alg>
+    <emu-grammar>IterationStatement : `do` Statement `while` `(` Expression `)` `;`</emu-grammar>
+    <emu-alg>
+      1. Return ContainsDuplicateLabels of |Statement| with argument _labelSet_.
+    </emu-alg>
+    <emu-grammar>IterationStatement : `while` `(` Expression `)` Statement</emu-grammar>
+    <emu-alg>
+      1. Return ContainsDuplicateLabels of |Statement| with argument _labelSet_.
+    </emu-alg>
+    <emu-grammar>
+      IterationStatement :
+        `for` `(` Expression? `;` Expression? `;` Expression? `)` Statement
+        `for` `(` `var` VariableDeclarationList `;` Expression? `;` Expression? `)` Statement
+        `for` `(` LexicalDeclaration Expression? `;` Expression? `)` Statement
+    </emu-grammar>
+    <emu-alg>
+      1. Return ContainsDuplicateLabels of |Statement| with argument _labelSet_.
+    </emu-alg>
+    <emu-grammar>
+      IterationStatement :
+        `for` `(` LeftHandSideExpression `in` Expression `)` Statement
+        `for` `(` `var` ForBinding `in` Expression `)` Statement
+        `for` `(` ForDeclaration `in` Expression `)` Statement
+        `for` `(` LeftHandSideExpression `of` AssignmentExpression `)` Statement
+        `for` `(` `var` ForBinding `of` AssignmentExpression `)` Statement
+        `for` `(` ForDeclaration `of` AssignmentExpression `)` Statement
+        `for` `await` `(` LeftHandSideExpression `of` AssignmentExpression `)` Statement
+        `for` `await` `(` `var` ForBinding `of` AssignmentExpression `)` Statement
+        `for` `await` `(` ForDeclaration `of` AssignmentExpression `)` Statement
+    </emu-grammar>
+    <emu-alg>
+      1. Return ContainsDuplicateLabels of |Statement| with argument _labelSet_.
+    </emu-alg>
+    <emu-note>
+      <p>This section is extended by Annex <emu-xref href="#sec-initializers-in-forin-statement-heads"></emu-xref>.</p>
+    </emu-note>
+    <emu-grammar>WithStatement : `with` `(` Expression `)` Statement</emu-grammar>
+    <emu-alg>
+      1. Return ContainsDuplicateLabels of |Statement| with argument _labelSet_.
+    </emu-alg>
+    <emu-grammar>SwitchStatement : `switch` `(` Expression `)` CaseBlock</emu-grammar>
+    <emu-alg>
+      1. Return ContainsDuplicateLabels of |CaseBlock| with argument _labelSet_.
+    </emu-alg>
+    <emu-grammar>CaseBlock : `{` `}`</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>CaseBlock : `{` CaseClauses? DefaultClause CaseClauses? `}`</emu-grammar>
+    <emu-alg>
+      1. If the first |CaseClauses| is present, then
+        1. Let _hasDuplicates_ be ContainsDuplicateLabels of the first |CaseClauses| with argument _labelSet_.
+        1. If _hasDuplicates_ is *true*, return *true*.
+      1. Let _hasDuplicates_ be ContainsDuplicateLabels of |DefaultClause| with argument _labelSet_.
+      1. If _hasDuplicates_ is *true*, return *true*.
+      1. If the second |CaseClauses| is not present, return *false*.
+      1. Return ContainsDuplicateLabels of the second |CaseClauses| with argument _labelSet_.
+    </emu-alg>
+    <emu-grammar>CaseClauses : CaseClauses CaseClause</emu-grammar>
+    <emu-alg>
+      1. Let _hasDuplicates_ be ContainsDuplicateLabels of |CaseClauses| with argument _labelSet_.
+      1. If _hasDuplicates_ is *true*, return *true*.
+      1. Return ContainsDuplicateLabels of |CaseClause| with argument _labelSet_.
+    </emu-alg>
+    <emu-grammar>CaseClause : `case` Expression `:` StatementList?</emu-grammar>
+    <emu-alg>
+      1. If the |StatementList| is present, return ContainsDuplicateLabels of |StatementList| with argument _labelSet_.
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>DefaultClause : `default` `:` StatementList?</emu-grammar>
+    <emu-alg>
+      1. If the |StatementList| is present, return ContainsDuplicateLabels of |StatementList| with argument _labelSet_.
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>LabelledStatement : LabelIdentifier `:` LabelledItem</emu-grammar>
+    <emu-alg>
+      1. Let _label_ be the StringValue of |LabelIdentifier|.
+      1. If _label_ is an element of _labelSet_, return *true*.
+      1. Let _newLabelSet_ be a copy of _labelSet_ with _label_ appended.
+      1. Return ContainsDuplicateLabels of |LabelledItem| with argument _newLabelSet_.
+    </emu-alg>
+    <emu-grammar>LabelledItem : FunctionDeclaration</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>TryStatement : `try` Block Catch</emu-grammar>
+    <emu-alg>
+      1. Let _hasDuplicates_ be ContainsDuplicateLabels of |Block| with argument _labelSet_.
+      1. If _hasDuplicates_ is *true*, return *true*.
+      1. Return ContainsDuplicateLabels of |Catch| with argument _labelSet_.
+    </emu-alg>
+    <emu-grammar>TryStatement : `try` Block Finally</emu-grammar>
+    <emu-alg>
+      1. Let _hasDuplicates_ be ContainsDuplicateLabels of |Block| with argument _labelSet_.
+      1. If _hasDuplicates_ is *true*, return *true*.
+      1. Return ContainsDuplicateLabels of |Finally| with argument _labelSet_.
+    </emu-alg>
+    <emu-grammar>TryStatement : `try` Block Catch Finally</emu-grammar>
+    <emu-alg>
+      1. Let _hasDuplicates_ be ContainsDuplicateLabels of |Block| with argument _labelSet_.
+      1. If _hasDuplicates_ is *true*, return *true*.
+      1. Let _hasDuplicates_ be ContainsDuplicateLabels of |Catch| with argument _labelSet_.
+      1. If _hasDuplicates_ is *true*, return *true*.
+      1. Return ContainsDuplicateLabels of |Finally| with argument _labelSet_.
+    </emu-alg>
+    <emu-grammar>Catch : `catch` `(` CatchParameter `)` Block</emu-grammar>
+    <emu-alg>
+      1. Return ContainsDuplicateLabels of |Block| with argument _labelSet_.
+    </emu-alg>
+    <emu-grammar>FunctionStatementList : [empty]</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>ModuleItemList : ModuleItemList ModuleItem</emu-grammar>
+    <emu-alg>
+      1. Let _hasDuplicates_ be ContainsDuplicateLabels of |ModuleItemList| with argument _labelSet_.
+      1. If _hasDuplicates_ is *true*, return *true*.
+      1. Return ContainsDuplicateLabels of |ModuleItem| with argument _labelSet_.
+    </emu-alg>
+    <emu-grammar>
+      ModuleItem :
+        ImportDeclaration
+        ExportDeclaration
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+  </emu-clause>
 <!-- insert sdos here -->
 </emu-clause>
 
@@ -16299,26 +16468,6 @@
   <emu-clause id="sec-statement-semantics">
     <h1>Statement Semantics</h1>
 
-    <emu-clause id="sec-statement-semantics-static-semantics-containsduplicatelabels">
-      <h1>Static Semantics: ContainsDuplicateLabels</h1>
-      <p>With parameter _labelSet_.</p>
-      <emu-see-also-para op="ContainsDuplicateLabels"></emu-see-also-para>
-      <emu-grammar>
-        Statement :
-          VariableStatement
-          EmptyStatement
-          ExpressionStatement
-          ContinueStatement
-          BreakStatement
-          ReturnStatement
-          ThrowStatement
-          DebuggerStatement
-      </emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-statement-semantics-static-semantics-containsundefinedbreaktarget">
       <h1>Static Semantics: ContainsUndefinedBreakTarget</h1>
       <p>With parameter _labelSet_.</p>
@@ -16512,26 +16661,6 @@
           It is a Syntax Error if any element of the LexicallyDeclaredNames of |StatementList| also occurs in the VarDeclaredNames of |StatementList|.
         </li>
       </ul>
-    </emu-clause>
-
-    <emu-clause id="sec-block-static-semantics-containsduplicatelabels">
-      <h1>Static Semantics: ContainsDuplicateLabels</h1>
-      <p>With parameter _labelSet_.</p>
-      <emu-see-also-para op="ContainsDuplicateLabels"></emu-see-also-para>
-      <emu-grammar>Block : `{` `}`</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-      <emu-grammar>StatementList : StatementList StatementListItem</emu-grammar>
-      <emu-alg>
-        1. Let _hasDuplicates_ be ContainsDuplicateLabels of |StatementList| with argument _labelSet_.
-        1. If _hasDuplicates_ is *true*, return *true*.
-        1. Return ContainsDuplicateLabels of |StatementListItem| with argument _labelSet_.
-      </emu-alg>
-      <emu-grammar>StatementListItem : Declaration</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
     </emu-clause>
 
     <emu-clause id="sec-block-static-semantics-containsundefinedbreaktarget">
@@ -17446,22 +17575,6 @@
       </emu-note>
     </emu-clause>
 
-    <emu-clause id="sec-if-statement-static-semantics-containsduplicatelabels">
-      <h1>Static Semantics: ContainsDuplicateLabels</h1>
-      <p>With parameter _labelSet_.</p>
-      <emu-see-also-para op="ContainsDuplicateLabels"></emu-see-also-para>
-      <emu-grammar>IfStatement : `if` `(` Expression `)` Statement `else` Statement</emu-grammar>
-      <emu-alg>
-        1. Let _hasDuplicate_ be ContainsDuplicateLabels of the first |Statement| with argument _labelSet_.
-        1. If _hasDuplicate_ is *true*, return *true*.
-        1. Return ContainsDuplicateLabels of the second |Statement| with argument _labelSet_.
-      </emu-alg>
-      <emu-grammar>IfStatement : `if` `(` Expression `)` Statement</emu-grammar>
-      <emu-alg>
-        1. Return ContainsDuplicateLabels of |Statement| with argument _labelSet_.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-if-statement-static-semantics-containsundefinedbreaktarget">
       <h1>Static Semantics: ContainsUndefinedBreakTarget</h1>
       <p>With parameter _labelSet_.</p>
@@ -17631,16 +17744,6 @@
     <emu-clause id="sec-do-while-statement">
       <h1>The `do`-`while` Statement</h1>
 
-      <emu-clause id="sec-do-while-statement-static-semantics-containsduplicatelabels">
-        <h1>Static Semantics: ContainsDuplicateLabels</h1>
-        <p>With parameter _labelSet_.</p>
-        <emu-see-also-para op="ContainsDuplicateLabels"></emu-see-also-para>
-        <emu-grammar>IterationStatement : `do` Statement `while` `(` Expression `)` `;`</emu-grammar>
-        <emu-alg>
-          1. Return ContainsDuplicateLabels of |Statement| with argument _labelSet_.
-        </emu-alg>
-      </emu-clause>
-
       <emu-clause id="sec-do-while-statement-static-semantics-containsundefinedbreaktarget">
         <h1>Static Semantics: ContainsUndefinedBreakTarget</h1>
         <p>With parameter _labelSet_.</p>
@@ -17699,16 +17802,6 @@
 
     <emu-clause id="sec-while-statement">
       <h1>The `while` Statement</h1>
-
-      <emu-clause id="sec-while-statement-static-semantics-containsduplicatelabels">
-        <h1>Static Semantics: ContainsDuplicateLabels</h1>
-        <p>With parameter _labelSet_.</p>
-        <emu-see-also-para op="ContainsDuplicateLabels"></emu-see-also-para>
-        <emu-grammar>IterationStatement : `while` `(` Expression `)` Statement</emu-grammar>
-        <emu-alg>
-          1. Return ContainsDuplicateLabels of |Statement| with argument _labelSet_.
-        </emu-alg>
-      </emu-clause>
 
       <emu-clause id="sec-while-statement-static-semantics-containsundefinedbreaktarget">
         <h1>Static Semantics: ContainsUndefinedBreakTarget</h1>
@@ -17777,21 +17870,6 @@
             It is a Syntax Error if any element of the BoundNames of |LexicalDeclaration| also occurs in the VarDeclaredNames of |Statement|.
           </li>
         </ul>
-      </emu-clause>
-
-      <emu-clause id="sec-for-statement-static-semantics-containsduplicatelabels">
-        <h1>Static Semantics: ContainsDuplicateLabels</h1>
-        <p>With parameter _labelSet_.</p>
-        <emu-see-also-para op="ContainsDuplicateLabels"></emu-see-also-para>
-        <emu-grammar>
-          IterationStatement :
-            `for` `(` Expression? `;` Expression? `;` Expression? `)` Statement
-            `for` `(` `var` VariableDeclarationList `;` Expression? `;` Expression? `)` Statement
-            `for` `(` LexicalDeclaration Expression? `;` Expression? `)` Statement
-        </emu-grammar>
-        <emu-alg>
-          1. Return ContainsDuplicateLabels of |Statement| with argument _labelSet_.
-        </emu-alg>
       </emu-clause>
 
       <emu-clause id="sec-for-statement-static-semantics-containsundefinedbreaktarget">
@@ -17985,30 +18063,6 @@
             It is a Syntax Error if the BoundNames of |ForDeclaration| contains any duplicate entries.
           </li>
         </ul>
-      </emu-clause>
-
-      <emu-clause id="sec-for-in-and-for-of-statements-static-semantics-containsduplicatelabels">
-        <h1>Static Semantics: ContainsDuplicateLabels</h1>
-        <p>With parameter _labelSet_.</p>
-        <emu-see-also-para op="ContainsDuplicateLabels"></emu-see-also-para>
-        <emu-grammar>
-          IterationStatement :
-            `for` `(` LeftHandSideExpression `in` Expression `)` Statement
-            `for` `(` `var` ForBinding `in` Expression `)` Statement
-            `for` `(` ForDeclaration `in` Expression `)` Statement
-            `for` `(` LeftHandSideExpression `of` AssignmentExpression `)` Statement
-            `for` `(` `var` ForBinding `of` AssignmentExpression `)` Statement
-            `for` `(` ForDeclaration `of` AssignmentExpression `)` Statement
-            `for` `await` `(` LeftHandSideExpression `of` AssignmentExpression `)` Statement
-            `for` `await` `(` `var` ForBinding `of` AssignmentExpression `)` Statement
-            `for` `await` `(` ForDeclaration `of` AssignmentExpression `)` Statement
-        </emu-grammar>
-        <emu-alg>
-          1. Return ContainsDuplicateLabels of |Statement| with argument _labelSet_.
-        </emu-alg>
-        <emu-note>
-          <p>This section is extended by Annex <emu-xref href="#sec-initializers-in-forin-statement-heads"></emu-xref>.</p>
-        </emu-note>
       </emu-clause>
 
       <emu-clause id="sec-for-in-and-for-of-statements-static-semantics-containsundefinedbreaktarget">
@@ -18617,16 +18671,6 @@
       </emu-note>
     </emu-clause>
 
-    <emu-clause id="sec-with-statement-static-semantics-containsduplicatelabels">
-      <h1>Static Semantics: ContainsDuplicateLabels</h1>
-      <p>With parameter _labelSet_.</p>
-      <emu-see-also-para op="ContainsDuplicateLabels"></emu-see-also-para>
-      <emu-grammar>WithStatement : `with` `(` Expression `)` Statement</emu-grammar>
-      <emu-alg>
-        1. Return ContainsDuplicateLabels of |Statement| with argument _labelSet_.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-with-statement-static-semantics-containsundefinedbreaktarget">
       <h1>Static Semantics: ContainsUndefinedBreakTarget</h1>
       <p>With parameter _labelSet_.</p>
@@ -18718,46 +18762,6 @@
           It is a Syntax Error if any element of the LexicallyDeclaredNames of |CaseBlock| also occurs in the VarDeclaredNames of |CaseBlock|.
         </li>
       </ul>
-    </emu-clause>
-
-    <emu-clause id="sec-switch-statement-static-semantics-containsduplicatelabels">
-      <h1>Static Semantics: ContainsDuplicateLabels</h1>
-      <p>With parameter _labelSet_.</p>
-      <emu-see-also-para op="ContainsDuplicateLabels"></emu-see-also-para>
-      <emu-grammar>SwitchStatement : `switch` `(` Expression `)` CaseBlock</emu-grammar>
-      <emu-alg>
-        1. Return ContainsDuplicateLabels of |CaseBlock| with argument _labelSet_.
-      </emu-alg>
-      <emu-grammar>CaseBlock : `{` `}`</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-      <emu-grammar>CaseBlock : `{` CaseClauses? DefaultClause CaseClauses? `}`</emu-grammar>
-      <emu-alg>
-        1. If the first |CaseClauses| is present, then
-          1. Let _hasDuplicates_ be ContainsDuplicateLabels of the first |CaseClauses| with argument _labelSet_.
-          1. If _hasDuplicates_ is *true*, return *true*.
-        1. Let _hasDuplicates_ be ContainsDuplicateLabels of |DefaultClause| with argument _labelSet_.
-        1. If _hasDuplicates_ is *true*, return *true*.
-        1. If the second |CaseClauses| is not present, return *false*.
-        1. Return ContainsDuplicateLabels of the second |CaseClauses| with argument _labelSet_.
-      </emu-alg>
-      <emu-grammar>CaseClauses : CaseClauses CaseClause</emu-grammar>
-      <emu-alg>
-        1. Let _hasDuplicates_ be ContainsDuplicateLabels of |CaseClauses| with argument _labelSet_.
-        1. If _hasDuplicates_ is *true*, return *true*.
-        1. Return ContainsDuplicateLabels of |CaseClause| with argument _labelSet_.
-      </emu-alg>
-      <emu-grammar>CaseClause : `case` Expression `:` StatementList?</emu-grammar>
-      <emu-alg>
-        1. If the |StatementList| is present, return ContainsDuplicateLabels of |StatementList| with argument _labelSet_.
-        1. Return *false*.
-      </emu-alg>
-      <emu-grammar>DefaultClause : `default` `:` StatementList?</emu-grammar>
-      <emu-alg>
-        1. If the |StatementList| is present, return ContainsDuplicateLabels of |StatementList| with argument _labelSet_.
-        1. Return *false*.
-      </emu-alg>
     </emu-clause>
 
     <emu-clause id="sec-switch-statement-static-semantics-containsundefinedbreaktarget">
@@ -19120,23 +19124,6 @@
       </emu-note>
     </emu-clause>
 
-    <emu-clause id="sec-labelled-statements-static-semantics-containsduplicatelabels">
-      <h1>Static Semantics: ContainsDuplicateLabels</h1>
-      <p>With parameter _labelSet_.</p>
-      <emu-see-also-para op="ContainsDuplicateLabels"></emu-see-also-para>
-      <emu-grammar>LabelledStatement : LabelIdentifier `:` LabelledItem</emu-grammar>
-      <emu-alg>
-        1. Let _label_ be the StringValue of |LabelIdentifier|.
-        1. If _label_ is an element of _labelSet_, return *true*.
-        1. Let _newLabelSet_ be a copy of _labelSet_ with _label_ appended.
-        1. Return ContainsDuplicateLabels of |LabelledItem| with argument _newLabelSet_.
-      </emu-alg>
-      <emu-grammar>LabelledItem : FunctionDeclaration</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-labelled-statements-static-semantics-containsundefinedbreaktarget">
       <h1>Static Semantics: ContainsUndefinedBreakTarget</h1>
       <p>With parameter _labelSet_.</p>
@@ -19391,36 +19378,6 @@
       <emu-note>
         <p>An alternative static semantics for this production is given in <emu-xref href="#sec-variablestatements-in-catch-blocks"></emu-xref>.</p>
       </emu-note>
-    </emu-clause>
-
-    <emu-clause id="sec-try-statement-static-semantics-containsduplicatelabels">
-      <h1>Static Semantics: ContainsDuplicateLabels</h1>
-      <p>With parameter _labelSet_.</p>
-      <emu-see-also-para op="ContainsDuplicateLabels"></emu-see-also-para>
-      <emu-grammar>TryStatement : `try` Block Catch</emu-grammar>
-      <emu-alg>
-        1. Let _hasDuplicates_ be ContainsDuplicateLabels of |Block| with argument _labelSet_.
-        1. If _hasDuplicates_ is *true*, return *true*.
-        1. Return ContainsDuplicateLabels of |Catch| with argument _labelSet_.
-      </emu-alg>
-      <emu-grammar>TryStatement : `try` Block Finally</emu-grammar>
-      <emu-alg>
-        1. Let _hasDuplicates_ be ContainsDuplicateLabels of |Block| with argument _labelSet_.
-        1. If _hasDuplicates_ is *true*, return *true*.
-        1. Return ContainsDuplicateLabels of |Finally| with argument _labelSet_.
-      </emu-alg>
-      <emu-grammar>TryStatement : `try` Block Catch Finally</emu-grammar>
-      <emu-alg>
-        1. Let _hasDuplicates_ be ContainsDuplicateLabels of |Block| with argument _labelSet_.
-        1. If _hasDuplicates_ is *true*, return *true*.
-        1. Let _hasDuplicates_ be ContainsDuplicateLabels of |Catch| with argument _labelSet_.
-        1. If _hasDuplicates_ is *true*, return *true*.
-        1. Return ContainsDuplicateLabels of |Finally| with argument _labelSet_.
-      </emu-alg>
-      <emu-grammar>Catch : `catch` `(` CatchParameter `)` Block</emu-grammar>
-      <emu-alg>
-        1. Return ContainsDuplicateLabels of |Block| with argument _labelSet_.
-      </emu-alg>
     </emu-clause>
 
     <emu-clause id="sec-try-statement-static-semantics-containsundefinedbreaktarget">
@@ -19735,16 +19692,6 @@
           It is a Syntax Error if ContainsUndefinedContinueTarget of |FunctionStatementList| with arguments &laquo; &raquo; and &laquo; &raquo; is *true*.
         </li>
       </ul>
-    </emu-clause>
-
-    <emu-clause id="sec-function-definitions-static-semantics-containsduplicatelabels">
-      <h1>Static Semantics: ContainsDuplicateLabels</h1>
-      <p>With parameter _labelSet_.</p>
-      <emu-see-also-para op="ContainsDuplicateLabels"></emu-see-also-para>
-      <emu-grammar>FunctionStatementList : [empty]</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
     </emu-clause>
 
     <emu-clause id="sec-function-definitions-static-semantics-containsexpression">
@@ -22131,26 +22078,6 @@
         <emu-note>
           <p>The duplicate ExportedNames rule implies that multiple `export default` |ExportDeclaration| items within a |ModuleBody| is a Syntax Error. Additional error conditions relating to conflicting or duplicate declarations are checked during module linking prior to evaluation of a |Module|. If any such errors are detected the |Module| is not evaluated.</p>
         </emu-note>
-      </emu-clause>
-
-      <emu-clause id="sec-module-semantics-static-semantics-containsduplicatelabels">
-        <h1>Static Semantics: ContainsDuplicateLabels</h1>
-        <p>With parameter _labelSet_.</p>
-        <emu-see-also-para op="ContainsDuplicateLabels"></emu-see-also-para>
-        <emu-grammar>ModuleItemList : ModuleItemList ModuleItem</emu-grammar>
-        <emu-alg>
-          1. Let _hasDuplicates_ be ContainsDuplicateLabels of |ModuleItemList| with argument _labelSet_.
-          1. If _hasDuplicates_ is *true*, return *true*.
-          1. Return ContainsDuplicateLabels of |ModuleItem| with argument _labelSet_.
-        </emu-alg>
-        <emu-grammar>
-          ModuleItem :
-            ImportDeclaration
-            ExportDeclaration
-        </emu-grammar>
-        <emu-alg>
-          1. Return *false*.
-        </emu-alg>
       </emu-clause>
 
       <emu-clause id="sec-module-semantics-static-semantics-containsundefinedbreaktarget">
