@@ -8731,6 +8731,111 @@
       <p>It is not necessary to treat `export default` |AssignmentExpression| as a constant declaration because there is no syntax that permits assignment to the internal bound name used to reference a module's default object.</p>
     </emu-note>
   </emu-clause>
+
+  <emu-clause id="sec-static-semantics-containsexpression" type="sdo" aoid="ContainsExpression">
+    <h1>Static Semantics: ContainsExpression</h1>
+    <emu-grammar>
+      ObjectBindingPattern :
+        `{` `}`
+        `{` BindingRestProperty `}`
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>ObjectBindingPattern : `{` BindingPropertyList `,` BindingRestProperty `}`</emu-grammar>
+    <emu-alg>
+      1. Return ContainsExpression of |BindingPropertyList|.
+    </emu-alg>
+    <emu-grammar>ArrayBindingPattern : `[` Elision? `]`</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>ArrayBindingPattern : `[` Elision? BindingRestElement `]`</emu-grammar>
+    <emu-alg>
+      1. Return ContainsExpression of |BindingRestElement|.
+    </emu-alg>
+    <emu-grammar>ArrayBindingPattern : `[` BindingElementList `,` Elision? `]`</emu-grammar>
+    <emu-alg>
+      1. Return ContainsExpression of |BindingElementList|.
+    </emu-alg>
+    <emu-grammar>ArrayBindingPattern : `[` BindingElementList `,` Elision? BindingRestElement `]`</emu-grammar>
+    <emu-alg>
+      1. Let _has_ be ContainsExpression of |BindingElementList|.
+      1. If _has_ is *true*, return *true*.
+      1. Return ContainsExpression of |BindingRestElement|.
+    </emu-alg>
+    <emu-grammar>BindingPropertyList : BindingPropertyList `,` BindingProperty</emu-grammar>
+    <emu-alg>
+      1. Let _has_ be ContainsExpression of |BindingPropertyList|.
+      1. If _has_ is *true*, return *true*.
+      1. Return ContainsExpression of |BindingProperty|.
+    </emu-alg>
+    <emu-grammar>BindingElementList : BindingElementList `,` BindingElisionElement</emu-grammar>
+    <emu-alg>
+      1. Let _has_ be ContainsExpression of |BindingElementList|.
+      1. If _has_ is *true*, return *true*.
+      1. Return ContainsExpression of |BindingElisionElement|.
+    </emu-alg>
+    <emu-grammar>BindingElisionElement : Elision? BindingElement</emu-grammar>
+    <emu-alg>
+      1. Return ContainsExpression of |BindingElement|.
+    </emu-alg>
+    <emu-grammar>BindingProperty : PropertyName `:` BindingElement</emu-grammar>
+    <emu-alg>
+      1. Let _has_ be IsComputedPropertyKey of |PropertyName|.
+      1. If _has_ is *true*, return *true*.
+      1. Return ContainsExpression of |BindingElement|.
+    </emu-alg>
+    <emu-grammar>BindingElement : BindingPattern Initializer</emu-grammar>
+    <emu-alg>
+      1. Return *true*.
+    </emu-alg>
+    <emu-grammar>SingleNameBinding : BindingIdentifier</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>SingleNameBinding : BindingIdentifier Initializer</emu-grammar>
+    <emu-alg>
+      1. Return *true*.
+    </emu-alg>
+    <emu-grammar>BindingRestElement : `...` BindingIdentifier</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>BindingRestElement : `...` BindingPattern</emu-grammar>
+    <emu-alg>
+      1. Return ContainsExpression of |BindingPattern|.
+    </emu-alg>
+    <emu-grammar>FormalParameters : [empty]</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>FormalParameters : FormalParameterList `,` FunctionRestParameter</emu-grammar>
+    <emu-alg>
+      1. If ContainsExpression of |FormalParameterList| is *true*, return *true*.
+      1. Return ContainsExpression of |FunctionRestParameter|.
+    </emu-alg>
+    <emu-grammar>FormalParameterList : FormalParameterList `,` FormalParameter</emu-grammar>
+    <emu-alg>
+      1. If ContainsExpression of |FormalParameterList| is *true*, return *true*.
+      1. Return ContainsExpression of |FormalParameter|.
+    </emu-alg>
+    <emu-grammar>ArrowParameters : BindingIdentifier</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>ArrowParameters : CoverParenthesizedExpressionAndArrowParameterList</emu-grammar>
+    <emu-alg>
+      1. Let _formals_ be CoveredFormalsList of |CoverParenthesizedExpressionAndArrowParameterList|.
+      1. Return ContainsExpression of _formals_.
+    </emu-alg>
+    <emu-grammar>
+      AsyncArrowBindingIdentifier : BindingIdentifier
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+  </emu-clause>
 <!-- insert sdos here -->
 </emu-clause>
 
@@ -18175,83 +18280,6 @@
           `...` BindingPattern[?Yield, ?Await]
       </emu-grammar>
 
-      <emu-clause id="sec-destructuring-binding-patterns-static-semantics-containsexpression">
-        <h1>Static Semantics: ContainsExpression</h1>
-        <emu-see-also-para op="ContainsExpression"></emu-see-also-para>
-        <emu-grammar>
-          ObjectBindingPattern :
-            `{` `}`
-            `{` BindingRestProperty `}`
-        </emu-grammar>
-        <emu-alg>
-          1. Return *false*.
-        </emu-alg>
-        <emu-grammar>ObjectBindingPattern : `{` BindingPropertyList `,` BindingRestProperty `}`</emu-grammar>
-        <emu-alg>
-          1. Return ContainsExpression of |BindingPropertyList|.
-        </emu-alg>
-        <emu-grammar>ArrayBindingPattern : `[` Elision? `]`</emu-grammar>
-        <emu-alg>
-          1. Return *false*.
-        </emu-alg>
-        <emu-grammar>ArrayBindingPattern : `[` Elision? BindingRestElement `]`</emu-grammar>
-        <emu-alg>
-          1. Return ContainsExpression of |BindingRestElement|.
-        </emu-alg>
-        <emu-grammar>ArrayBindingPattern : `[` BindingElementList `,` Elision? `]`</emu-grammar>
-        <emu-alg>
-          1. Return ContainsExpression of |BindingElementList|.
-        </emu-alg>
-        <emu-grammar>ArrayBindingPattern : `[` BindingElementList `,` Elision? BindingRestElement `]`</emu-grammar>
-        <emu-alg>
-          1. Let _has_ be ContainsExpression of |BindingElementList|.
-          1. If _has_ is *true*, return *true*.
-          1. Return ContainsExpression of |BindingRestElement|.
-        </emu-alg>
-        <emu-grammar>BindingPropertyList : BindingPropertyList `,` BindingProperty</emu-grammar>
-        <emu-alg>
-          1. Let _has_ be ContainsExpression of |BindingPropertyList|.
-          1. If _has_ is *true*, return *true*.
-          1. Return ContainsExpression of |BindingProperty|.
-        </emu-alg>
-        <emu-grammar>BindingElementList : BindingElementList `,` BindingElisionElement</emu-grammar>
-        <emu-alg>
-          1. Let _has_ be ContainsExpression of |BindingElementList|.
-          1. If _has_ is *true*, return *true*.
-          1. Return ContainsExpression of |BindingElisionElement|.
-        </emu-alg>
-        <emu-grammar>BindingElisionElement : Elision? BindingElement</emu-grammar>
-        <emu-alg>
-          1. Return ContainsExpression of |BindingElement|.
-        </emu-alg>
-        <emu-grammar>BindingProperty : PropertyName `:` BindingElement</emu-grammar>
-        <emu-alg>
-          1. Let _has_ be IsComputedPropertyKey of |PropertyName|.
-          1. If _has_ is *true*, return *true*.
-          1. Return ContainsExpression of |BindingElement|.
-        </emu-alg>
-        <emu-grammar>BindingElement : BindingPattern Initializer</emu-grammar>
-        <emu-alg>
-          1. Return *true*.
-        </emu-alg>
-        <emu-grammar>SingleNameBinding : BindingIdentifier</emu-grammar>
-        <emu-alg>
-          1. Return *false*.
-        </emu-alg>
-        <emu-grammar>SingleNameBinding : BindingIdentifier Initializer</emu-grammar>
-        <emu-alg>
-          1. Return *true*.
-        </emu-alg>
-        <emu-grammar>BindingRestElement : `...` BindingIdentifier</emu-grammar>
-        <emu-alg>
-          1. Return *false*.
-        </emu-alg>
-        <emu-grammar>BindingRestElement : `...` BindingPattern</emu-grammar>
-        <emu-alg>
-          1. Return ContainsExpression of |BindingPattern|.
-        </emu-alg>
-      </emu-clause>
-
       <emu-clause id="sec-destructuring-binding-patterns-static-semantics-hasinitializer">
         <h1>Static Semantics: HasInitializer</h1>
         <emu-see-also-para op="HasInitializer"></emu-see-also-para>
@@ -19651,25 +19679,6 @@
       </ul>
     </emu-clause>
 
-    <emu-clause id="sec-function-definitions-static-semantics-containsexpression">
-      <h1>Static Semantics: ContainsExpression</h1>
-      <emu-see-also-para op="ContainsExpression"></emu-see-also-para>
-      <emu-grammar>FormalParameters : [empty]</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-      <emu-grammar>FormalParameters : FormalParameterList `,` FunctionRestParameter</emu-grammar>
-      <emu-alg>
-        1. If ContainsExpression of |FormalParameterList| is *true*, return *true*.
-        1. Return ContainsExpression of |FunctionRestParameter|.
-      </emu-alg>
-      <emu-grammar>FormalParameterList : FormalParameterList `,` FormalParameter</emu-grammar>
-      <emu-alg>
-        1. If ContainsExpression of |FormalParameterList| is *true*, return *true*.
-        1. Return ContainsExpression of |FormalParameter|.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-function-definitions-static-semantics-containsusestrict">
       <h1>Static Semantics: ContainsUseStrict</h1>
       <emu-see-also-para op="ContainsUseStrict"></emu-see-also-para>
@@ -19915,20 +19924,6 @@
           All early error rules for |ArrowFormalParameters| and its derived productions also apply to CoveredFormalsList of |CoverParenthesizedExpressionAndArrowParameterList|.
         </li>
       </ul>
-    </emu-clause>
-
-    <emu-clause id="sec-arrow-function-definitions-static-semantics-containsexpression">
-      <h1>Static Semantics: ContainsExpression</h1>
-      <emu-see-also-para op="ContainsExpression"></emu-see-also-para>
-      <emu-grammar>ArrowParameters : BindingIdentifier</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-      <emu-grammar>ArrowParameters : CoverParenthesizedExpressionAndArrowParameterList</emu-grammar>
-      <emu-alg>
-        1. Let _formals_ be CoveredFormalsList of |CoverParenthesizedExpressionAndArrowParameterList|.
-        1. Return ContainsExpression of _formals_.
-      </emu-alg>
     </emu-clause>
 
     <emu-clause id="sec-arrow-function-definitions-static-semantics-containsusestrict">
@@ -21026,16 +21021,6 @@
       </emu-grammar>
       <emu-alg>
         1. Return the |AsyncArrowHead| that is covered by |CoverCallExpressionAndAsyncArrowHead|.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-async-arrow-function-definitions-static-semantics-ContainsExpression">
-      <h1>Static Semantics: ContainsExpression</h1>
-      <emu-grammar>
-        AsyncArrowBindingIdentifier : BindingIdentifier
-      </emu-grammar>
-      <emu-alg>
-        1. Return *false*.
       </emu-alg>
     </emu-clause>
 
