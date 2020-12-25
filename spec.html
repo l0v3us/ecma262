@@ -7064,6 +7064,104 @@
         1. Append _nextArg_ as the last element of _precedingArgs_.
     </emu-alg>
   </emu-clause>
+
+  <emu-clause id="sec-runtime-semantics-namedevaluation" type="sdo" aoid="NamedEvaluation">
+    <h1>Runtime Semantics: NamedEvaluation</h1>
+    <p>With parameter _name_.</p>
+    <emu-grammar>PrimaryExpression : CoverParenthesizedExpressionAndArrowParameterList</emu-grammar>
+    <emu-alg>
+      1. Let _expr_ be CoveredParenthesizedExpression of |CoverParenthesizedExpressionAndArrowParameterList|.
+      1. Return the result of performing NamedEvaluation for _expr_ with argument _name_.
+    </emu-alg>
+    <emu-grammar>ParenthesizedExpression : `(` Expression `)`</emu-grammar>
+    <emu-alg>
+      1. Assert: IsAnonymousFunctionDefinition(|Expression|) is *true*.
+      1. Return the result of performing NamedEvaluation for |Expression| with argument _name_.
+    </emu-alg>
+    <emu-grammar>FunctionExpression : `function` `(` FormalParameters `)` `{` FunctionBody `}`</emu-grammar>
+    <emu-alg>
+      1. Let _scope_ be the LexicalEnvironment of the running execution context.
+      1. Let _sourceText_ be the source text matched by |FunctionExpression|.
+      1. Let _closure_ be OrdinaryFunctionCreate(%Function.prototype%, _sourceText_, |FormalParameters|, |FunctionBody|, ~non-lexical-this~, _scope_).
+      1. Perform SetFunctionName(_closure_, _name_).
+      1. Perform MakeConstructor(_closure_).
+      1. Return _closure_.
+    </emu-alg>
+    <emu-grammar>ArrowFunction : ArrowParameters `=&gt;` ConciseBody</emu-grammar>
+    <emu-alg>
+      1. Let _scope_ be the LexicalEnvironment of the running execution context.
+      1. Let _sourceText_ be the source text matched by |ArrowFunction|.
+      1. Let _parameters_ be CoveredFormalsList of |ArrowParameters|.
+      1. [id="step-arrowfunction-evaluation-functioncreate"] Let _closure_ be OrdinaryFunctionCreate(%Function.prototype%, _sourceText_, _parameters_, |ConciseBody|, ~lexical-this~, _scope_).
+      1. Perform SetFunctionName(_closure_, _name_).
+      1. Return _closure_.
+    </emu-alg>
+    <emu-note>
+      <p>An |ArrowFunction| does not define local bindings for `arguments`, `super`, `this`, or `new.target`. Any reference to `arguments`, `super`, `this`, or `new.target` within an |ArrowFunction| must resolve to a binding in a lexically enclosing environment. Typically this will be the Function Environment of an immediately enclosing function. Even though an |ArrowFunction| may contain references to `super`, the function object created in step <emu-xref href="#step-arrowfunction-evaluation-functioncreate"></emu-xref> is not made into a method by performing MakeMethod. An |ArrowFunction| that references `super` is always contained within a non-|ArrowFunction| and the necessary state to implement `super` is accessible via the _scope_ that is captured by the function object of the |ArrowFunction|.</p>
+    </emu-note>
+    <emu-grammar>GeneratorExpression : `function` `*` `(` FormalParameters `)` `{` GeneratorBody `}`</emu-grammar>
+    <emu-alg>
+      1. Let _scope_ be the LexicalEnvironment of the running execution context.
+      1. Let _sourceText_ be the source text matched by |GeneratorExpression|.
+      1. Let _closure_ be OrdinaryFunctionCreate(%GeneratorFunction.prototype%, _sourceText_, |FormalParameters|, |GeneratorBody|, ~non-lexical-this~, _scope_).
+      1. Perform SetFunctionName(_closure_, _name_).
+      1. Let _prototype_ be ! OrdinaryObjectCreate(%GeneratorFunction.prototype.prototype%).
+      1. Perform DefinePropertyOrThrow(_closure_, *"prototype"*, PropertyDescriptor { [[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false* }).
+      1. Return _closure_.
+    </emu-alg>
+    <emu-grammar>
+      AsyncGeneratorExpression : `async` `function` `*` `(` FormalParameters `)` `{` AsyncGeneratorBody `}`
+    </emu-grammar>
+    <emu-alg>
+      1. Let _scope_ be the LexicalEnvironment of the running execution context.
+      1. Let _sourceText_ be the source text matched by |AsyncGeneratorExpression|.
+      1. Let _closure_ be ! OrdinaryFunctionCreate(%AsyncGeneratorFunction.prototype%, _sourceText_, |FormalParameters|, |AsyncGeneratorBody|, ~non-lexical-this~, _scope_).
+      1. Perform SetFunctionName(_closure_, _name_).
+      1. Let _prototype_ be ! OrdinaryObjectCreate(%AsyncGeneratorFunction.prototype.prototype%).
+      1. Perform ! DefinePropertyOrThrow(_closure_, *"prototype"*, PropertyDescriptor { [[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false* }).
+      1. Return _closure_.
+    </emu-alg>
+    <emu-grammar>ClassExpression : `class` ClassTail</emu-grammar>
+    <emu-alg>
+      1. Let _value_ be the result of ClassDefinitionEvaluation of |ClassTail| with arguments *undefined* and _name_.
+      1. ReturnIfAbrupt(_value_).
+      1. Set _value_.[[SourceText]] to the source text matched by |ClassExpression|.
+      1. Return _value_.
+    </emu-alg>
+    <emu-grammar>
+      AsyncFunctionExpression : `async` `function` `(` FormalParameters `)` `{` AsyncFunctionBody `}`
+    </emu-grammar>
+    <emu-alg>
+      1. Let _scope_ be the LexicalEnvironment of the running execution context.
+      1. Let _sourceText_ be the source text matched by |AsyncFunctionExpression|.
+      1. Let _closure_ be ! OrdinaryFunctionCreate(%AsyncFunction.prototype%, _sourceText_, |FormalParameters|, |AsyncFunctionBody|, ~non-lexical-this~, _scope_).
+      1. Perform SetFunctionName(_closure_, _name_).
+      1. Return _closure_.
+    </emu-alg>
+    <emu-grammar>
+      AsyncArrowFunction : `async` AsyncArrowBindingIdentifier `=>` AsyncConciseBody
+    </emu-grammar>
+    <emu-alg>
+      1. Let _scope_ be the LexicalEnvironment of the running execution context.
+      1. Let _sourceText_ be the source text matched by |AsyncArrowFunction|.
+      1. Let _parameters_ be |AsyncArrowBindingIdentifier|.
+      1. Let _closure_ be ! OrdinaryFunctionCreate(%AsyncFunction.prototype%, _sourceText_, _parameters_, |AsyncConciseBody|, ~lexical-this~, _scope_).
+      1. Perform SetFunctionName(_closure_, _name_).
+      1. Return _closure_.
+    </emu-alg>
+    <emu-grammar>
+      AsyncArrowFunction : CoverCallExpressionAndAsyncArrowHead `=>` AsyncConciseBody
+    </emu-grammar>
+    <emu-alg>
+      1. Let _scope_ be the LexicalEnvironment of the running execution context.
+      1. Let _sourceText_ be the source text matched by |AsyncArrowFunction|.
+      1. Let _head_ be CoveredAsyncArrowHead of |CoverCallExpressionAndAsyncArrowHead|.
+      1. Let _parameters_ be the |ArrowFormalParameters| of _head_.
+      1. Let _closure_ be ! OrdinaryFunctionCreate(%AsyncFunction.prototype%, _sourceText_, _parameters_, |AsyncConciseBody|, ~lexical-this~, _scope_).
+      1. Perform SetFunctionName(_closure_, _name_).
+      1. Return _closure_.
+    </emu-alg>
+  </emu-clause>
 <!-- insert sdos here -->
 </emu-clause>
 
@@ -14128,21 +14226,6 @@
         </ul>
       </emu-clause>
 
-      <emu-clause id="sec-grouping-operator-runtime-semantics-namedevaluation">
-        <h1>Runtime Semantics: NamedEvaluation</h1>
-        <p>With parameter _name_.</p>
-        <emu-grammar>PrimaryExpression : CoverParenthesizedExpressionAndArrowParameterList</emu-grammar>
-        <emu-alg>
-          1. Let _expr_ be CoveredParenthesizedExpression of |CoverParenthesizedExpressionAndArrowParameterList|.
-          1. Return the result of performing NamedEvaluation for _expr_ with argument _name_.
-        </emu-alg>
-        <emu-grammar>ParenthesizedExpression : `(` Expression `)`</emu-grammar>
-        <emu-alg>
-          1. Assert: IsAnonymousFunctionDefinition(|Expression|) is *true*.
-          1. Return the result of performing NamedEvaluation for |Expression| with argument _name_.
-        </emu-alg>
-      </emu-clause>
-
       <emu-clause id="sec-grouping-operator-runtime-semantics-evaluation">
         <h1>Runtime Semantics: Evaluation</h1>
         <emu-grammar>PrimaryExpression : CoverParenthesizedExpressionAndArrowParameterList</emu-grammar>
@@ -19921,20 +20004,6 @@
       </emu-note>
     </emu-clause>
 
-    <emu-clause id="sec-function-definitions-runtime-semantics-namedevaluation">
-      <h1>Runtime Semantics: NamedEvaluation</h1>
-      <p>With parameter _name_.</p>
-      <emu-grammar>FunctionExpression : `function` `(` FormalParameters `)` `{` FunctionBody `}`</emu-grammar>
-      <emu-alg>
-        1. Let _scope_ be the LexicalEnvironment of the running execution context.
-        1. Let _sourceText_ be the source text matched by |FunctionExpression|.
-        1. Let _closure_ be OrdinaryFunctionCreate(%Function.prototype%, _sourceText_, |FormalParameters|, |FunctionBody|, ~non-lexical-this~, _scope_).
-        1. Perform SetFunctionName(_closure_, _name_).
-        1. Perform MakeConstructor(_closure_).
-        1. Return _closure_.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-function-definitions-runtime-semantics-evaluation">
       <h1>Runtime Semantics: Evaluation</h1>
       <emu-grammar>FunctionDeclaration : `function` BindingIdentifier `(` FormalParameters `)` `{` FunctionBody `}`</emu-grammar>
@@ -20180,23 +20249,6 @@
         1. Perform ? FunctionDeclarationInstantiation(_functionObject_, _argumentsList_).
         1. Return the result of evaluating |ExpressionBody|.
       </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-arrow-function-definitions-runtime-semantics-namedevaluation">
-      <h1>Runtime Semantics: NamedEvaluation</h1>
-      <p>With parameter _name_.</p>
-      <emu-grammar>ArrowFunction : ArrowParameters `=&gt;` ConciseBody</emu-grammar>
-      <emu-alg>
-        1. Let _scope_ be the LexicalEnvironment of the running execution context.
-        1. Let _sourceText_ be the source text matched by |ArrowFunction|.
-        1. Let _parameters_ be CoveredFormalsList of |ArrowParameters|.
-        1. [id="step-arrowfunction-evaluation-functioncreate"] Let _closure_ be OrdinaryFunctionCreate(%Function.prototype%, _sourceText_, _parameters_, |ConciseBody|, ~lexical-this~, _scope_).
-        1. Perform SetFunctionName(_closure_, _name_).
-        1. Return _closure_.
-      </emu-alg>
-      <emu-note>
-        <p>An |ArrowFunction| does not define local bindings for `arguments`, `super`, `this`, or `new.target`. Any reference to `arguments`, `super`, `this`, or `new.target` within an |ArrowFunction| must resolve to a binding in a lexically enclosing environment. Typically this will be the Function Environment of an immediately enclosing function. Even though an |ArrowFunction| may contain references to `super`, the function object created in step <emu-xref href="#step-arrowfunction-evaluation-functioncreate"></emu-xref> is not made into a method by performing MakeMethod. An |ArrowFunction| that references `super` is always contained within a non-|ArrowFunction| and the necessary state to implement `super` is accessible via the _scope_ that is captured by the function object of the |ArrowFunction|.</p>
-      </emu-note>
     </emu-clause>
 
     <emu-clause id="sec-arrow-function-definitions-runtime-semantics-evaluation">
@@ -20474,21 +20526,6 @@
       </emu-note>
     </emu-clause>
 
-    <emu-clause id="sec-generator-function-definitions-runtime-semantics-namedevaluation">
-      <h1>Runtime Semantics: NamedEvaluation</h1>
-      <p>With parameter _name_.</p>
-      <emu-grammar>GeneratorExpression : `function` `*` `(` FormalParameters `)` `{` GeneratorBody `}`</emu-grammar>
-      <emu-alg>
-        1. Let _scope_ be the LexicalEnvironment of the running execution context.
-        1. Let _sourceText_ be the source text matched by |GeneratorExpression|.
-        1. Let _closure_ be OrdinaryFunctionCreate(%GeneratorFunction.prototype%, _sourceText_, |FormalParameters|, |GeneratorBody|, ~non-lexical-this~, _scope_).
-        1. Perform SetFunctionName(_closure_, _name_).
-        1. Let _prototype_ be ! OrdinaryObjectCreate(%GeneratorFunction.prototype.prototype%).
-        1. Perform DefinePropertyOrThrow(_closure_, *"prototype"*, PropertyDescriptor { [[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false* }).
-        1. Return _closure_.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-generator-function-definitions-runtime-semantics-evaluation">
       <h1>Runtime Semantics: Evaluation</h1>
       <emu-grammar>GeneratorExpression : `function` `*` `(` FormalParameters `)` `{` GeneratorBody `}`</emu-grammar>
@@ -20704,23 +20741,6 @@
       <emu-note>
         <p>An anonymous |AsyncGeneratorDeclaration| can only occur as part of an `export default` declaration.</p>
       </emu-note>
-    </emu-clause>
-
-    <emu-clause id="sec-asyncgenerator-definitions-namedevaluation">
-      <h1>Runtime Semantics: NamedEvaluation</h1>
-      <p>With parameter _name_.</p>
-      <emu-grammar>
-        AsyncGeneratorExpression : `async` `function` `*` `(` FormalParameters `)` `{` AsyncGeneratorBody `}`
-      </emu-grammar>
-      <emu-alg>
-        1. Let _scope_ be the LexicalEnvironment of the running execution context.
-        1. Let _sourceText_ be the source text matched by |AsyncGeneratorExpression|.
-        1. Let _closure_ be ! OrdinaryFunctionCreate(%AsyncGeneratorFunction.prototype%, _sourceText_, |FormalParameters|, |AsyncGeneratorBody|, ~non-lexical-this~, _scope_).
-        1. Perform SetFunctionName(_closure_, _name_).
-        1. Let _prototype_ be ! OrdinaryObjectCreate(%AsyncGeneratorFunction.prototype.prototype%).
-        1. Perform ! DefinePropertyOrThrow(_closure_, *"prototype"*, PropertyDescriptor { [[Value]]: _prototype_, [[Writable]]: *true*, [[Enumerable]]: *false*, [[Configurable]]: *false* }).
-        1. Return _closure_.
-      </emu-alg>
     </emu-clause>
 
     <emu-clause id="sec-asyncgenerator-definitions-evaluation">
@@ -21011,18 +21031,6 @@
       </emu-note>
     </emu-clause>
 
-    <emu-clause id="sec-class-definitions-runtime-semantics-namedevaluation">
-      <h1>Runtime Semantics: NamedEvaluation</h1>
-      <p>With parameter _name_.</p>
-      <emu-grammar>ClassExpression : `class` ClassTail</emu-grammar>
-      <emu-alg>
-        1. Let _value_ be the result of ClassDefinitionEvaluation of |ClassTail| with arguments *undefined* and _name_.
-        1. ReturnIfAbrupt(_value_).
-        1. Set _value_.[[SourceText]] to the source text matched by |ClassExpression|.
-        1. Return _value_.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-class-definitions-runtime-semantics-evaluation">
       <h1>Runtime Semantics: Evaluation</h1>
       <emu-grammar>ClassDeclaration : `class` BindingIdentifier ClassTail</emu-grammar>
@@ -21182,21 +21190,6 @@
         1. Else,
           1. Perform ! Call(_promiseCapability_.[[Reject]], *undefined*, &laquo; _declResult_.[[Value]] &raquo;).
         1. Return Completion { [[Type]]: ~return~, [[Value]]: _promiseCapability_.[[Promise]], [[Target]]: ~empty~ }.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-async-function-definitions-runtime-semantics-namedevaluation">
-      <h1>Runtime Semantics: NamedEvaluation</h1>
-      <p>With parameter _name_.</p>
-      <emu-grammar>
-        AsyncFunctionExpression : `async` `function` `(` FormalParameters `)` `{` AsyncFunctionBody `}`
-      </emu-grammar>
-      <emu-alg>
-        1. Let _scope_ be the LexicalEnvironment of the running execution context.
-        1. Let _sourceText_ be the source text matched by |AsyncFunctionExpression|.
-        1. Let _closure_ be ! OrdinaryFunctionCreate(%AsyncFunction.prototype%, _sourceText_, |FormalParameters|, |AsyncFunctionBody|, ~non-lexical-this~, _scope_).
-        1. Perform SetFunctionName(_closure_, _name_).
-        1. Return _closure_.
       </emu-alg>
     </emu-clause>
 
@@ -21431,34 +21424,6 @@
         1. Else,
           1. Perform ! Call(_promiseCapability_.[[Reject]], *undefined*, &laquo; _declResult_.[[Value]] &raquo;).
         1. Return Completion { [[Type]]: ~return~, [[Value]]: _promiseCapability_.[[Promise]], [[Target]]: ~empty~ }.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-async-arrow-function-definitions-runtime-semantics-namedevaluation">
-      <h1>Runtime Semantics: NamedEvaluation</h1>
-      <p>With parameter _name_.</p>
-      <emu-grammar>
-        AsyncArrowFunction : `async` AsyncArrowBindingIdentifier `=>` AsyncConciseBody
-      </emu-grammar>
-      <emu-alg>
-        1. Let _scope_ be the LexicalEnvironment of the running execution context.
-        1. Let _sourceText_ be the source text matched by |AsyncArrowFunction|.
-        1. Let _parameters_ be |AsyncArrowBindingIdentifier|.
-        1. Let _closure_ be ! OrdinaryFunctionCreate(%AsyncFunction.prototype%, _sourceText_, _parameters_, |AsyncConciseBody|, ~lexical-this~, _scope_).
-        1. Perform SetFunctionName(_closure_, _name_).
-        1. Return _closure_.
-      </emu-alg>
-      <emu-grammar>
-        AsyncArrowFunction : CoverCallExpressionAndAsyncArrowHead `=>` AsyncConciseBody
-      </emu-grammar>
-      <emu-alg>
-        1. Let _scope_ be the LexicalEnvironment of the running execution context.
-        1. Let _sourceText_ be the source text matched by |AsyncArrowFunction|.
-        1. Let _head_ be CoveredAsyncArrowHead of |CoverCallExpressionAndAsyncArrowHead|.
-        1. Let _parameters_ be the |ArrowFormalParameters| of _head_.
-        1. Let _closure_ be ! OrdinaryFunctionCreate(%AsyncFunction.prototype%, _sourceText_, _parameters_, |AsyncConciseBody|, ~lexical-this~, _scope_).
-        1. Perform SetFunctionName(_closure_, _name_).
-        1. Return _closure_.
       </emu-alg>
     </emu-clause>
 
