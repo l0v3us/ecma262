@@ -7162,6 +7162,49 @@
       1. Return _closure_.
     </emu-alg>
   </emu-clause>
+
+  <emu-clause id="sec-static-semantics-isdestructuring" type="sdo" aoid="IsDestructuring">
+    <h1>Static Semantics: IsDestructuring</h1>
+    <emu-grammar>MemberExpression : PrimaryExpression</emu-grammar>
+    <emu-alg>
+      1. If |PrimaryExpression| is either an |ObjectLiteral| or an |ArrayLiteral|, return *true*.
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>
+      MemberExpression :
+        MemberExpression `[` Expression `]`
+        MemberExpression `.` IdentifierName
+        MemberExpression TemplateLiteral
+        SuperProperty
+        MetaProperty
+        `new` MemberExpression Arguments
+
+      NewExpression :
+        `new` NewExpression
+
+      LeftHandSideExpression :
+        CallExpression
+        OptionalExpression
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>ForDeclaration : LetOrConst ForBinding</emu-grammar>
+    <emu-alg>
+      1. Return IsDestructuring of |ForBinding|.
+    </emu-alg>
+    <emu-grammar>ForBinding : BindingIdentifier</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>ForBinding : BindingPattern</emu-grammar>
+    <emu-alg>
+      1. Return *true*.
+    </emu-alg>
+    <emu-note>
+      <p>This section is extended by Annex <emu-xref href="#sec-initializers-in-forin-statement-heads"></emu-xref>.</p>
+    </emu-note>
+  </emu-clause>
 <!-- insert sdos here -->
 </emu-clause>
 
@@ -14381,35 +14424,6 @@
           1. Return the |CallMemberExpression| that is covered by |CoverCallExpressionAndAsyncArrowHead|.
         </emu-alg>
       </emu-clause>
-
-      <emu-clause id="sec-static-semantics-static-semantics-isdestructuring">
-        <h1>Static Semantics: IsDestructuring</h1>
-        <emu-see-also-para op="IsDestructuring"></emu-see-also-para>
-        <emu-grammar>MemberExpression : PrimaryExpression</emu-grammar>
-        <emu-alg>
-          1. If |PrimaryExpression| is either an |ObjectLiteral| or an |ArrayLiteral|, return *true*.
-          1. Return *false*.
-        </emu-alg>
-        <emu-grammar>
-          MemberExpression :
-            MemberExpression `[` Expression `]`
-            MemberExpression `.` IdentifierName
-            MemberExpression TemplateLiteral
-            SuperProperty
-            MetaProperty
-            `new` MemberExpression Arguments
-
-          NewExpression :
-            `new` NewExpression
-
-          LeftHandSideExpression :
-            CallExpression
-            OptionalExpression
-        </emu-grammar>
-        <emu-alg>
-          1. Return *false*.
-        </emu-alg>
-      </emu-clause>
     </emu-clause>
 
     <emu-clause id="sec-property-accessors">
@@ -18039,26 +18053,6 @@
         </emu-grammar>
         <emu-alg>
           1. Return ContainsUndefinedContinueTarget of |Statement| with arguments _iterationSet_ and &laquo; &raquo;.
-        </emu-alg>
-        <emu-note>
-          <p>This section is extended by Annex <emu-xref href="#sec-initializers-in-forin-statement-heads"></emu-xref>.</p>
-        </emu-note>
-      </emu-clause>
-
-      <emu-clause id="sec-for-in-and-for-of-statements-static-semantics-isdestructuring">
-        <h1>Static Semantics: IsDestructuring</h1>
-        <emu-see-also-para op="IsDestructuring"></emu-see-also-para>
-        <emu-grammar>ForDeclaration : LetOrConst ForBinding</emu-grammar>
-        <emu-alg>
-          1. Return IsDestructuring of |ForBinding|.
-        </emu-alg>
-        <emu-grammar>ForBinding : BindingIdentifier</emu-grammar>
-        <emu-alg>
-          1. Return *false*.
-        </emu-alg>
-        <emu-grammar>ForBinding : BindingPattern</emu-grammar>
-        <emu-alg>
-          1. Return *true*.
         </emu-alg>
         <emu-note>
           <p>This section is extended by Annex <emu-xref href="#sec-initializers-in-forin-statement-heads"></emu-xref>.</p>
