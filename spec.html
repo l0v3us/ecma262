@@ -9101,6 +9101,22 @@
       1. Return the result of performing BindingInitialization for |BindingIdentifier| using _v_ and _environment_ as the arguments.
     </emu-alg>
   </emu-clause>
+
+  <emu-clause id="sec-static-semantics-containsusestrict" type="sdo" aoid="ContainsUseStrict">
+    <h1>Static Semantics: ContainsUseStrict</h1>
+    <emu-grammar>FunctionBody : FunctionStatementList</emu-grammar>
+    <emu-alg>
+      1. If the Directive Prologue of |FunctionBody| contains a Use Strict Directive, return *true*; otherwise, return *false*.
+    </emu-alg>
+    <emu-grammar>ConciseBody : ExpressionBody</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>AsyncConciseBody : ExpressionBody</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+  </emu-clause>
 <!-- insert sdos here -->
 </emu-clause>
 
@@ -19779,15 +19795,6 @@
       </ul>
     </emu-clause>
 
-    <emu-clause id="sec-function-definitions-static-semantics-containsusestrict">
-      <h1>Static Semantics: ContainsUseStrict</h1>
-      <emu-see-also-para op="ContainsUseStrict"></emu-see-also-para>
-      <emu-grammar>FunctionBody : FunctionStatementList</emu-grammar>
-      <emu-alg>
-        1. If the Directive Prologue of |FunctionBody| contains a Use Strict Directive, return *true*; otherwise, return *false*.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-function-definitions-static-semantics-expectedargumentcount">
       <h1>Static Semantics: ExpectedArgumentCount</h1>
       <emu-see-also-para op="ExpectedArgumentCount"></emu-see-also-para>
@@ -19965,15 +19972,6 @@
           All early error rules for |ArrowFormalParameters| and its derived productions also apply to CoveredFormalsList of |CoverParenthesizedExpressionAndArrowParameterList|.
         </li>
       </ul>
-    </emu-clause>
-
-    <emu-clause id="sec-arrow-function-definitions-static-semantics-containsusestrict">
-      <h1>Static Semantics: ContainsUseStrict</h1>
-      <emu-see-also-para op="ContainsUseStrict"></emu-see-also-para>
-      <emu-grammar>ConciseBody : ExpressionBody</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
     </emu-clause>
 
     <emu-clause id="sec-arrow-function-definitions-static-semantics-expectedargumentcount">
@@ -21020,15 +21018,6 @@
       </emu-grammar>
       <emu-alg>
         1. Return the |AsyncArrowHead| that is covered by |CoverCallExpressionAndAsyncArrowHead|.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-async-arrow-function-definitions-static-semantics-containsusestrict">
-      <h1>Static Semantics: ContainsUseStrict</h1>
-      <emu-see-also-para op="ContainsUseStrict"></emu-see-also-para>
-      <emu-grammar>AsyncConciseBody : ExpressionBody</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
       </emu-alg>
     </emu-clause>
 
