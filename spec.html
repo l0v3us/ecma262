@@ -8555,6 +8555,34 @@
       1. Return a new empty List.
     </emu-alg>
   </emu-clause>
+
+  <emu-clause id="sec-static-semantics-toplevellexicallyscopeddeclarations" type="sdo" aoid="TopLevelLexicallyScopedDeclarations">
+    <h1>Static Semantics: TopLevelLexicallyScopedDeclarations</h1>
+    <emu-grammar>Block : `{` `}`</emu-grammar>
+    <emu-alg>
+      1. Return a new empty List.
+    </emu-alg>
+    <emu-grammar>StatementList : StatementList StatementListItem</emu-grammar>
+    <emu-alg>
+      1. Let _declarations_ be TopLevelLexicallyScopedDeclarations of |StatementList|.
+      1. Append to _declarations_ the elements of the TopLevelLexicallyScopedDeclarations of |StatementListItem|.
+      1. Return _declarations_.
+    </emu-alg>
+    <emu-grammar>StatementListItem : Statement</emu-grammar>
+    <emu-alg>
+      1. Return a new empty List.
+    </emu-alg>
+    <emu-grammar>StatementListItem : Declaration</emu-grammar>
+    <emu-alg>
+      1. If |Declaration| is <emu-grammar>Declaration : HoistableDeclaration</emu-grammar> , then
+        1. Return &laquo; &raquo;.
+      1. Return a List whose sole element is |Declaration|.
+    </emu-alg>
+    <emu-grammar>LabelledStatement : LabelIdentifier `:` LabelledItem</emu-grammar>
+    <emu-alg>
+      1. Return a new empty List.
+    </emu-alg>
+  </emu-clause>
 <!-- insert sdos here -->
 </emu-clause>
 
@@ -17738,31 +17766,6 @@
       </ul>
     </emu-clause>
 
-    <emu-clause id="sec-block-static-semantics-toplevellexicallyscopeddeclarations">
-      <h1>Static Semantics: TopLevelLexicallyScopedDeclarations</h1>
-      <emu-see-also-para op="TopLevelLexicallyScopedDeclarations"></emu-see-also-para>
-      <emu-grammar>Block : `{` `}`</emu-grammar>
-      <emu-alg>
-        1. Return a new empty List.
-      </emu-alg>
-      <emu-grammar>StatementList : StatementList StatementListItem</emu-grammar>
-      <emu-alg>
-        1. Let _declarations_ be TopLevelLexicallyScopedDeclarations of |StatementList|.
-        1. Append to _declarations_ the elements of the TopLevelLexicallyScopedDeclarations of |StatementListItem|.
-        1. Return _declarations_.
-      </emu-alg>
-      <emu-grammar>StatementListItem : Statement</emu-grammar>
-      <emu-alg>
-        1. Return a new empty List.
-      </emu-alg>
-      <emu-grammar>StatementListItem : Declaration</emu-grammar>
-      <emu-alg>
-        1. If |Declaration| is <emu-grammar>Declaration : HoistableDeclaration</emu-grammar> , then
-          1. Return &laquo; &raquo;.
-        1. Return a List whose sole element is |Declaration|.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-block-static-semantics-toplevelvardeclarednames">
       <h1>Static Semantics: TopLevelVarDeclaredNames</h1>
       <emu-see-also-para op="TopLevelVarDeclaredNames"></emu-see-also-para>
@@ -19300,15 +19303,6 @@
         1. If _item_ is <emu-grammar>LabelledItem : FunctionDeclaration</emu-grammar> , return *true*.
         1. Let _subStmt_ be the |Statement| of _item_.
         1. Return IsLabelledFunction(_subStmt_).
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-labelled-statements-static-semantics-toplevellexicallyscopeddeclarations">
-      <h1>Static Semantics: TopLevelLexicallyScopedDeclarations</h1>
-      <emu-see-also-para op="TopLevelLexicallyScopedDeclarations"></emu-see-also-para>
-      <emu-grammar>LabelledStatement : LabelIdentifier `:` LabelledItem</emu-grammar>
-      <emu-alg>
-        1. Return a new empty List.
       </emu-alg>
     </emu-clause>
 
