@@ -7731,6 +7731,207 @@
       1. Return *false*.
     </emu-alg>
   </emu-clause>
+
+  <emu-clause id="sec-static-semantics-vardeclarednames" type="sdo" aoid="VarDeclaredNames">
+    <h1>Static Semantics: VarDeclaredNames</h1>
+    <emu-grammar>
+      Statement :
+        EmptyStatement
+        ExpressionStatement
+        ContinueStatement
+        BreakStatement
+        ReturnStatement
+        ThrowStatement
+        DebuggerStatement
+    </emu-grammar>
+    <emu-alg>
+      1. Return a new empty List.
+    </emu-alg>
+    <emu-grammar>Block : `{` `}`</emu-grammar>
+    <emu-alg>
+      1. Return a new empty List.
+    </emu-alg>
+    <emu-grammar>StatementList : StatementList StatementListItem</emu-grammar>
+    <emu-alg>
+      1. Let _names_ be VarDeclaredNames of |StatementList|.
+      1. Append to _names_ the elements of the VarDeclaredNames of |StatementListItem|.
+      1. Return _names_.
+    </emu-alg>
+    <emu-grammar>StatementListItem : Declaration</emu-grammar>
+    <emu-alg>
+      1. Return a new empty List.
+    </emu-alg>
+    <emu-grammar>VariableStatement : `var` VariableDeclarationList `;`</emu-grammar>
+    <emu-alg>
+      1. Return BoundNames of |VariableDeclarationList|.
+    </emu-alg>
+    <emu-grammar>IfStatement : `if` `(` Expression `)` Statement `else` Statement</emu-grammar>
+    <emu-alg>
+      1. Let _names_ be VarDeclaredNames of the first |Statement|.
+      1. Append to _names_ the elements of the VarDeclaredNames of the second |Statement|.
+      1. Return _names_.
+    </emu-alg>
+    <emu-grammar>IfStatement : `if` `(` Expression `)` Statement</emu-grammar>
+    <emu-alg>
+      1. Return the VarDeclaredNames of |Statement|.
+    </emu-alg>
+    <emu-grammar>IterationStatement : `do` Statement `while` `(` Expression `)` `;`</emu-grammar>
+    <emu-alg>
+      1. Return the VarDeclaredNames of |Statement|.
+    </emu-alg>
+    <emu-grammar>IterationStatement : `while` `(` Expression `)` Statement</emu-grammar>
+    <emu-alg>
+      1. Return the VarDeclaredNames of |Statement|.
+    </emu-alg>
+    <emu-grammar>IterationStatement : `for` `(` Expression? `;` Expression? `;` Expression? `)` Statement</emu-grammar>
+    <emu-alg>
+      1. Return the VarDeclaredNames of |Statement|.
+    </emu-alg>
+    <emu-grammar>IterationStatement : `for` `(` `var` VariableDeclarationList `;` Expression? `;` Expression? `)` Statement</emu-grammar>
+    <emu-alg>
+      1. Let _names_ be BoundNames of |VariableDeclarationList|.
+      1. Append to _names_ the elements of the VarDeclaredNames of |Statement|.
+      1. Return _names_.
+    </emu-alg>
+    <emu-grammar>IterationStatement : `for` `(` LexicalDeclaration Expression? `;` Expression? `)` Statement</emu-grammar>
+    <emu-alg>
+      1. Return the VarDeclaredNames of |Statement|.
+    </emu-alg>
+    <emu-grammar>
+      IterationStatement :
+        `for` `(` LeftHandSideExpression `in` Expression `)` Statement
+        `for` `(` ForDeclaration `in` Expression `)` Statement
+        `for` `(` LeftHandSideExpression `of` AssignmentExpression `)` Statement
+        `for` `(` ForDeclaration `of` AssignmentExpression `)` Statement
+        `for` `await` `(` LeftHandSideExpression `of` AssignmentExpression `)` Statement
+        `for` `await` `(` ForDeclaration `of` AssignmentExpression `)` Statement
+    </emu-grammar>
+    <emu-alg>
+      1. Return the VarDeclaredNames of |Statement|.
+    </emu-alg>
+    <emu-grammar>
+      IterationStatement :
+        `for` `(` `var` ForBinding `in` Expression `)` Statement
+        `for` `(` `var` ForBinding `of` AssignmentExpression `)` Statement
+        `for` `await` `(` `var` ForBinding `of` AssignmentExpression `)` Statement
+    </emu-grammar>
+    <emu-alg>
+      1. Let _names_ be the BoundNames of |ForBinding|.
+      1. Append to _names_ the elements of the VarDeclaredNames of |Statement|.
+      1. Return _names_.
+    </emu-alg>
+    <emu-note>
+      <p>This section is extended by Annex <emu-xref href="#sec-initializers-in-forin-statement-heads"></emu-xref>.</p>
+    </emu-note>
+    <emu-grammar>WithStatement : `with` `(` Expression `)` Statement</emu-grammar>
+    <emu-alg>
+      1. Return the VarDeclaredNames of |Statement|.
+    </emu-alg>
+    <emu-grammar>SwitchStatement : `switch` `(` Expression `)` CaseBlock</emu-grammar>
+    <emu-alg>
+      1. Return the VarDeclaredNames of |CaseBlock|.
+    </emu-alg>
+    <emu-grammar>CaseBlock : `{` `}`</emu-grammar>
+    <emu-alg>
+      1. Return a new empty List.
+    </emu-alg>
+    <emu-grammar>CaseBlock : `{` CaseClauses? DefaultClause CaseClauses? `}`</emu-grammar>
+    <emu-alg>
+      1. If the first |CaseClauses| is present, let _names_ be the VarDeclaredNames of the first |CaseClauses|.
+      1. Else, let _names_ be a new empty List.
+      1. Append to _names_ the elements of the VarDeclaredNames of |DefaultClause|.
+      1. If the second |CaseClauses| is not present, return _names_.
+      1. Return the result of appending to _names_ the elements of the VarDeclaredNames of the second |CaseClauses|.
+    </emu-alg>
+    <emu-grammar>CaseClauses : CaseClauses CaseClause</emu-grammar>
+    <emu-alg>
+      1. Let _names_ be VarDeclaredNames of |CaseClauses|.
+      1. Append to _names_ the elements of the VarDeclaredNames of |CaseClause|.
+      1. Return _names_.
+    </emu-alg>
+    <emu-grammar>CaseClause : `case` Expression `:` StatementList?</emu-grammar>
+    <emu-alg>
+      1. If the |StatementList| is present, return the VarDeclaredNames of |StatementList|.
+      1. Return a new empty List.
+    </emu-alg>
+    <emu-grammar>DefaultClause : `default` `:` StatementList?</emu-grammar>
+    <emu-alg>
+      1. If the |StatementList| is present, return the VarDeclaredNames of |StatementList|.
+      1. Return a new empty List.
+    </emu-alg>
+    <emu-grammar>LabelledStatement : LabelIdentifier `:` LabelledItem</emu-grammar>
+    <emu-alg>
+      1. Return the VarDeclaredNames of |LabelledItem|.
+    </emu-alg>
+    <emu-grammar>LabelledItem : FunctionDeclaration</emu-grammar>
+    <emu-alg>
+      1. Return a new empty List.
+    </emu-alg>
+    <emu-grammar>TryStatement : `try` Block Catch</emu-grammar>
+    <emu-alg>
+      1. Let _names_ be VarDeclaredNames of |Block|.
+      1. Append to _names_ the elements of the VarDeclaredNames of |Catch|.
+      1. Return _names_.
+    </emu-alg>
+    <emu-grammar>TryStatement : `try` Block Finally</emu-grammar>
+    <emu-alg>
+      1. Let _names_ be VarDeclaredNames of |Block|.
+      1. Append to _names_ the elements of the VarDeclaredNames of |Finally|.
+      1. Return _names_.
+    </emu-alg>
+    <emu-grammar>TryStatement : `try` Block Catch Finally</emu-grammar>
+    <emu-alg>
+      1. Let _names_ be VarDeclaredNames of |Block|.
+      1. Append to _names_ the elements of the VarDeclaredNames of |Catch|.
+      1. Append to _names_ the elements of the VarDeclaredNames of |Finally|.
+      1. Return _names_.
+    </emu-alg>
+    <emu-grammar>Catch : `catch` `(` CatchParameter `)` Block</emu-grammar>
+    <emu-alg>
+      1. Return the VarDeclaredNames of |Block|.
+    </emu-alg>
+    <emu-grammar>FunctionStatementList : [empty]</emu-grammar>
+    <emu-alg>
+      1. Return a new empty List.
+    </emu-alg>
+    <emu-grammar>FunctionStatementList : StatementList</emu-grammar>
+    <emu-alg>
+      1. Return TopLevelVarDeclaredNames of |StatementList|.
+    </emu-alg>
+    <emu-grammar>ConciseBody : ExpressionBody</emu-grammar>
+    <emu-alg>
+      1. Return a new empty List.
+    </emu-alg>
+    <emu-grammar>
+      AsyncConciseBody : ExpressionBody
+    </emu-grammar>
+    <emu-alg>
+      1. Return a new empty List.
+    </emu-alg>
+    <emu-grammar>ScriptBody : StatementList</emu-grammar>
+    <emu-alg>
+      1. Return TopLevelVarDeclaredNames of |StatementList|.
+    </emu-alg>
+    <emu-grammar>Module : [empty]</emu-grammar>
+    <emu-alg>
+      1. Return a new empty List.
+    </emu-alg>
+    <emu-grammar>ModuleItemList : ModuleItemList ModuleItem</emu-grammar>
+    <emu-alg>
+      1. Let _names_ be VarDeclaredNames of |ModuleItemList|.
+      1. Append to _names_ the elements of the VarDeclaredNames of |ModuleItem|.
+      1. Return _names_.
+    </emu-alg>
+    <emu-grammar>ModuleItem : ImportDeclaration</emu-grammar>
+    <emu-alg>
+      1. Return a new empty List.
+    </emu-alg>
+    <emu-grammar>ModuleItem : ExportDeclaration</emu-grammar>
+    <emu-alg>
+      1. If |ExportDeclaration| is `export` |VariableStatement|, return BoundNames of |ExportDeclaration|.
+      1. Return a new empty List.
+    </emu-alg>
+  </emu-clause>
 <!-- insert sdos here -->
 </emu-clause>
 
@@ -16853,24 +17054,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-statement-semantics-static-semantics-vardeclarednames">
-      <h1>Static Semantics: VarDeclaredNames</h1>
-      <emu-see-also-para op="VarDeclaredNames"></emu-see-also-para>
-      <emu-grammar>
-        Statement :
-          EmptyStatement
-          ExpressionStatement
-          ContinueStatement
-          BreakStatement
-          ReturnStatement
-          ThrowStatement
-          DebuggerStatement
-      </emu-grammar>
-      <emu-alg>
-        1. Return a new empty List.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-statement-semantics-static-semantics-varscopeddeclarations">
       <h1>Static Semantics: VarScopedDeclarations</h1>
       <emu-see-also-para op="VarScopedDeclarations"></emu-see-also-para>
@@ -17126,25 +17309,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-block-static-semantics-vardeclarednames">
-      <h1>Static Semantics: VarDeclaredNames</h1>
-      <emu-see-also-para op="VarDeclaredNames"></emu-see-also-para>
-      <emu-grammar>Block : `{` `}`</emu-grammar>
-      <emu-alg>
-        1. Return a new empty List.
-      </emu-alg>
-      <emu-grammar>StatementList : StatementList StatementListItem</emu-grammar>
-      <emu-alg>
-        1. Let _names_ be VarDeclaredNames of |StatementList|.
-        1. Append to _names_ the elements of the VarDeclaredNames of |StatementListItem|.
-        1. Return _names_.
-      </emu-alg>
-      <emu-grammar>StatementListItem : Declaration</emu-grammar>
-      <emu-alg>
-        1. Return a new empty List.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-block-static-semantics-varscopeddeclarations">
       <h1>Static Semantics: VarScopedDeclarations</h1>
       <emu-see-also-para op="VarScopedDeclarations"></emu-see-also-para>
@@ -17351,15 +17515,6 @@
           BindingIdentifier[?Yield, ?Await] Initializer[?In, ?Yield, ?Await]?
           BindingPattern[?Yield, ?Await] Initializer[?In, ?Yield, ?Await]
       </emu-grammar>
-
-      <emu-clause id="sec-variable-statement-static-semantics-vardeclarednames">
-        <h1>Static Semantics: VarDeclaredNames</h1>
-        <emu-see-also-para op="VarDeclaredNames"></emu-see-also-para>
-        <emu-grammar>VariableStatement : `var` VariableDeclarationList `;`</emu-grammar>
-        <emu-alg>
-          1. Return BoundNames of |VariableDeclarationList|.
-        </emu-alg>
-      </emu-clause>
 
       <emu-clause id="sec-variable-statement-static-semantics-varscopeddeclarations">
         <h1>Static Semantics: VarScopedDeclarations</h1>
@@ -17849,21 +18004,6 @@
       </emu-note>
     </emu-clause>
 
-    <emu-clause id="sec-if-statement-static-semantics-vardeclarednames">
-      <h1>Static Semantics: VarDeclaredNames</h1>
-      <emu-see-also-para op="VarDeclaredNames"></emu-see-also-para>
-      <emu-grammar>IfStatement : `if` `(` Expression `)` Statement `else` Statement</emu-grammar>
-      <emu-alg>
-        1. Let _names_ be VarDeclaredNames of the first |Statement|.
-        1. Append to _names_ the elements of the VarDeclaredNames of the second |Statement|.
-        1. Return _names_.
-      </emu-alg>
-      <emu-grammar>IfStatement : `if` `(` Expression `)` Statement</emu-grammar>
-      <emu-alg>
-        1. Return the VarDeclaredNames of |Statement|.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-if-statement-static-semantics-varscopeddeclarations">
       <h1>Static Semantics: VarScopedDeclarations</h1>
       <emu-see-also-para op="VarScopedDeclarations"></emu-see-also-para>
@@ -17986,15 +18126,6 @@
     <emu-clause id="sec-do-while-statement">
       <h1>The `do`-`while` Statement</h1>
 
-      <emu-clause id="sec-do-while-statement-static-semantics-vardeclarednames">
-        <h1>Static Semantics: VarDeclaredNames</h1>
-        <emu-see-also-para op="VarDeclaredNames"></emu-see-also-para>
-        <emu-grammar>IterationStatement : `do` Statement `while` `(` Expression `)` `;`</emu-grammar>
-        <emu-alg>
-          1. Return the VarDeclaredNames of |Statement|.
-        </emu-alg>
-      </emu-clause>
-
       <emu-clause id="sec-do-while-statement-static-semantics-varscopeddeclarations">
         <h1>Static Semantics: VarScopedDeclarations</h1>
         <emu-see-also-para op="VarScopedDeclarations"></emu-see-also-para>
@@ -18024,15 +18155,6 @@
 
     <emu-clause id="sec-while-statement">
       <h1>The `while` Statement</h1>
-
-      <emu-clause id="sec-while-statement-static-semantics-vardeclarednames">
-        <h1>Static Semantics: VarDeclaredNames</h1>
-        <emu-see-also-para op="VarDeclaredNames"></emu-see-also-para>
-        <emu-grammar>IterationStatement : `while` `(` Expression `)` Statement</emu-grammar>
-        <emu-alg>
-          1. Return the VarDeclaredNames of |Statement|.
-        </emu-alg>
-      </emu-clause>
 
       <emu-clause id="sec-while-statement-static-semantics-varscopeddeclarations">
         <h1>Static Semantics: VarScopedDeclarations</h1>
@@ -18072,25 +18194,6 @@
             It is a Syntax Error if any element of the BoundNames of |LexicalDeclaration| also occurs in the VarDeclaredNames of |Statement|.
           </li>
         </ul>
-      </emu-clause>
-
-      <emu-clause id="sec-for-statement-static-semantics-vardeclarednames">
-        <h1>Static Semantics: VarDeclaredNames</h1>
-        <emu-see-also-para op="VarDeclaredNames"></emu-see-also-para>
-        <emu-grammar>IterationStatement : `for` `(` Expression? `;` Expression? `;` Expression? `)` Statement</emu-grammar>
-        <emu-alg>
-          1. Return the VarDeclaredNames of |Statement|.
-        </emu-alg>
-        <emu-grammar>IterationStatement : `for` `(` `var` VariableDeclarationList `;` Expression? `;` Expression? `)` Statement</emu-grammar>
-        <emu-alg>
-          1. Let _names_ be BoundNames of |VariableDeclarationList|.
-          1. Append to _names_ the elements of the VarDeclaredNames of |Statement|.
-          1. Return _names_.
-        </emu-alg>
-        <emu-grammar>IterationStatement : `for` `(` LexicalDeclaration Expression? `;` Expression? `)` Statement</emu-grammar>
-        <emu-alg>
-          1. Return the VarDeclaredNames of |Statement|.
-        </emu-alg>
       </emu-clause>
 
       <emu-clause id="sec-for-statement-static-semantics-varscopeddeclarations">
@@ -18235,37 +18338,6 @@
             It is a Syntax Error if the BoundNames of |ForDeclaration| contains any duplicate entries.
           </li>
         </ul>
-      </emu-clause>
-
-      <emu-clause id="sec-for-in-and-for-of-statements-static-semantics-vardeclarednames">
-        <h1>Static Semantics: VarDeclaredNames</h1>
-        <emu-see-also-para op="VarDeclaredNames"></emu-see-also-para>
-        <emu-grammar>
-          IterationStatement :
-            `for` `(` LeftHandSideExpression `in` Expression `)` Statement
-            `for` `(` ForDeclaration `in` Expression `)` Statement
-            `for` `(` LeftHandSideExpression `of` AssignmentExpression `)` Statement
-            `for` `(` ForDeclaration `of` AssignmentExpression `)` Statement
-            `for` `await` `(` LeftHandSideExpression `of` AssignmentExpression `)` Statement
-            `for` `await` `(` ForDeclaration `of` AssignmentExpression `)` Statement
-        </emu-grammar>
-        <emu-alg>
-          1. Return the VarDeclaredNames of |Statement|.
-        </emu-alg>
-        <emu-grammar>
-          IterationStatement :
-            `for` `(` `var` ForBinding `in` Expression `)` Statement
-            `for` `(` `var` ForBinding `of` AssignmentExpression `)` Statement
-            `for` `await` `(` `var` ForBinding `of` AssignmentExpression `)` Statement
-        </emu-grammar>
-        <emu-alg>
-          1. Let _names_ be the BoundNames of |ForBinding|.
-          1. Append to _names_ the elements of the VarDeclaredNames of |Statement|.
-          1. Return _names_.
-        </emu-alg>
-        <emu-note>
-          <p>This section is extended by Annex <emu-xref href="#sec-initializers-in-forin-statement-heads"></emu-xref>.</p>
-        </emu-note>
       </emu-clause>
 
       <emu-clause id="sec-for-in-and-for-of-statements-static-semantics-varscopeddeclarations">
@@ -18765,15 +18837,6 @@
       </emu-note>
     </emu-clause>
 
-    <emu-clause id="sec-with-statement-static-semantics-vardeclarednames">
-      <h1>Static Semantics: VarDeclaredNames</h1>
-      <emu-see-also-para op="VarDeclaredNames"></emu-see-also-para>
-      <emu-grammar>WithStatement : `with` `(` Expression `)` Statement</emu-grammar>
-      <emu-alg>
-        1. Return the VarDeclaredNames of |Statement|.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-with-statement-static-semantics-varscopeddeclarations">
       <h1>Static Semantics: VarScopedDeclarations</h1>
       <emu-see-also-para op="VarScopedDeclarations"></emu-see-also-para>
@@ -18900,43 +18963,6 @@
       <emu-grammar>DefaultClause : `default` `:` StatementList?</emu-grammar>
       <emu-alg>
         1. If the |StatementList| is present, return the LexicallyScopedDeclarations of |StatementList|.
-        1. Return a new empty List.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-switch-statement-static-semantics-vardeclarednames">
-      <h1>Static Semantics: VarDeclaredNames</h1>
-      <emu-see-also-para op="VarDeclaredNames"></emu-see-also-para>
-      <emu-grammar>SwitchStatement : `switch` `(` Expression `)` CaseBlock</emu-grammar>
-      <emu-alg>
-        1. Return the VarDeclaredNames of |CaseBlock|.
-      </emu-alg>
-      <emu-grammar>CaseBlock : `{` `}`</emu-grammar>
-      <emu-alg>
-        1. Return a new empty List.
-      </emu-alg>
-      <emu-grammar>CaseBlock : `{` CaseClauses? DefaultClause CaseClauses? `}`</emu-grammar>
-      <emu-alg>
-        1. If the first |CaseClauses| is present, let _names_ be the VarDeclaredNames of the first |CaseClauses|.
-        1. Else, let _names_ be a new empty List.
-        1. Append to _names_ the elements of the VarDeclaredNames of |DefaultClause|.
-        1. If the second |CaseClauses| is not present, return _names_.
-        1. Return the result of appending to _names_ the elements of the VarDeclaredNames of the second |CaseClauses|.
-      </emu-alg>
-      <emu-grammar>CaseClauses : CaseClauses CaseClause</emu-grammar>
-      <emu-alg>
-        1. Let _names_ be VarDeclaredNames of |CaseClauses|.
-        1. Append to _names_ the elements of the VarDeclaredNames of |CaseClause|.
-        1. Return _names_.
-      </emu-alg>
-      <emu-grammar>CaseClause : `case` Expression `:` StatementList?</emu-grammar>
-      <emu-alg>
-        1. If the |StatementList| is present, return the VarDeclaredNames of |StatementList|.
-        1. Return a new empty List.
-      </emu-alg>
-      <emu-grammar>DefaultClause : `default` `:` StatementList?</emu-grammar>
-      <emu-alg>
-        1. If the |StatementList| is present, return the VarDeclaredNames of |StatementList|.
         1. Return a new empty List.
       </emu-alg>
     </emu-clause>
@@ -19218,19 +19244,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-labelled-statements-static-semantics-vardeclarednames">
-      <h1>Static Semantics: VarDeclaredNames</h1>
-      <emu-see-also-para op="VarDeclaredNames"></emu-see-also-para>
-      <emu-grammar>LabelledStatement : LabelIdentifier `:` LabelledItem</emu-grammar>
-      <emu-alg>
-        1. Return the VarDeclaredNames of |LabelledItem|.
-      </emu-alg>
-      <emu-grammar>LabelledItem : FunctionDeclaration</emu-grammar>
-      <emu-alg>
-        1. Return a new empty List.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-labelled-statements-static-semantics-varscopeddeclarations">
       <h1>Static Semantics: VarScopedDeclarations</h1>
       <emu-see-also-para op="VarScopedDeclarations"></emu-see-also-para>
@@ -19340,34 +19353,6 @@
       <emu-note>
         <p>An alternative static semantics for this production is given in <emu-xref href="#sec-variablestatements-in-catch-blocks"></emu-xref>.</p>
       </emu-note>
-    </emu-clause>
-
-    <emu-clause id="sec-try-statement-static-semantics-vardeclarednames">
-      <h1>Static Semantics: VarDeclaredNames</h1>
-      <emu-see-also-para op="VarDeclaredNames"></emu-see-also-para>
-      <emu-grammar>TryStatement : `try` Block Catch</emu-grammar>
-      <emu-alg>
-        1. Let _names_ be VarDeclaredNames of |Block|.
-        1. Append to _names_ the elements of the VarDeclaredNames of |Catch|.
-        1. Return _names_.
-      </emu-alg>
-      <emu-grammar>TryStatement : `try` Block Finally</emu-grammar>
-      <emu-alg>
-        1. Let _names_ be VarDeclaredNames of |Block|.
-        1. Append to _names_ the elements of the VarDeclaredNames of |Finally|.
-        1. Return _names_.
-      </emu-alg>
-      <emu-grammar>TryStatement : `try` Block Catch Finally</emu-grammar>
-      <emu-alg>
-        1. Let _names_ be VarDeclaredNames of |Block|.
-        1. Append to _names_ the elements of the VarDeclaredNames of |Catch|.
-        1. Append to _names_ the elements of the VarDeclaredNames of |Finally|.
-        1. Return _names_.
-      </emu-alg>
-      <emu-grammar>Catch : `catch` `(` CatchParameter `)` Block</emu-grammar>
-      <emu-alg>
-        1. Return the VarDeclaredNames of |Block|.
-      </emu-alg>
     </emu-clause>
 
     <emu-clause id="sec-try-statement-static-semantics-varscopeddeclarations">
@@ -19741,19 +19726,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-function-definitions-static-semantics-vardeclarednames">
-      <h1>Static Semantics: VarDeclaredNames</h1>
-      <emu-see-also-para op="VarDeclaredNames"></emu-see-also-para>
-      <emu-grammar>FunctionStatementList : [empty]</emu-grammar>
-      <emu-alg>
-        1. Return a new empty List.
-      </emu-alg>
-      <emu-grammar>FunctionStatementList : StatementList</emu-grammar>
-      <emu-alg>
-        1. Return TopLevelVarDeclaredNames of |StatementList|.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-function-definitions-static-semantics-varscopeddeclarations">
       <h1>Static Semantics: VarScopedDeclarations</h1>
       <emu-see-also-para op="VarScopedDeclarations"></emu-see-also-para>
@@ -20011,15 +19983,6 @@
     <emu-clause id="sec-arrow-function-definitions-static-semantics-lexicallyscopeddeclarations">
       <h1>Static Semantics: LexicallyScopedDeclarations</h1>
       <emu-see-also-para op="LexicallyScopedDeclarations"></emu-see-also-para>
-      <emu-grammar>ConciseBody : ExpressionBody</emu-grammar>
-      <emu-alg>
-        1. Return a new empty List.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-arrow-function-definitions-static-semantics-vardeclarednames">
-      <h1>Static Semantics: VarDeclaredNames</h1>
-      <emu-see-also-para op="VarDeclaredNames"></emu-see-also-para>
       <emu-grammar>ConciseBody : ExpressionBody</emu-grammar>
       <emu-alg>
         1. Return a new empty List.
@@ -21192,16 +21155,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-async-arrow-function-definitions-static-semantics-VarDeclaredNames">
-      <h1>Static Semantics: VarDeclaredNames</h1>
-      <emu-grammar>
-        AsyncConciseBody : ExpressionBody
-      </emu-grammar>
-      <emu-alg>
-        1. Return a new empty List.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-async-arrow-function-definitions-static-semantics-VarScopedDeclarations">
       <h1>Static Semantics: VarScopedDeclarations</h1>
       <emu-grammar>
@@ -21695,15 +21648,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-scripts-static-semantics-vardeclarednames">
-      <h1>Static Semantics: VarDeclaredNames</h1>
-      <emu-see-also-para op="VarDeclaredNames"></emu-see-also-para>
-      <emu-grammar>ScriptBody : StatementList</emu-grammar>
-      <emu-alg>
-        1. Return TopLevelVarDeclaredNames of |StatementList|.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-scripts-static-semantics-varscopeddeclarations">
       <h1>Static Semantics: VarScopedDeclarations</h1>
       <emu-see-also-para op="VarScopedDeclarations"></emu-see-also-para>
@@ -22136,30 +22080,6 @@
         </emu-alg>
         <emu-grammar>ModuleItem : ImportDeclaration</emu-grammar>
         <emu-alg>
-          1. Return a new empty List.
-        </emu-alg>
-      </emu-clause>
-
-      <emu-clause id="sec-module-semantics-static-semantics-vardeclarednames">
-        <h1>Static Semantics: VarDeclaredNames</h1>
-        <emu-see-also-para op="VarDeclaredNames"></emu-see-also-para>
-        <emu-grammar>Module : [empty]</emu-grammar>
-        <emu-alg>
-          1. Return a new empty List.
-        </emu-alg>
-        <emu-grammar>ModuleItemList : ModuleItemList ModuleItem</emu-grammar>
-        <emu-alg>
-          1. Let _names_ be VarDeclaredNames of |ModuleItemList|.
-          1. Append to _names_ the elements of the VarDeclaredNames of |ModuleItem|.
-          1. Return _names_.
-        </emu-alg>
-        <emu-grammar>ModuleItem : ImportDeclaration</emu-grammar>
-        <emu-alg>
-          1. Return a new empty List.
-        </emu-alg>
-        <emu-grammar>ModuleItem : ExportDeclaration</emu-grammar>
-        <emu-alg>
-          1. If |ExportDeclaration| is `export` |VariableStatement|, return BoundNames of |ExportDeclaration|.
           1. Return a new empty List.
         </emu-alg>
       </emu-clause>
