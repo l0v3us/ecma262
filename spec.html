@@ -6398,6 +6398,197 @@
       1. Return *false*.
     </emu-alg>
   </emu-clause>
+
+  <emu-clause id="sec-static-semantics-isfunctiondefinition" type="sdo" aoid="IsFunctionDefinition">
+    <h1>Static Semantics: IsFunctionDefinition</h1>
+    <emu-grammar>
+      PrimaryExpression :
+        `this`
+        IdentifierReference
+        Literal
+        ArrayLiteral
+        ObjectLiteral
+        RegularExpressionLiteral
+        TemplateLiteral
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>PrimaryExpression : CoverParenthesizedExpressionAndArrowParameterList</emu-grammar>
+    <emu-alg>
+      1. Let _expr_ be CoveredParenthesizedExpression of |CoverParenthesizedExpressionAndArrowParameterList|.
+      1. Return IsFunctionDefinition of _expr_.
+    </emu-alg>
+    <emu-grammar>ParenthesizedExpression : `(` Expression `)`</emu-grammar>
+    <emu-alg>
+      1. Return IsFunctionDefinition of |Expression|.
+    </emu-alg>
+    <emu-grammar>
+      MemberExpression :
+        MemberExpression `[` Expression `]`
+        MemberExpression `.` IdentifierName
+        MemberExpression TemplateLiteral
+        SuperProperty
+        MetaProperty
+        `new` MemberExpression Arguments
+
+      NewExpression :
+        `new` NewExpression
+
+      LeftHandSideExpression :
+        CallExpression
+        OptionalExpression
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>
+      UpdateExpression :
+        LeftHandSideExpression `++`
+        LeftHandSideExpression `--`
+        `++` UnaryExpression
+        `--` UnaryExpression
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>
+      UnaryExpression :
+        `delete` UnaryExpression
+        `void` UnaryExpression
+        `typeof` UnaryExpression
+        `+` UnaryExpression
+        `-` UnaryExpression
+        `~` UnaryExpression
+        `!` UnaryExpression
+        AwaitExpression
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>
+      ExponentiationExpression :
+        UpdateExpression `**` ExponentiationExpression
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>MultiplicativeExpression : MultiplicativeExpression MultiplicativeOperator ExponentiationExpression</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>
+      AdditiveExpression :
+        AdditiveExpression `+` MultiplicativeExpression
+        AdditiveExpression `-` MultiplicativeExpression
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>
+      ShiftExpression :
+        ShiftExpression `&lt;&lt;` AdditiveExpression
+        ShiftExpression `&gt;&gt;` AdditiveExpression
+        ShiftExpression `&gt;&gt;&gt;` AdditiveExpression
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>
+      RelationalExpression :
+        RelationalExpression `&lt;` ShiftExpression
+        RelationalExpression `&gt;` ShiftExpression
+        RelationalExpression `&lt;=` ShiftExpression
+        RelationalExpression `&gt;=` ShiftExpression
+        RelationalExpression `instanceof` ShiftExpression
+        RelationalExpression `in` ShiftExpression
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>
+      EqualityExpression :
+        EqualityExpression `==` RelationalExpression
+        EqualityExpression `!=` RelationalExpression
+        EqualityExpression `===` RelationalExpression
+        EqualityExpression `!==` RelationalExpression
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>
+      BitwiseANDExpression : BitwiseANDExpression `&amp;` EqualityExpression
+
+      BitwiseXORExpression : BitwiseXORExpression `^` BitwiseANDExpression
+
+      BitwiseORExpression : BitwiseORExpression `|` BitwiseXORExpression
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>
+      LogicalANDExpression : LogicalANDExpression `&amp;&amp;` BitwiseORExpression
+
+      LogicalORExpression : LogicalORExpression `||` LogicalANDExpression
+
+      CoalesceExpression : CoalesceExpressionHead `??` BitwiseORExpression
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>ConditionalExpression : ShortCircuitExpression `?` AssignmentExpression `:` AssignmentExpression</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>
+      AssignmentExpression :
+        ArrowFunction
+        AsyncArrowFunction
+    </emu-grammar>
+    <emu-alg>
+      1. Return *true*.
+    </emu-alg>
+    <emu-grammar>
+      AssignmentExpression :
+        YieldExpression
+        LeftHandSideExpression `=` AssignmentExpression
+        LeftHandSideExpression AssignmentOperator AssignmentExpression
+        LeftHandSideExpression `&amp;&amp;=` AssignmentExpression
+        LeftHandSideExpression `||=` AssignmentExpression
+        LeftHandSideExpression `??=` AssignmentExpression
+    </emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>Expression : Expression `,` AssignmentExpression</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>FunctionExpression : `function` BindingIdentifier? `(` FormalParameters `)` `{` FunctionBody `}`</emu-grammar>
+    <emu-alg>
+      1. Return *true*.
+    </emu-alg>
+    <emu-grammar>GeneratorExpression : `function` `*` BindingIdentifier? `(` FormalParameters `)` `{` GeneratorBody `}`</emu-grammar>
+    <emu-alg>
+      1. Return *true*.
+    </emu-alg>
+    <emu-grammar>AsyncGeneratorExpression : `async` `function` `*` BindingIdentifier? `(` FormalParameters `)` `{` AsyncGeneratorBody `}`</emu-grammar>
+    <emu-alg>
+      1. Return *true*.
+    </emu-alg>
+    <emu-grammar>ClassExpression : `class` BindingIdentifier? ClassTail</emu-grammar>
+    <emu-alg>
+      1. Return *true*.
+    </emu-alg>
+    <emu-grammar>
+      AsyncFunctionExpression : `async` `function` `(` FormalParameters `)` `{` AsyncFunctionBody `}`
+
+      AsyncFunctionExpression : `async` `function` BindingIdentifier `(` FormalParameters `)` `{` AsyncFunctionBody `}`
+    </emu-grammar>
+    <emu-alg>
+      1. Return *true*.
+    </emu-alg>
+  </emu-clause>
 <!-- insert sdos here -->
 </emu-clause>
 
@@ -12834,29 +13025,6 @@
         </emu-alg>
       </emu-clause>
 
-      <emu-clause id="sec-semantics-static-semantics-isfunctiondefinition">
-        <h1>Static Semantics: IsFunctionDefinition</h1>
-        <emu-see-also-para op="IsFunctionDefinition"></emu-see-also-para>
-        <emu-grammar>
-          PrimaryExpression :
-            `this`
-            IdentifierReference
-            Literal
-            ArrayLiteral
-            ObjectLiteral
-            RegularExpressionLiteral
-            TemplateLiteral
-        </emu-grammar>
-        <emu-alg>
-          1. Return *false*.
-        </emu-alg>
-        <emu-grammar>PrimaryExpression : CoverParenthesizedExpressionAndArrowParameterList</emu-grammar>
-        <emu-alg>
-          1. Let _expr_ be CoveredParenthesizedExpression of |CoverParenthesizedExpressionAndArrowParameterList|.
-          1. Return IsFunctionDefinition of _expr_.
-        </emu-alg>
-      </emu-clause>
-
       <emu-clause id="sec-semantics-static-semantics-isidentifierref">
         <h1>Static Semantics: IsIdentifierRef</h1>
         <emu-see-also-para op="IsIdentifierRef"></emu-see-also-para>
@@ -13647,15 +13815,6 @@
         </ul>
       </emu-clause>
 
-      <emu-clause id="sec-grouping-operator-static-semantics-isfunctiondefinition">
-        <h1>Static Semantics: IsFunctionDefinition</h1>
-        <emu-see-also-para op="IsFunctionDefinition"></emu-see-also-para>
-        <emu-grammar>ParenthesizedExpression : `(` Expression `)`</emu-grammar>
-        <emu-alg>
-          1. Return IsFunctionDefinition of |Expression|.
-        </emu-alg>
-      </emu-clause>
-
       <emu-clause id="sec-grouping-operator-runtime-semantics-namedevaluation">
         <h1>Runtime Semantics: NamedEvaluation</h1>
         <p>With parameter _name_.</p>
@@ -13853,30 +14012,6 @@
         <emu-grammar>OptionalChain : OptionalChain `.` IdentifierName</emu-grammar>
         <emu-alg>
           1. If |OptionalChain| Contains _symbol_ is *true*, return *true*.
-          1. Return *false*.
-        </emu-alg>
-      </emu-clause>
-
-      <emu-clause id="sec-static-semantics-static-semantics-isfunctiondefinition">
-        <h1>Static Semantics: IsFunctionDefinition</h1>
-        <emu-see-also-para op="IsFunctionDefinition"></emu-see-also-para>
-        <emu-grammar>
-          MemberExpression :
-            MemberExpression `[` Expression `]`
-            MemberExpression `.` IdentifierName
-            MemberExpression TemplateLiteral
-            SuperProperty
-            MetaProperty
-            `new` MemberExpression Arguments
-
-          NewExpression :
-            `new` NewExpression
-
-          LeftHandSideExpression :
-            CallExpression
-            OptionalExpression
-        </emu-grammar>
-        <emu-alg>
           1. Return *false*.
         </emu-alg>
       </emu-clause>
@@ -14462,21 +14597,6 @@
       </ul>
     </emu-clause>
 
-    <emu-clause id="sec-update-expressions-static-semantics-isfunctiondefinition">
-      <h1>Static Semantics: IsFunctionDefinition</h1>
-      <emu-see-also-para op="IsFunctionDefinition"></emu-see-also-para>
-      <emu-grammar>
-        UpdateExpression :
-          LeftHandSideExpression `++`
-          LeftHandSideExpression `--`
-          `++` UnaryExpression
-          `--` UnaryExpression
-      </emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-postfix-increment-operator">
       <h1>Postfix Increment Operator</h1>
 
@@ -14557,25 +14677,6 @@
         `!` UnaryExpression[?Yield, ?Await]
         [+Await] AwaitExpression[?Yield]
     </emu-grammar>
-
-    <emu-clause id="sec-unary-operators-static-semantics-isfunctiondefinition">
-      <h1>Static Semantics: IsFunctionDefinition</h1>
-      <emu-see-also-para op="IsFunctionDefinition"></emu-see-also-para>
-      <emu-grammar>
-        UnaryExpression :
-          `delete` UnaryExpression
-          `void` UnaryExpression
-          `typeof` UnaryExpression
-          `+` UnaryExpression
-          `-` UnaryExpression
-          `~` UnaryExpression
-          `!` UnaryExpression
-          AwaitExpression
-      </emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-    </emu-clause>
 
     <emu-clause id="sec-delete-operator">
       <h1>The `delete` Operator</h1>
@@ -14827,18 +14928,6 @@
         UpdateExpression[?Yield, ?Await] `**` ExponentiationExpression[?Yield, ?Await]
     </emu-grammar>
 
-    <emu-clause id="sec-exp-operator-static-semantics-isfunctiondefinition">
-      <h1>Static Semantics: IsFunctionDefinition</h1>
-      <emu-see-also-para op="IsFunctionDefinition"></emu-see-also-para>
-      <emu-grammar>
-        ExponentiationExpression :
-          UpdateExpression `**` ExponentiationExpression
-      </emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-exp-operator-runtime-semantics-evaluation">
       <h1>Runtime Semantics: Evaluation</h1>
       <emu-grammar>
@@ -14869,15 +14958,6 @@
       </ul>
     </emu-note>
 
-    <emu-clause id="sec-multiplicative-operators-static-semantics-isfunctiondefinition">
-      <h1>Static Semantics: IsFunctionDefinition</h1>
-      <emu-see-also-para op="IsFunctionDefinition"></emu-see-also-para>
-      <emu-grammar>MultiplicativeExpression : MultiplicativeExpression MultiplicativeOperator ExponentiationExpression</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-multiplicative-operators-runtime-semantics-evaluation">
       <h1>Runtime Semantics: Evaluation</h1>
       <emu-grammar>MultiplicativeExpression : MultiplicativeExpression MultiplicativeOperator ExponentiationExpression</emu-grammar>
@@ -14897,19 +14977,6 @@
         AdditiveExpression[?Yield, ?Await] `+` MultiplicativeExpression[?Yield, ?Await]
         AdditiveExpression[?Yield, ?Await] `-` MultiplicativeExpression[?Yield, ?Await]
     </emu-grammar>
-
-    <emu-clause id="sec-additive-operators-static-semantics-isfunctiondefinition">
-      <h1>Static Semantics: IsFunctionDefinition</h1>
-      <emu-see-also-para op="IsFunctionDefinition"></emu-see-also-para>
-      <emu-grammar>
-        AdditiveExpression :
-          AdditiveExpression `+` MultiplicativeExpression
-          AdditiveExpression `-` MultiplicativeExpression
-      </emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-    </emu-clause>
 
     <emu-clause id="sec-addition-operator-plus">
       <h1>The Addition Operator ( `+` )</h1>
@@ -14952,20 +15019,6 @@
         ShiftExpression[?Yield, ?Await] `&gt;&gt;` AdditiveExpression[?Yield, ?Await]
         ShiftExpression[?Yield, ?Await] `&gt;&gt;&gt;` AdditiveExpression[?Yield, ?Await]
     </emu-grammar>
-
-    <emu-clause id="sec-bitwise-shift-operators-static-semantics-isfunctiondefinition">
-      <h1>Static Semantics: IsFunctionDefinition</h1>
-      <emu-see-also-para op="IsFunctionDefinition"></emu-see-also-para>
-      <emu-grammar>
-        ShiftExpression :
-          ShiftExpression `&lt;&lt;` AdditiveExpression
-          ShiftExpression `&gt;&gt;` AdditiveExpression
-          ShiftExpression `&gt;&gt;&gt;` AdditiveExpression
-      </emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-    </emu-clause>
 
     <emu-clause id="sec-left-shift-operator">
       <h1>The Left Shift Operator ( `&lt;&lt;` )</h1>
@@ -15032,23 +15085,6 @@
     <emu-note>
       <p>The <sub>[In]</sub> grammar parameter is needed to avoid confusing the `in` operator in a relational expression with the `in` operator in a `for` statement.</p>
     </emu-note>
-
-    <emu-clause id="sec-relational-operators-static-semantics-isfunctiondefinition">
-      <h1>Static Semantics: IsFunctionDefinition</h1>
-      <emu-see-also-para op="IsFunctionDefinition"></emu-see-also-para>
-      <emu-grammar>
-        RelationalExpression :
-          RelationalExpression `&lt;` ShiftExpression
-          RelationalExpression `&gt;` ShiftExpression
-          RelationalExpression `&lt;=` ShiftExpression
-          RelationalExpression `&gt;=` ShiftExpression
-          RelationalExpression `instanceof` ShiftExpression
-          RelationalExpression `in` ShiftExpression
-      </emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-    </emu-clause>
 
     <emu-clause id="sec-relational-operators-runtime-semantics-evaluation">
       <h1>Runtime Semantics: Evaluation</h1>
@@ -15142,21 +15178,6 @@
         EqualityExpression[?In, ?Yield, ?Await] `===` RelationalExpression[?In, ?Yield, ?Await]
         EqualityExpression[?In, ?Yield, ?Await] `!==` RelationalExpression[?In, ?Yield, ?Await]
     </emu-grammar>
-
-    <emu-clause id="sec-equality-operators-static-semantics-isfunctiondefinition">
-      <h1>Static Semantics: IsFunctionDefinition</h1>
-      <emu-see-also-para op="IsFunctionDefinition"></emu-see-also-para>
-      <emu-grammar>
-        EqualityExpression :
-          EqualityExpression `==` RelationalExpression
-          EqualityExpression `!=` RelationalExpression
-          EqualityExpression `===` RelationalExpression
-          EqualityExpression `!==` RelationalExpression
-      </emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-    </emu-clause>
 
     <emu-clause id="sec-equality-operators-runtime-semantics-evaluation">
       <h1>Runtime Semantics: Evaluation</h1>
@@ -15255,21 +15276,6 @@
         BitwiseORExpression[?In, ?Yield, ?Await] `|` BitwiseXORExpression[?In, ?Yield, ?Await]
     </emu-grammar>
 
-    <emu-clause id="sec-binary-bitwise-operators-static-semantics-isfunctiondefinition">
-      <h1>Static Semantics: IsFunctionDefinition</h1>
-      <emu-see-also-para op="IsFunctionDefinition"></emu-see-also-para>
-      <emu-grammar>
-        BitwiseANDExpression : BitwiseANDExpression `&amp;` EqualityExpression
-
-        BitwiseXORExpression : BitwiseXORExpression `^` BitwiseANDExpression
-
-        BitwiseORExpression : BitwiseORExpression `|` BitwiseXORExpression
-      </emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-binary-bitwise-operators-runtime-semantics-evaluation">
       <h1>Runtime Semantics: Evaluation</h1>
       <emu-grammar>BitwiseANDExpression : BitwiseANDExpression `&amp;` EqualityExpression</emu-grammar>
@@ -15314,21 +15320,6 @@
       <p>The value produced by a `&amp;&amp;` or `||` operator is not necessarily of type Boolean. The value produced will always be the value of one of the two operand expressions.</p>
     </emu-note>
 
-    <emu-clause id="sec-binary-logical-operators-static-semantics-isfunctiondefinition">
-      <h1>Static Semantics: IsFunctionDefinition</h1>
-      <emu-see-also-para op="IsFunctionDefinition"></emu-see-also-para>
-      <emu-grammar>
-        LogicalANDExpression : LogicalANDExpression `&amp;&amp;` BitwiseORExpression
-
-        LogicalORExpression : LogicalORExpression `||` LogicalANDExpression
-
-        CoalesceExpression : CoalesceExpressionHead `??` BitwiseORExpression
-      </emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-binary-logical-operators-runtime-semantics-evaluation">
       <h1>Runtime Semantics: Evaluation</h1>
       <emu-grammar>LogicalANDExpression : LogicalANDExpression `&amp;&amp;` BitwiseORExpression</emu-grammar>
@@ -15372,15 +15363,6 @@
     <emu-note>
       <p>The grammar for a |ConditionalExpression| in ECMAScript is slightly different from that in C and Java, which each allow the second subexpression to be an |Expression| but restrict the third expression to be a |ConditionalExpression|. The motivation for this difference in ECMAScript is to allow an assignment expression to be governed by either arm of a conditional and to eliminate the confusing and fairly useless case of a comma expression as the centre expression.</p>
     </emu-note>
-
-    <emu-clause id="sec-conditional-operator-static-semantics-isfunctiondefinition">
-      <h1>Static Semantics: IsFunctionDefinition</h1>
-      <emu-see-also-para op="IsFunctionDefinition"></emu-see-also-para>
-      <emu-grammar>ConditionalExpression : ShortCircuitExpression `?` AssignmentExpression `:` AssignmentExpression</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-    </emu-clause>
 
     <emu-clause id="sec-conditional-operator-runtime-semantics-evaluation">
       <h1>Runtime Semantics: Evaluation</h1>
@@ -15447,31 +15429,6 @@
           It is a Syntax Error if AssignmentTargetType of |LeftHandSideExpression| is not ~simple~.
         </li>
       </ul>
-    </emu-clause>
-
-    <emu-clause id="sec-assignment-operators-static-semantics-isfunctiondefinition">
-      <h1>Static Semantics: IsFunctionDefinition</h1>
-      <emu-see-also-para op="IsFunctionDefinition"></emu-see-also-para>
-      <emu-grammar>
-        AssignmentExpression :
-          ArrowFunction
-          AsyncArrowFunction
-      </emu-grammar>
-      <emu-alg>
-        1. Return *true*.
-      </emu-alg>
-      <emu-grammar>
-        AssignmentExpression :
-          YieldExpression
-          LeftHandSideExpression `=` AssignmentExpression
-          LeftHandSideExpression AssignmentOperator AssignmentExpression
-          LeftHandSideExpression `&amp;&amp;=` AssignmentExpression
-          LeftHandSideExpression `||=` AssignmentExpression
-          LeftHandSideExpression `??=` AssignmentExpression
-      </emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
     </emu-clause>
 
     <emu-clause id="sec-assignment-operators-runtime-semantics-evaluation">
@@ -15976,15 +15933,6 @@
         AssignmentExpression[?In, ?Yield, ?Await]
         Expression[?In, ?Yield, ?Await] `,` AssignmentExpression[?In, ?Yield, ?Await]
     </emu-grammar>
-
-    <emu-clause id="sec-comma-operator-static-semantics-isfunctiondefinition">
-      <h1>Static Semantics: IsFunctionDefinition</h1>
-      <emu-see-also-para op="IsFunctionDefinition"></emu-see-also-para>
-      <emu-grammar>Expression : Expression `,` AssignmentExpression</emu-grammar>
-      <emu-alg>
-        1. Return *false*.
-      </emu-alg>
-    </emu-clause>
 
     <emu-clause id="sec-comma-operator-runtime-semantics-evaluation">
       <h1>Runtime Semantics: Evaluation</h1>
@@ -19641,15 +19589,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-function-definitions-static-semantics-isfunctiondefinition">
-      <h1>Static Semantics: IsFunctionDefinition</h1>
-      <emu-see-also-para op="IsFunctionDefinition"></emu-see-also-para>
-      <emu-grammar>FunctionExpression : `function` BindingIdentifier? `(` FormalParameters `)` `{` FunctionBody `}`</emu-grammar>
-      <emu-alg>
-        1. Return *true*.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-function-definitions-static-semantics-issimpleparameterlist">
       <h1>Static Semantics: IsSimpleParameterList</h1>
       <emu-see-also-para op="IsSimpleParameterList"></emu-see-also-para>
@@ -20416,15 +20355,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-generator-function-definitions-static-semantics-isfunctiondefinition">
-      <h1>Static Semantics: IsFunctionDefinition</h1>
-      <emu-see-also-para op="IsFunctionDefinition"></emu-see-also-para>
-      <emu-grammar>GeneratorExpression : `function` `*` BindingIdentifier? `(` FormalParameters `)` `{` GeneratorBody `}`</emu-grammar>
-      <emu-alg>
-        1. Return *true*.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-generator-function-definitions-static-semantics-propname">
       <h1>Static Semantics: PropName</h1>
       <emu-see-also-para op="PropName"></emu-see-also-para>
@@ -20710,15 +20640,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-async-generator-function-definitions-static-semantics-isfunctiondefinition">
-      <h1>Static Semantics: IsFunctionDefinition</h1>
-      <emu-see-also-para op="IsFunctionDefinition"></emu-see-also-para>
-      <emu-grammar>AsyncGeneratorExpression : `async` `function` `*` BindingIdentifier? `(` FormalParameters `)` `{` AsyncGeneratorBody `}`</emu-grammar>
-      <emu-alg>
-        1. Return *true*.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-async-generator-function-definitions-static-semantics-propname">
       <h1>Static Semantics: PropName</h1>
       <emu-see-also-para op="PropName"></emu-see-also-para>
@@ -20996,15 +20917,6 @@
       </emu-grammar>
       <emu-alg>
         1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-class-definitions-static-semantics-isfunctiondefinition">
-      <h1>Static Semantics: IsFunctionDefinition</h1>
-      <emu-see-also-para op="IsFunctionDefinition"></emu-see-also-para>
-      <emu-grammar>ClassExpression : `class` BindingIdentifier? ClassTail</emu-grammar>
-      <emu-alg>
-        1. Return *true*.
       </emu-alg>
     </emu-clause>
 
@@ -21313,18 +21225,6 @@
       </emu-grammar>
       <emu-alg>
         1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-async-function-definitions-static-semantics-IsFunctionDefinition">
-      <h1>Static Semantics: IsFunctionDefinition</h1>
-      <emu-grammar>
-        AsyncFunctionExpression : `async` `function` `(` FormalParameters `)` `{` AsyncFunctionBody `}`
-
-        AsyncFunctionExpression : `async` `function` BindingIdentifier `(` FormalParameters `)` `{` AsyncFunctionBody `}`
-      </emu-grammar>
-      <emu-alg>
-        1. Return *true*.
       </emu-alg>
     </emu-clause>
 
