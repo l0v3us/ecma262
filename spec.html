@@ -9167,6 +9167,61 @@
       1. Return 1.
     </emu-alg>
   </emu-clause>
+
+  <emu-clause id="sec-runtime-semantics-evaluatebody" type="sdo" aoid="EvaluateBody">
+    <h1>Runtime Semantics: EvaluateBody</h1>
+    <p>With parameters _functionObject_ and List _argumentsList_.</p>
+    <emu-grammar>FunctionBody : FunctionStatementList</emu-grammar>
+    <emu-alg>
+      1. Perform ? FunctionDeclarationInstantiation(_functionObject_, _argumentsList_).
+      1. Return the result of evaluating |FunctionStatementList|.
+    </emu-alg>
+    <emu-grammar>ConciseBody : ExpressionBody</emu-grammar>
+    <emu-alg>
+      1. Perform ? FunctionDeclarationInstantiation(_functionObject_, _argumentsList_).
+      1. Return the result of evaluating |ExpressionBody|.
+    </emu-alg>
+    <emu-grammar>GeneratorBody : FunctionBody</emu-grammar>
+    <emu-alg>
+      1. Perform ? FunctionDeclarationInstantiation(_functionObject_, _argumentsList_).
+      1. Let _G_ be ? OrdinaryCreateFromConstructor(_functionObject_, *"%GeneratorFunction.prototype.prototype%"*, &laquo; [[GeneratorState]], [[GeneratorContext]] &raquo;).
+      1. Perform GeneratorStart(_G_, |FunctionBody|).
+      1. Return Completion { [[Type]]: ~return~, [[Value]]: _G_, [[Target]]: ~empty~ }.
+    </emu-alg>
+    <emu-grammar>
+      AsyncGeneratorBody : FunctionBody
+    </emu-grammar>
+    <emu-alg>
+      1. Perform ? FunctionDeclarationInstantiation(_functionObject_, _argumentsList_).
+      1. Let _generator_ be ? OrdinaryCreateFromConstructor(_functionObject_, *"%AsyncGeneratorFunction.prototype.prototype%"*, &laquo; [[AsyncGeneratorState]], [[AsyncGeneratorContext]], [[AsyncGeneratorQueue]] &raquo;).
+      1. Perform ! AsyncGeneratorStart(_generator_, |FunctionBody|).
+      1. Return Completion { [[Type]]: ~return~, [[Value]]: _generator_, [[Target]]: ~empty~ }.
+    </emu-alg>
+    <emu-grammar>
+      AsyncFunctionBody : FunctionBody
+    </emu-grammar>
+    <emu-alg>
+      1. Let _promiseCapability_ be ! NewPromiseCapability(%Promise%).
+      1. Let _declResult_ be FunctionDeclarationInstantiation(_functionObject_, _argumentsList_).
+      1. If _declResult_ is not an abrupt completion, then
+        1. Perform ! AsyncFunctionStart(_promiseCapability_, |FunctionBody|).
+      1. Else,
+        1. Perform ! Call(_promiseCapability_.[[Reject]], *undefined*, &laquo; _declResult_.[[Value]] &raquo;).
+      1. Return Completion { [[Type]]: ~return~, [[Value]]: _promiseCapability_.[[Promise]], [[Target]]: ~empty~ }.
+    </emu-alg>
+    <emu-grammar>
+      AsyncConciseBody : ExpressionBody
+    </emu-grammar>
+    <emu-alg>
+      1. Let _promiseCapability_ be ! NewPromiseCapability(%Promise%).
+      1. Let _declResult_ be FunctionDeclarationInstantiation(_functionObject_, _argumentsList_).
+      1. If _declResult_ is not an abrupt completion, then
+        1. Perform ! AsyncFunctionStart(_promiseCapability_, |ExpressionBody|).
+      1. Else,
+        1. Perform ! Call(_promiseCapability_.[[Reject]], *undefined*, &laquo; _declResult_.[[Value]] &raquo;).
+      1. Return Completion { [[Type]]: ~return~, [[Value]]: _promiseCapability_.[[Promise]], [[Target]]: ~empty~ }.
+    </emu-alg>
+  </emu-clause>
 <!-- insert sdos here -->
 </emu-clause>
 
@@ -19856,17 +19911,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-function-definitions-runtime-semantics-evaluatebody">
-      <h1>Runtime Semantics: EvaluateBody</h1>
-      <p>With parameters _functionObject_ and List _argumentsList_.</p>
-      <emu-see-also-para op="EvaluateBody"></emu-see-also-para>
-      <emu-grammar>FunctionBody : FunctionStatementList</emu-grammar>
-      <emu-alg>
-        1. Perform ? FunctionDeclarationInstantiation(_functionObject_, _argumentsList_).
-        1. Return the result of evaluating |FunctionStatementList|.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-function-definitions-runtime-semantics-instantiatefunctionobject">
       <h1>Runtime Semantics: InstantiateFunctionObject</h1>
       <p>With parameter _scope_.</p>
@@ -20011,17 +20055,6 @@
       </emu-grammar>
       <emu-alg>
         1. Return the |ArrowFormalParameters| that is covered by |CoverParenthesizedExpressionAndArrowParameterList|.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-arrow-function-definitions-runtime-semantics-evaluatebody">
-      <h1>Runtime Semantics: EvaluateBody</h1>
-      <p>With parameters _functionObject_ and List _argumentsList_.</p>
-      <emu-see-also-para op="EvaluateBody"></emu-see-also-para>
-      <emu-grammar>ConciseBody : ExpressionBody</emu-grammar>
-      <emu-alg>
-        1. Perform ? FunctionDeclarationInstantiation(_functionObject_, _argumentsList_).
-        1. Return the result of evaluating |ExpressionBody|.
       </emu-alg>
     </emu-clause>
 
@@ -20236,19 +20269,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-generator-function-definitions-runtime-semantics-evaluatebody">
-      <h1>Runtime Semantics: EvaluateBody</h1>
-      <p>With parameters _functionObject_ and List _argumentsList_.</p>
-      <emu-see-also-para op="EvaluateBody"></emu-see-also-para>
-      <emu-grammar>GeneratorBody : FunctionBody</emu-grammar>
-      <emu-alg>
-        1. Perform ? FunctionDeclarationInstantiation(_functionObject_, _argumentsList_).
-        1. Let _G_ be ? OrdinaryCreateFromConstructor(_functionObject_, *"%GeneratorFunction.prototype.prototype%"*, &laquo; [[GeneratorState]], [[GeneratorContext]] &raquo;).
-        1. Perform GeneratorStart(_G_, |FunctionBody|).
-        1. Return Completion { [[Type]]: ~return~, [[Value]]: _G_, [[Target]]: ~empty~ }.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-generator-function-definitions-runtime-semantics-instantiatefunctionobject">
       <h1>Runtime Semantics: InstantiateFunctionObject</h1>
       <p>With parameter _scope_.</p>
@@ -20432,20 +20452,6 @@
       <emu-alg>
         1. If |UniqueFormalParameters| Contains |SuperCall| is *true*, return *true*.
         1. Return |AsyncGeneratorBody| Contains |SuperCall|.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-asyncgenerator-definitions-evaluatebody">
-      <h1>Runtime Semantics: EvaluateBody</h1>
-      <p>With parameters _functionObject_ and List _argumentsList_.</p>
-      <emu-grammar>
-        AsyncGeneratorBody : FunctionBody
-      </emu-grammar>
-      <emu-alg>
-        1. Perform ? FunctionDeclarationInstantiation(_functionObject_, _argumentsList_).
-        1. Let _generator_ be ? OrdinaryCreateFromConstructor(_functionObject_, *"%AsyncGeneratorFunction.prototype.prototype%"*, &laquo; [[AsyncGeneratorState]], [[AsyncGeneratorContext]], [[AsyncGeneratorQueue]] &raquo;).
-        1. Perform ! AsyncGeneratorStart(_generator_, |FunctionBody|).
-        1. Return Completion { [[Type]]: ~return~, [[Value]]: _generator_, [[Target]]: ~empty~ }.
       </emu-alg>
     </emu-clause>
 
@@ -20889,23 +20895,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-async-function-definitions-EvaluateBody">
-      <h1>Runtime Semantics: EvaluateBody</h1>
-      <p>With parameters _functionObject_ and List _argumentsList_.</p>
-      <emu-grammar>
-        AsyncFunctionBody : FunctionBody
-      </emu-grammar>
-      <emu-alg>
-        1. Let _promiseCapability_ be ! NewPromiseCapability(%Promise%).
-        1. Let _declResult_ be FunctionDeclarationInstantiation(_functionObject_, _argumentsList_).
-        1. If _declResult_ is not an abrupt completion, then
-          1. Perform ! AsyncFunctionStart(_promiseCapability_, |FunctionBody|).
-        1. Else,
-          1. Perform ! Call(_promiseCapability_.[[Reject]], *undefined*, &laquo; _declResult_.[[Value]] &raquo;).
-        1. Return Completion { [[Type]]: ~return~, [[Value]]: _promiseCapability_.[[Promise]], [[Target]]: ~empty~ }.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-async-function-definitions-runtime-semantics-evaluation">
       <h1>Runtime Semantics: Evaluation</h1>
       <emu-grammar>
@@ -21013,23 +21002,6 @@
       </emu-grammar>
       <emu-alg>
         1. Return the |AsyncArrowHead| that is covered by |CoverCallExpressionAndAsyncArrowHead|.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-async-arrow-function-definitions-EvaluateBody">
-      <h1>Runtime Semantics: EvaluateBody</h1>
-      <p>With parameters _functionObject_ and List _argumentsList_.</p>
-      <emu-grammar>
-        AsyncConciseBody : ExpressionBody
-      </emu-grammar>
-      <emu-alg>
-        1. Let _promiseCapability_ be ! NewPromiseCapability(%Promise%).
-        1. Let _declResult_ be FunctionDeclarationInstantiation(_functionObject_, _argumentsList_).
-        1. If _declResult_ is not an abrupt completion, then
-          1. Perform ! AsyncFunctionStart(_promiseCapability_, |ExpressionBody|).
-        1. Else,
-          1. Perform ! Call(_promiseCapability_.[[Reject]], *undefined*, &laquo; _declResult_.[[Value]] &raquo;).
-        1. Return Completion { [[Type]]: ~return~, [[Value]]: _promiseCapability_.[[Promise]], [[Target]]: ~empty~ }.
       </emu-alg>
     </emu-clause>
 
