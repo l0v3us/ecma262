@@ -6051,6 +6051,205 @@
       1. Return &laquo; *"\*default\*"* &raquo;.
     </emu-alg>
   </emu-clause>
+
+  <emu-clause id="sec-static-semantics-assignmenttargettype" type="sdo" aoid="AssignmentTargetType">
+    <h1>Static Semantics: AssignmentTargetType</h1>
+    <emu-grammar>IdentifierReference : Identifier</emu-grammar>
+    <emu-alg>
+      1. If this |IdentifierReference| is contained in strict mode code and StringValue of |Identifier| is *"eval"* or *"arguments"*, return ~invalid~.
+      1. Return ~simple~.
+    </emu-alg>
+    <emu-grammar>IdentifierReference : `yield`</emu-grammar>
+    <emu-alg>
+      1. Return ~simple~.
+    </emu-alg>
+    <emu-grammar>IdentifierReference : `await`</emu-grammar>
+    <emu-alg>
+      1. Return ~simple~.
+    </emu-alg>
+    <emu-grammar>
+      PrimaryExpression :
+        `this`
+        Literal
+        ArrayLiteral
+        ObjectLiteral
+        FunctionExpression
+        ClassExpression
+        GeneratorExpression
+        AsyncFunctionExpression
+        AsyncGeneratorExpression
+        RegularExpressionLiteral
+        TemplateLiteral
+    </emu-grammar>
+    <emu-alg>
+      1. Return ~invalid~.
+    </emu-alg>
+    <emu-grammar>PrimaryExpression : CoverParenthesizedExpressionAndArrowParameterList</emu-grammar>
+    <emu-alg>
+      1. Let _expr_ be CoveredParenthesizedExpression of |CoverParenthesizedExpressionAndArrowParameterList|.
+      1. Return AssignmentTargetType of _expr_.
+    </emu-alg>
+    <emu-grammar>ParenthesizedExpression : `(` Expression `)`</emu-grammar>
+    <emu-alg>
+      1. Return AssignmentTargetType of |Expression|.
+    </emu-alg>
+    <emu-grammar>
+      CallExpression :
+        CallExpression `[` Expression `]`
+        CallExpression `.` IdentifierName
+
+      MemberExpression :
+        MemberExpression `[` Expression `]`
+        MemberExpression `.` IdentifierName
+        SuperProperty
+    </emu-grammar>
+    <emu-alg>
+      1. Return ~simple~.
+    </emu-alg>
+    <emu-grammar>
+      CallExpression :
+        CoverCallExpressionAndAsyncArrowHead
+        SuperCall
+        ImportCall
+        CallExpression Arguments
+        CallExpression TemplateLiteral
+
+      NewExpression :
+        `new` NewExpression
+
+      MemberExpression :
+        MemberExpression TemplateLiteral
+        `new` MemberExpression Arguments
+
+      NewTarget :
+        `new` `.` `target`
+
+      ImportMeta :
+        `import` `.` `meta`
+
+      LeftHandSideExpression :
+        OptionalExpression
+    </emu-grammar>
+    <emu-alg>
+      1. Return ~invalid~.
+    </emu-alg>
+    <emu-grammar>
+      UpdateExpression :
+        LeftHandSideExpression `++`
+        LeftHandSideExpression `--`
+        `++` UnaryExpression
+        `--` UnaryExpression
+    </emu-grammar>
+    <emu-alg>
+      1. Return ~invalid~.
+    </emu-alg>
+    <emu-grammar>
+      UnaryExpression :
+        `delete` UnaryExpression
+        `void` UnaryExpression
+        `typeof` UnaryExpression
+        `+` UnaryExpression
+        `-` UnaryExpression
+        `~` UnaryExpression
+        `!` UnaryExpression
+        AwaitExpression
+    </emu-grammar>
+    <emu-alg>
+      1. Return ~invalid~.
+    </emu-alg>
+    <emu-grammar>
+      ExponentiationExpression :
+        UpdateExpression `**` ExponentiationExpression
+    </emu-grammar>
+    <emu-alg>
+      1. Return ~invalid~.
+    </emu-alg>
+    <emu-grammar>MultiplicativeExpression : MultiplicativeExpression MultiplicativeOperator ExponentiationExpression</emu-grammar>
+    <emu-alg>
+      1. Return ~invalid~.
+    </emu-alg>
+    <emu-grammar>
+      AdditiveExpression :
+        AdditiveExpression `+` MultiplicativeExpression
+        AdditiveExpression `-` MultiplicativeExpression
+    </emu-grammar>
+    <emu-alg>
+      1. Return ~invalid~.
+    </emu-alg>
+    <emu-grammar>
+      ShiftExpression :
+        ShiftExpression `&lt;&lt;` AdditiveExpression
+        ShiftExpression `&gt;&gt;` AdditiveExpression
+        ShiftExpression `&gt;&gt;&gt;` AdditiveExpression
+    </emu-grammar>
+    <emu-alg>
+      1. Return ~invalid~.
+    </emu-alg>
+    <emu-grammar>
+      RelationalExpression :
+        RelationalExpression `&lt;` ShiftExpression
+        RelationalExpression `&gt;` ShiftExpression
+        RelationalExpression `&lt;=` ShiftExpression
+        RelationalExpression `&gt;=` ShiftExpression
+        RelationalExpression `instanceof` ShiftExpression
+        RelationalExpression `in` ShiftExpression
+    </emu-grammar>
+    <emu-alg>
+      1. Return ~invalid~.
+    </emu-alg>
+    <emu-grammar>
+      EqualityExpression :
+        EqualityExpression `==` RelationalExpression
+        EqualityExpression `!=` RelationalExpression
+        EqualityExpression `===` RelationalExpression
+        EqualityExpression `!==` RelationalExpression
+    </emu-grammar>
+    <emu-alg>
+      1. Return ~invalid~.
+    </emu-alg>
+    <emu-grammar>
+      BitwiseANDExpression : BitwiseANDExpression `&amp;` EqualityExpression
+
+      BitwiseXORExpression : BitwiseXORExpression `^` BitwiseANDExpression
+
+      BitwiseORExpression : BitwiseORExpression `|` BitwiseXORExpression
+    </emu-grammar>
+    <emu-alg>
+      1. Return ~invalid~.
+    </emu-alg>
+    <emu-grammar>
+      LogicalANDExpression : LogicalANDExpression `&amp;&amp;` BitwiseORExpression
+
+      LogicalORExpression : LogicalORExpression `||` LogicalANDExpression
+
+      CoalesceExpression : CoalesceExpressionHead `??` BitwiseORExpression
+    </emu-grammar>
+    <emu-alg>
+      1. Return ~invalid~.
+    </emu-alg>
+    <emu-grammar>ConditionalExpression : ShortCircuitExpression `?` AssignmentExpression `:` AssignmentExpression</emu-grammar>
+    <emu-alg>
+      1. Return ~invalid~.
+    </emu-alg>
+    <emu-grammar>
+      AssignmentExpression :
+        YieldExpression
+        ArrowFunction
+        AsyncArrowFunction
+        LeftHandSideExpression `=` AssignmentExpression
+        LeftHandSideExpression AssignmentOperator AssignmentExpression
+        LeftHandSideExpression `&amp;&amp;=` AssignmentExpression
+        LeftHandSideExpression `||=` AssignmentExpression
+        LeftHandSideExpression `??=` AssignmentExpression
+    </emu-grammar>
+    <emu-alg>
+      1. Return ~invalid~.
+    </emu-alg>
+    <emu-grammar>Expression : Expression `,` AssignmentExpression</emu-grammar>
+    <emu-alg>
+      1. Return ~invalid~.
+    </emu-alg>
+  </emu-clause>
 <!-- insert sdos here -->
 </emu-clause>
 
@@ -12385,24 +12584,6 @@
       </emu-note>
     </emu-clause>
 
-    <emu-clause oldids="sec-identifiers-static-semantics-isvalidsimpleassignmenttarget" id="sec-identifiers-static-semantics-assignmenttargettype">
-      <h1>Static Semantics: AssignmentTargetType</h1>
-      <emu-see-also-para op="AssignmentTargetType"></emu-see-also-para>
-      <emu-grammar>IdentifierReference : Identifier</emu-grammar>
-      <emu-alg>
-        1. If this |IdentifierReference| is contained in strict mode code and StringValue of |Identifier| is *"eval"* or *"arguments"*, return ~invalid~.
-        1. Return ~simple~.
-      </emu-alg>
-      <emu-grammar>IdentifierReference : `yield`</emu-grammar>
-      <emu-alg>
-        1. Return ~simple~.
-      </emu-alg>
-      <emu-grammar>IdentifierReference : `await`</emu-grammar>
-      <emu-alg>
-        1. Return ~simple~.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-identifiers-static-semantics-stringvalue">
       <h1>Static Semantics: StringValue</h1>
       <emu-see-also-para op="StringValue"></emu-see-also-para>
@@ -12599,33 +12780,6 @@
         </emu-grammar>
         <emu-alg>
           1. Return *false*.
-        </emu-alg>
-      </emu-clause>
-
-      <emu-clause oldids="sec-semantics-static-semantics-isvalidsimpleassignmenttarget" id="sec-semantics-static-semantics-assignmenttargettype">
-        <h1>Static Semantics: AssignmentTargetType</h1>
-        <emu-see-also-para op="AssignmentTargetType"></emu-see-also-para>
-        <emu-grammar>
-          PrimaryExpression :
-            `this`
-            Literal
-            ArrayLiteral
-            ObjectLiteral
-            FunctionExpression
-            ClassExpression
-            GeneratorExpression
-            AsyncFunctionExpression
-            AsyncGeneratorExpression
-            RegularExpressionLiteral
-            TemplateLiteral
-        </emu-grammar>
-        <emu-alg>
-          1. Return ~invalid~.
-        </emu-alg>
-        <emu-grammar>PrimaryExpression : CoverParenthesizedExpressionAndArrowParameterList</emu-grammar>
-        <emu-alg>
-          1. Let _expr_ be CoveredParenthesizedExpression of |CoverParenthesizedExpressionAndArrowParameterList|.
-          1. Return AssignmentTargetType of _expr_.
         </emu-alg>
       </emu-clause>
     </emu-clause>
@@ -13401,15 +13555,6 @@
         </emu-alg>
       </emu-clause>
 
-      <emu-clause oldids="sec-grouping-operator-static-semantics-isvalidsimpleassignmenttarget" id="sec-grouping-operator-static-semantics-assignmenttargettype">
-        <h1>Static Semantics: AssignmentTargetType</h1>
-        <emu-see-also-para op="AssignmentTargetType"></emu-see-also-para>
-        <emu-grammar>ParenthesizedExpression : `(` Expression `)`</emu-grammar>
-        <emu-alg>
-          1. Return AssignmentTargetType of |Expression|.
-        </emu-alg>
-      </emu-clause>
-
       <emu-clause id="sec-grouping-operator-runtime-semantics-namedevaluation">
         <h1>Runtime Semantics: NamedEvaluation</h1>
         <p>With parameter _name_.</p>
@@ -13685,51 +13830,6 @@
         </emu-grammar>
         <emu-alg>
           1. Return *false*.
-        </emu-alg>
-      </emu-clause>
-
-      <emu-clause oldids="sec-static-semantics-static-semantics-isvalidsimpleassignmenttarget" id="sec-static-semantics-static-semantics-assignmenttargettype">
-        <h1>Static Semantics: AssignmentTargetType</h1>
-        <emu-see-also-para op="AssignmentTargetType"></emu-see-also-para>
-        <emu-grammar>
-          CallExpression :
-            CallExpression `[` Expression `]`
-            CallExpression `.` IdentifierName
-
-          MemberExpression :
-            MemberExpression `[` Expression `]`
-            MemberExpression `.` IdentifierName
-            SuperProperty
-        </emu-grammar>
-        <emu-alg>
-          1. Return ~simple~.
-        </emu-alg>
-        <emu-grammar>
-          CallExpression :
-            CoverCallExpressionAndAsyncArrowHead
-            SuperCall
-            ImportCall
-            CallExpression Arguments
-            CallExpression TemplateLiteral
-
-          NewExpression :
-            `new` NewExpression
-
-          MemberExpression :
-            MemberExpression TemplateLiteral
-            `new` MemberExpression Arguments
-
-          NewTarget :
-            `new` `.` `target`
-
-          ImportMeta :
-            `import` `.` `meta`
-
-          LeftHandSideExpression :
-            OptionalExpression
-        </emu-grammar>
-        <emu-alg>
-          1. Return ~invalid~.
         </emu-alg>
       </emu-clause>
     </emu-clause>
@@ -14276,21 +14376,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause oldids="sec-update-expressions-static-semantics-isvalidsimpleassignmenttarget" id="sec-update-expressions-static-semantics-assignmenttargettype">
-      <h1>Static Semantics: AssignmentTargetType</h1>
-      <emu-see-also-para op="AssignmentTargetType"></emu-see-also-para>
-      <emu-grammar>
-        UpdateExpression :
-          LeftHandSideExpression `++`
-          LeftHandSideExpression `--`
-          `++` UnaryExpression
-          `--` UnaryExpression
-      </emu-grammar>
-      <emu-alg>
-        1. Return ~invalid~.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-postfix-increment-operator">
       <h1>Postfix Increment Operator</h1>
 
@@ -14388,25 +14473,6 @@
       </emu-grammar>
       <emu-alg>
         1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause oldids="sec-unary-operators-static-semantics-isvalidsimpleassignmenttarget" id="sec-unary-operators-static-semantics-assignmenttargettype">
-      <h1>Static Semantics: AssignmentTargetType</h1>
-      <emu-see-also-para op="AssignmentTargetType"></emu-see-also-para>
-      <emu-grammar>
-        UnaryExpression :
-          `delete` UnaryExpression
-          `void` UnaryExpression
-          `typeof` UnaryExpression
-          `+` UnaryExpression
-          `-` UnaryExpression
-          `~` UnaryExpression
-          `!` UnaryExpression
-          AwaitExpression
-      </emu-grammar>
-      <emu-alg>
-        1. Return ~invalid~.
       </emu-alg>
     </emu-clause>
 
@@ -14672,18 +14738,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause oldids="sec-exp-operator-static-semantics-isvalidsimpleassignmenttarget" id="sec-exp-operator-static-semantics-assignmenttargettype">
-      <h1>Static Semantics: AssignmentTargetType</h1>
-      <emu-see-also-para op="AssignmentTargetType"></emu-see-also-para>
-      <emu-grammar>
-        ExponentiationExpression :
-          UpdateExpression `**` ExponentiationExpression
-      </emu-grammar>
-      <emu-alg>
-        1. Return ~invalid~.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-exp-operator-runtime-semantics-evaluation">
       <h1>Runtime Semantics: Evaluation</h1>
       <emu-grammar>
@@ -14723,15 +14777,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause oldids="sec-multiplicative-operators-static-semantics-isvalidsimpleassignmenttarget" id="sec-multiplicative-operators-static-semantics-assignmenttargettype">
-      <h1>Static Semantics: AssignmentTargetType</h1>
-      <emu-see-also-para op="AssignmentTargetType"></emu-see-also-para>
-      <emu-grammar>MultiplicativeExpression : MultiplicativeExpression MultiplicativeOperator ExponentiationExpression</emu-grammar>
-      <emu-alg>
-        1. Return ~invalid~.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-multiplicative-operators-runtime-semantics-evaluation">
       <h1>Runtime Semantics: Evaluation</h1>
       <emu-grammar>MultiplicativeExpression : MultiplicativeExpression MultiplicativeOperator ExponentiationExpression</emu-grammar>
@@ -14762,19 +14807,6 @@
       </emu-grammar>
       <emu-alg>
         1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause oldids="sec-additive-operators-static-semantics-isvalidsimpleassignmenttarget" id="sec-additive-operators-static-semantics-assignmenttargettype">
-      <h1>Static Semantics: AssignmentTargetType</h1>
-      <emu-see-also-para op="AssignmentTargetType"></emu-see-also-para>
-      <emu-grammar>
-        AdditiveExpression :
-          AdditiveExpression `+` MultiplicativeExpression
-          AdditiveExpression `-` MultiplicativeExpression
-      </emu-grammar>
-      <emu-alg>
-        1. Return ~invalid~.
       </emu-alg>
     </emu-clause>
 
@@ -14831,20 +14863,6 @@
       </emu-grammar>
       <emu-alg>
         1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause oldids="sec-bitwise-shift-operators-static-semantics-isvalidsimpleassignmenttarget" id="sec-bitwise-shift-operators-static-semantics-assignmenttargettype">
-      <h1>Static Semantics: AssignmentTargetType</h1>
-      <emu-see-also-para op="AssignmentTargetType"></emu-see-also-para>
-      <emu-grammar>
-        ShiftExpression :
-          ShiftExpression `&lt;&lt;` AdditiveExpression
-          ShiftExpression `&gt;&gt;` AdditiveExpression
-          ShiftExpression `&gt;&gt;&gt;` AdditiveExpression
-      </emu-grammar>
-      <emu-alg>
-        1. Return ~invalid~.
       </emu-alg>
     </emu-clause>
 
@@ -14928,23 +14946,6 @@
       </emu-grammar>
       <emu-alg>
         1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause oldids="sec-relational-operators-static-semantics-isvalidsimpleassignmenttarget" id="sec-relational-operators-static-semantics-assignmenttargettype">
-      <h1>Static Semantics: AssignmentTargetType</h1>
-      <emu-see-also-para op="AssignmentTargetType"></emu-see-also-para>
-      <emu-grammar>
-        RelationalExpression :
-          RelationalExpression `&lt;` ShiftExpression
-          RelationalExpression `&gt;` ShiftExpression
-          RelationalExpression `&lt;=` ShiftExpression
-          RelationalExpression `&gt;=` ShiftExpression
-          RelationalExpression `instanceof` ShiftExpression
-          RelationalExpression `in` ShiftExpression
-      </emu-grammar>
-      <emu-alg>
-        1. Return ~invalid~.
       </emu-alg>
     </emu-clause>
 
@@ -15053,21 +15054,6 @@
       </emu-grammar>
       <emu-alg>
         1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause oldids="sec-equality-operators-static-semantics-isvalidsimpleassignmenttarget" id="sec-equality-operators-static-semantics-assignmenttargettype">
-      <h1>Static Semantics: AssignmentTargetType</h1>
-      <emu-see-also-para op="AssignmentTargetType"></emu-see-also-para>
-      <emu-grammar>
-        EqualityExpression :
-          EqualityExpression `==` RelationalExpression
-          EqualityExpression `!=` RelationalExpression
-          EqualityExpression `===` RelationalExpression
-          EqualityExpression `!==` RelationalExpression
-      </emu-grammar>
-      <emu-alg>
-        1. Return ~invalid~.
       </emu-alg>
     </emu-clause>
 
@@ -15183,21 +15169,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause oldids="sec-binary-bitwise-operators-static-semantics-isvalidsimpleassignmenttarget" id="sec-binary-bitwise-operators-static-semantics-assignmenttargettype">
-      <h1>Static Semantics: AssignmentTargetType</h1>
-      <emu-see-also-para op="AssignmentTargetType"></emu-see-also-para>
-      <emu-grammar>
-        BitwiseANDExpression : BitwiseANDExpression `&amp;` EqualityExpression
-
-        BitwiseXORExpression : BitwiseXORExpression `^` BitwiseANDExpression
-
-        BitwiseORExpression : BitwiseORExpression `|` BitwiseXORExpression
-      </emu-grammar>
-      <emu-alg>
-        1. Return ~invalid~.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-binary-bitwise-operators-runtime-semantics-evaluation">
       <h1>Runtime Semantics: Evaluation</h1>
       <emu-grammar>BitwiseANDExpression : BitwiseANDExpression `&amp;` EqualityExpression</emu-grammar>
@@ -15257,21 +15228,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause oldids="sec-binary-logical-operators-static-semantics-isvalidsimpleassignmenttarget" id="sec-binary-logical-operators-static-semantics-assignmenttargettype">
-      <h1>Static Semantics: AssignmentTargetType</h1>
-      <emu-see-also-para op="AssignmentTargetType"></emu-see-also-para>
-      <emu-grammar>
-        LogicalANDExpression : LogicalANDExpression `&amp;&amp;` BitwiseORExpression
-
-        LogicalORExpression : LogicalORExpression `||` LogicalANDExpression
-
-        CoalesceExpression : CoalesceExpressionHead `??` BitwiseORExpression
-      </emu-grammar>
-      <emu-alg>
-        1. Return ~invalid~.
-      </emu-alg>
-    </emu-clause>
-
     <emu-clause id="sec-binary-logical-operators-runtime-semantics-evaluation">
       <h1>Runtime Semantics: Evaluation</h1>
       <emu-grammar>LogicalANDExpression : LogicalANDExpression `&amp;&amp;` BitwiseORExpression</emu-grammar>
@@ -15322,15 +15278,6 @@
       <emu-grammar>ConditionalExpression : ShortCircuitExpression `?` AssignmentExpression `:` AssignmentExpression</emu-grammar>
       <emu-alg>
         1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause oldids="sec-conditional-operator-static-semantics-isvalidsimpleassignmenttarget" id="sec-conditional-operator-static-semantics-assignmenttargettype">
-      <h1>Static Semantics: AssignmentTargetType</h1>
-      <emu-see-also-para op="AssignmentTargetType"></emu-see-also-para>
-      <emu-grammar>ConditionalExpression : ShortCircuitExpression `?` AssignmentExpression `:` AssignmentExpression</emu-grammar>
-      <emu-alg>
-        1. Return ~invalid~.
       </emu-alg>
     </emu-clause>
 
@@ -15423,25 +15370,6 @@
       </emu-grammar>
       <emu-alg>
         1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause oldids="sec-assignment-operators-static-semantics-isvalidsimpleassignmenttarget" id="sec-assignment-operators-static-semantics-assignmenttargettype">
-      <h1>Static Semantics: AssignmentTargetType</h1>
-      <emu-see-also-para op="AssignmentTargetType"></emu-see-also-para>
-      <emu-grammar>
-        AssignmentExpression :
-          YieldExpression
-          ArrowFunction
-          AsyncArrowFunction
-          LeftHandSideExpression `=` AssignmentExpression
-          LeftHandSideExpression AssignmentOperator AssignmentExpression
-          LeftHandSideExpression `&amp;&amp;=` AssignmentExpression
-          LeftHandSideExpression `||=` AssignmentExpression
-          LeftHandSideExpression `??=` AssignmentExpression
-      </emu-grammar>
-      <emu-alg>
-        1. Return ~invalid~.
       </emu-alg>
     </emu-clause>
 
@@ -15954,15 +15882,6 @@
       <emu-grammar>Expression : Expression `,` AssignmentExpression</emu-grammar>
       <emu-alg>
         1. Return *false*.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause oldids="sec-comma-operator-static-semantics-isvalidsimpleassignmenttarget" id="sec-comma-operator-static-semantics-assignmenttargettype">
-      <h1>Static Semantics: AssignmentTargetType</h1>
-      <emu-see-also-para op="AssignmentTargetType"></emu-see-also-para>
-      <emu-grammar>Expression : Expression `,` AssignmentExpression</emu-grammar>
-      <emu-alg>
-        1. Return ~invalid~.
       </emu-alg>
     </emu-clause>
 
