@@ -9593,6 +9593,55 @@
       1. Return a new empty List.
     </emu-alg>
   </emu-clause>
+
+  <emu-clause id="sec-static-semantics-modulerequests" type="sdo" aoid="ModuleRequests">
+    <h1>Static Semantics: ModuleRequests</h1>
+    <emu-grammar>Module : [empty]</emu-grammar>
+    <emu-alg>
+      1. Return a new empty List.
+    </emu-alg>
+    <emu-grammar>ModuleItemList : ModuleItem</emu-grammar>
+    <emu-alg>
+      1. Return ModuleRequests of |ModuleItem|.
+    </emu-alg>
+    <emu-grammar>ModuleItemList : ModuleItemList ModuleItem</emu-grammar>
+    <emu-alg>
+      1. Let _moduleNames_ be ModuleRequests of |ModuleItemList|.
+      1. Let _additionalNames_ be ModuleRequests of |ModuleItem|.
+      1. Append to _moduleNames_ each element of _additionalNames_ that is not already an element of _moduleNames_.
+      1. Return _moduleNames_.
+    </emu-alg>
+    <emu-grammar>ModuleItem : StatementListItem</emu-grammar>
+    <emu-alg>
+      1. Return a new empty List.
+    </emu-alg>
+    <emu-grammar>ImportDeclaration : `import` ImportClause FromClause `;`</emu-grammar>
+    <emu-alg>
+      1. Return ModuleRequests of |FromClause|.
+    </emu-alg>
+    <emu-grammar>ModuleSpecifier : StringLiteral</emu-grammar>
+    <emu-alg>
+      1. Return a List whose sole element is the StringValue of |StringLiteral|.
+    </emu-alg>
+    <emu-grammar>
+      ExportDeclaration : `export` ExportFromClause FromClause `;`
+    </emu-grammar>
+    <emu-alg>
+      1. Return the ModuleRequests of |FromClause|.
+    </emu-alg>
+    <emu-grammar>
+      ExportDeclaration :
+        `export` NamedExports `;`
+        `export` VariableStatement
+        `export` Declaration
+        `export` `default` HoistableDeclaration
+        `export` `default` ClassDeclaration
+        `export` `default` AssignmentExpression `;`
+    </emu-grammar>
+    <emu-alg>
+      1. Return a new empty List.
+    </emu-alg>
+  </emu-clause>
 <!-- insert sdos here -->
 </emu-clause>
 
@@ -21900,30 +21949,6 @@
         </emu-alg>
       </emu-clause>
 
-      <emu-clause id="sec-module-semantics-static-semantics-modulerequests">
-        <h1>Static Semantics: ModuleRequests</h1>
-        <emu-see-also-para op="ModuleRequests"></emu-see-also-para>
-        <emu-grammar>Module : [empty]</emu-grammar>
-        <emu-alg>
-          1. Return a new empty List.
-        </emu-alg>
-        <emu-grammar>ModuleItemList : ModuleItem</emu-grammar>
-        <emu-alg>
-          1. Return ModuleRequests of |ModuleItem|.
-        </emu-alg>
-        <emu-grammar>ModuleItemList : ModuleItemList ModuleItem</emu-grammar>
-        <emu-alg>
-          1. Let _moduleNames_ be ModuleRequests of |ModuleItemList|.
-          1. Let _additionalNames_ be ModuleRequests of |ModuleItem|.
-          1. Append to _moduleNames_ each element of _additionalNames_ that is not already an element of _moduleNames_.
-          1. Return _moduleNames_.
-        </emu-alg>
-        <emu-grammar>ModuleItem : StatementListItem</emu-grammar>
-        <emu-alg>
-          1. Return a new empty List.
-        </emu-alg>
-      </emu-clause>
-
       <emu-clause id="sec-abstract-module-records">
         <h1>Abstract Module Records</h1>
         <p>A <dfn>Module Record</dfn> encapsulates structural information about the imports and exports of a single module. This information is used to link the imports and exports of sets of connected modules. A Module Record includes four fields that are only used when evaluating a module.</p>
@@ -23257,19 +23282,6 @@
           1. Return a List whose sole element is _entry_.
         </emu-alg>
       </emu-clause>
-
-      <emu-clause id="sec-imports-static-semantics-modulerequests">
-        <h1>Static Semantics: ModuleRequests</h1>
-        <emu-see-also-para op="ModuleRequests"></emu-see-also-para>
-        <emu-grammar>ImportDeclaration : `import` ImportClause FromClause `;`</emu-grammar>
-        <emu-alg>
-          1. Return ModuleRequests of |FromClause|.
-        </emu-alg>
-        <emu-grammar>ModuleSpecifier : StringLiteral</emu-grammar>
-        <emu-alg>
-          1. Return a List whose sole element is the StringValue of |StringLiteral|.
-        </emu-alg>
-      </emu-clause>
     </emu-clause>
 
     <emu-clause id="sec-exports">
@@ -23363,29 +23375,6 @@
             1. Let _localName_ be *null*.
             1. Let _importName_ be _sourceName_.
           1. Return a List whose sole element is the ExportEntry Record { [[ModuleRequest]]: _module_, [[ImportName]]: _importName_, [[LocalName]]: _localName_, [[ExportName]]: _exportName_ }.
-        </emu-alg>
-      </emu-clause>
-
-      <emu-clause id="sec-exports-static-semantics-modulerequests">
-        <h1>Static Semantics: ModuleRequests</h1>
-        <emu-see-also-para op="ModuleRequests"></emu-see-also-para>
-        <emu-grammar>
-          ExportDeclaration : `export` ExportFromClause FromClause `;`
-        </emu-grammar>
-        <emu-alg>
-          1. Return the ModuleRequests of |FromClause|.
-        </emu-alg>
-        <emu-grammar>
-          ExportDeclaration :
-            `export` NamedExports `;`
-            `export` VariableStatement
-            `export` Declaration
-            `export` `default` HoistableDeclaration
-            `export` `default` ClassDeclaration
-            `export` `default` AssignmentExpression `;`
-        </emu-grammar>
-        <emu-alg>
-          1. Return a new empty List.
         </emu-alg>
       </emu-clause>
 
