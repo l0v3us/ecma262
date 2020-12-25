@@ -8836,6 +8836,31 @@
       1. Return *false*.
     </emu-alg>
   </emu-clause>
+
+  <emu-clause id="sec-static-semantics-hasinitializer" type="sdo" aoid="HasInitializer">
+    <h1>Static Semantics: HasInitializer</h1>
+    <emu-grammar>BindingElement : BindingPattern</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>BindingElement : BindingPattern Initializer</emu-grammar>
+    <emu-alg>
+      1. Return *true*.
+    </emu-alg>
+    <emu-grammar>SingleNameBinding : BindingIdentifier</emu-grammar>
+    <emu-alg>
+      1. Return *false*.
+    </emu-alg>
+    <emu-grammar>SingleNameBinding : BindingIdentifier Initializer</emu-grammar>
+    <emu-alg>
+      1. Return *true*.
+    </emu-alg>
+    <emu-grammar>FormalParameterList : FormalParameterList `,` FormalParameter</emu-grammar>
+    <emu-alg>
+      1. If HasInitializer of |FormalParameterList| is *true*, return *true*.
+      1. Return HasInitializer of |FormalParameter|.
+    </emu-alg>
+  </emu-clause>
 <!-- insert sdos here -->
 </emu-clause>
 
@@ -18280,27 +18305,6 @@
           `...` BindingPattern[?Yield, ?Await]
       </emu-grammar>
 
-      <emu-clause id="sec-destructuring-binding-patterns-static-semantics-hasinitializer">
-        <h1>Static Semantics: HasInitializer</h1>
-        <emu-see-also-para op="HasInitializer"></emu-see-also-para>
-        <emu-grammar>BindingElement : BindingPattern</emu-grammar>
-        <emu-alg>
-          1. Return *false*.
-        </emu-alg>
-        <emu-grammar>BindingElement : BindingPattern Initializer</emu-grammar>
-        <emu-alg>
-          1. Return *true*.
-        </emu-alg>
-        <emu-grammar>SingleNameBinding : BindingIdentifier</emu-grammar>
-        <emu-alg>
-          1. Return *false*.
-        </emu-alg>
-        <emu-grammar>SingleNameBinding : BindingIdentifier Initializer</emu-grammar>
-        <emu-alg>
-          1. Return *true*.
-        </emu-alg>
-      </emu-clause>
-
       <emu-clause id="sec-destructuring-binding-patterns-static-semantics-issimpleparameterlist">
         <h1>Static Semantics: IsSimpleParameterList</h1>
         <emu-see-also-para op="IsSimpleParameterList"></emu-see-also-para>
@@ -19716,16 +19720,6 @@
         1. Let _count_ be ExpectedArgumentCount of |FormalParameterList|.
         1. If HasInitializer of |FormalParameterList| is *true* or HasInitializer of |FormalParameter| is *true*, return _count_.
         1. Return _count_ + 1.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-function-definitions-static-semantics-hasinitializer">
-      <h1>Static Semantics: HasInitializer</h1>
-      <emu-see-also-para op="HasInitializer"></emu-see-also-para>
-      <emu-grammar>FormalParameterList : FormalParameterList `,` FormalParameter</emu-grammar>
-      <emu-alg>
-        1. If HasInitializer of |FormalParameterList| is *true*, return *true*.
-        1. Return HasInitializer of |FormalParameter|.
       </emu-alg>
     </emu-clause>
 
