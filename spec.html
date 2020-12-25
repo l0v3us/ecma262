@@ -8583,6 +8583,47 @@
       1. Return a new empty List.
     </emu-alg>
   </emu-clause>
+
+  <emu-clause id="sec-static-semantics-toplevelvardeclarednames" type="sdo" aoid="TopLevelVarDeclaredNames">
+    <h1>Static Semantics: TopLevelVarDeclaredNames</h1>
+    <emu-grammar>Block : `{` `}`</emu-grammar>
+    <emu-alg>
+      1. Return a new empty List.
+    </emu-alg>
+    <emu-grammar>StatementList : StatementList StatementListItem</emu-grammar>
+    <emu-alg>
+      1. Let _names_ be TopLevelVarDeclaredNames of |StatementList|.
+      1. Append to _names_ the elements of the TopLevelVarDeclaredNames of |StatementListItem|.
+      1. Return _names_.
+    </emu-alg>
+    <emu-grammar>StatementListItem : Declaration</emu-grammar>
+    <emu-alg>
+      1. If |Declaration| is <emu-grammar>Declaration : HoistableDeclaration</emu-grammar> , then
+        1. Return the BoundNames of |HoistableDeclaration|.
+      1. Return a new empty List.
+    </emu-alg>
+    <emu-grammar>StatementListItem : Statement</emu-grammar>
+    <emu-alg>
+      1. If |Statement| is <emu-grammar>Statement : LabelledStatement</emu-grammar> , return TopLevelVarDeclaredNames of |Statement|.
+      1. Return VarDeclaredNames of |Statement|.
+    </emu-alg>
+    <emu-note>
+      <p>At the top level of a function or script, inner function declarations are treated like var declarations.</p>
+    </emu-note>
+    <emu-grammar>LabelledStatement : LabelIdentifier `:` LabelledItem</emu-grammar>
+    <emu-alg>
+      1. Return the TopLevelVarDeclaredNames of |LabelledItem|.
+    </emu-alg>
+    <emu-grammar>LabelledItem : Statement</emu-grammar>
+    <emu-alg>
+      1. If |Statement| is <emu-grammar>Statement : LabelledStatement</emu-grammar> , return TopLevelVarDeclaredNames of |Statement|.
+      1. Return VarDeclaredNames of |Statement|.
+    </emu-alg>
+    <emu-grammar>LabelledItem : FunctionDeclaration</emu-grammar>
+    <emu-alg>
+      1. Return BoundNames of |FunctionDeclaration|.
+    </emu-alg>
+  </emu-clause>
 <!-- insert sdos here -->
 </emu-clause>
 
@@ -17766,35 +17807,6 @@
       </ul>
     </emu-clause>
 
-    <emu-clause id="sec-block-static-semantics-toplevelvardeclarednames">
-      <h1>Static Semantics: TopLevelVarDeclaredNames</h1>
-      <emu-see-also-para op="TopLevelVarDeclaredNames"></emu-see-also-para>
-      <emu-grammar>Block : `{` `}`</emu-grammar>
-      <emu-alg>
-        1. Return a new empty List.
-      </emu-alg>
-      <emu-grammar>StatementList : StatementList StatementListItem</emu-grammar>
-      <emu-alg>
-        1. Let _names_ be TopLevelVarDeclaredNames of |StatementList|.
-        1. Append to _names_ the elements of the TopLevelVarDeclaredNames of |StatementListItem|.
-        1. Return _names_.
-      </emu-alg>
-      <emu-grammar>StatementListItem : Declaration</emu-grammar>
-      <emu-alg>
-        1. If |Declaration| is <emu-grammar>Declaration : HoistableDeclaration</emu-grammar> , then
-          1. Return the BoundNames of |HoistableDeclaration|.
-        1. Return a new empty List.
-      </emu-alg>
-      <emu-grammar>StatementListItem : Statement</emu-grammar>
-      <emu-alg>
-        1. If |Statement| is <emu-grammar>Statement : LabelledStatement</emu-grammar> , return TopLevelVarDeclaredNames of |Statement|.
-        1. Return VarDeclaredNames of |Statement|.
-      </emu-alg>
-      <emu-note>
-        <p>At the top level of a function or script, inner function declarations are treated like var declarations.</p>
-      </emu-note>
-    </emu-clause>
-
     <emu-clause id="sec-block-static-semantics-toplevelvarscopeddeclarations">
       <h1>Static Semantics: TopLevelVarScopedDeclarations</h1>
       <emu-see-also-para op="TopLevelVarScopedDeclarations"></emu-see-also-para>
@@ -19303,24 +19315,6 @@
         1. If _item_ is <emu-grammar>LabelledItem : FunctionDeclaration</emu-grammar> , return *true*.
         1. Let _subStmt_ be the |Statement| of _item_.
         1. Return IsLabelledFunction(_subStmt_).
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-labelled-statements-static-semantics-toplevelvardeclarednames">
-      <h1>Static Semantics: TopLevelVarDeclaredNames</h1>
-      <emu-see-also-para op="TopLevelVarDeclaredNames"></emu-see-also-para>
-      <emu-grammar>LabelledStatement : LabelIdentifier `:` LabelledItem</emu-grammar>
-      <emu-alg>
-        1. Return the TopLevelVarDeclaredNames of |LabelledItem|.
-      </emu-alg>
-      <emu-grammar>LabelledItem : Statement</emu-grammar>
-      <emu-alg>
-        1. If |Statement| is <emu-grammar>Statement : LabelledStatement</emu-grammar> , return TopLevelVarDeclaredNames of |Statement|.
-        1. Return VarDeclaredNames of |Statement|.
-      </emu-alg>
-      <emu-grammar>LabelledItem : FunctionDeclaration</emu-grammar>
-      <emu-alg>
-        1. Return BoundNames of |FunctionDeclaration|.
       </emu-alg>
     </emu-clause>
 
