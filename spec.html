@@ -8139,6 +8139,162 @@
       1. Return a new empty List.
     </emu-alg>
   </emu-clause>
+
+  <emu-clause id="sec-runtime-semantics-labelledevaluation" type="sdo" aoid="LabelledEvaluation">
+    <h1>Runtime Semantics: LabelledEvaluation</h1>
+    <p>With parameter _labelSet_.</p>
+    <emu-grammar>BreakableStatement : IterationStatement</emu-grammar>
+    <emu-alg>
+      1. Let _stmtResult_ be LabelledEvaluation of |IterationStatement| with argument _labelSet_.
+      1. If _stmtResult_.[[Type]] is ~break~, then
+        1. If _stmtResult_.[[Target]] is ~empty~, then
+          1. If _stmtResult_.[[Value]] is ~empty~, set _stmtResult_ to NormalCompletion(*undefined*).
+          1. Else, set _stmtResult_ to NormalCompletion(_stmtResult_.[[Value]]).
+      1. Return Completion(_stmtResult_).
+    </emu-alg>
+    <emu-grammar>BreakableStatement : SwitchStatement</emu-grammar>
+    <emu-alg>
+      1. Let _stmtResult_ be the result of evaluating |SwitchStatement|.
+      1. If _stmtResult_.[[Type]] is ~break~, then
+        1. If _stmtResult_.[[Target]] is ~empty~, then
+          1. If _stmtResult_.[[Value]] is ~empty~, set _stmtResult_ to NormalCompletion(*undefined*).
+          1. Else, set _stmtResult_ to NormalCompletion(_stmtResult_.[[Value]]).
+      1. Return Completion(_stmtResult_).
+    </emu-alg>
+    <emu-note>
+      <p>A |BreakableStatement| is one that can be exited via an unlabelled |BreakStatement|.</p>
+    </emu-note>
+    <emu-grammar>IterationStatement : `do` Statement `while` `(` Expression `)` `;`</emu-grammar>
+    <emu-alg>
+      1. Let _V_ be *undefined*.
+      1. Repeat,
+        1. Let _stmtResult_ be the result of evaluating |Statement|.
+        1. If LoopContinues(_stmtResult_, _labelSet_) is *false*, return Completion(UpdateEmpty(_stmtResult_, _V_)).
+        1. If _stmtResult_.[[Value]] is not ~empty~, set _V_ to _stmtResult_.[[Value]].
+        1. Let _exprRef_ be the result of evaluating |Expression|.
+        1. Let _exprValue_ be ? GetValue(_exprRef_).
+        1. If ! ToBoolean(_exprValue_) is *false*, return NormalCompletion(_V_).
+    </emu-alg>
+    <emu-grammar>IterationStatement : `while` `(` Expression `)` Statement</emu-grammar>
+    <emu-alg>
+      1. Let _V_ be *undefined*.
+      1. Repeat,
+        1. Let _exprRef_ be the result of evaluating |Expression|.
+        1. Let _exprValue_ be ? GetValue(_exprRef_).
+        1. If ! ToBoolean(_exprValue_) is *false*, return NormalCompletion(_V_).
+        1. Let _stmtResult_ be the result of evaluating |Statement|.
+        1. If LoopContinues(_stmtResult_, _labelSet_) is *false*, return Completion(UpdateEmpty(_stmtResult_, _V_)).
+        1. If _stmtResult_.[[Value]] is not ~empty~, set _V_ to _stmtResult_.[[Value]].
+    </emu-alg>
+    <emu-grammar>IterationStatement : `for` `(` Expression? `;` Expression? `;` Expression? `)` Statement</emu-grammar>
+    <emu-alg>
+      1. If the first |Expression| is present, then
+        1. Let _exprRef_ be the result of evaluating the first |Expression|.
+        1. Perform ? GetValue(_exprRef_).
+      1. Return ? ForBodyEvaluation(the second |Expression|, the third |Expression|, |Statement|, &laquo; &raquo;, _labelSet_).
+    </emu-alg>
+    <emu-grammar>IterationStatement : `for` `(` `var` VariableDeclarationList `;` Expression? `;` Expression? `)` Statement</emu-grammar>
+    <emu-alg>
+      1. Let _varDcl_ be the result of evaluating |VariableDeclarationList|.
+      1. ReturnIfAbrupt(_varDcl_).
+      1. Return ? ForBodyEvaluation(the first |Expression|, the second |Expression|, |Statement|, &laquo; &raquo;, _labelSet_).
+    </emu-alg>
+    <emu-grammar>IterationStatement : `for` `(` LexicalDeclaration Expression? `;` Expression? `)` Statement</emu-grammar>
+    <emu-alg>
+      1. Let _oldEnv_ be the running execution context's LexicalEnvironment.
+      1. Let _loopEnv_ be NewDeclarativeEnvironment(_oldEnv_).
+      1. Let _isConst_ be IsConstantDeclaration of |LexicalDeclaration|.
+      1. Let _boundNames_ be the BoundNames of |LexicalDeclaration|.
+      1. For each element _dn_ of _boundNames_, do
+        1. If _isConst_ is *true*, then
+          1. Perform ! _loopEnv_.CreateImmutableBinding(_dn_, *true*).
+        1. Else,
+          1. Perform ! _loopEnv_.CreateMutableBinding(_dn_, *false*).
+      1. Set the running execution context's LexicalEnvironment to _loopEnv_.
+      1. Let _forDcl_ be the result of evaluating |LexicalDeclaration|.
+      1. If _forDcl_ is an abrupt completion, then
+        1. Set the running execution context's LexicalEnvironment to _oldEnv_.
+        1. Return Completion(_forDcl_).
+      1. If _isConst_ is *false*, let _perIterationLets_ be _boundNames_; otherwise let _perIterationLets_ be &laquo; &raquo;.
+      1. Let _bodyResult_ be ForBodyEvaluation(the first |Expression|, the second |Expression|, |Statement|, _perIterationLets_, _labelSet_).
+      1. Set the running execution context's LexicalEnvironment to _oldEnv_.
+      1. Return Completion(_bodyResult_).
+    </emu-alg>
+    <emu-grammar>IterationStatement : `for` `(` LeftHandSideExpression `in` Expression `)` Statement</emu-grammar>
+    <emu-alg>
+      1. Let _keyResult_ be ? ForIn/OfHeadEvaluation(&laquo; &raquo;, |Expression|, ~enumerate~).
+      1. Return ? ForIn/OfBodyEvaluation(|LeftHandSideExpression|, |Statement|, _keyResult_, ~enumerate~, ~assignment~, _labelSet_).
+    </emu-alg>
+    <emu-grammar>IterationStatement : `for` `(` `var` ForBinding `in` Expression `)` Statement</emu-grammar>
+    <emu-alg>
+      1. Let _keyResult_ be ? ForIn/OfHeadEvaluation(&laquo; &raquo;, |Expression|, ~enumerate~).
+      1. Return ? ForIn/OfBodyEvaluation(|ForBinding|, |Statement|, _keyResult_, ~enumerate~, ~varBinding~, _labelSet_).
+    </emu-alg>
+    <emu-grammar>IterationStatement : `for` `(` ForDeclaration `in` Expression `)` Statement</emu-grammar>
+    <emu-alg>
+      1. Let _keyResult_ be ? ForIn/OfHeadEvaluation(BoundNames of |ForDeclaration|, |Expression|, ~enumerate~).
+      1. Return ? ForIn/OfBodyEvaluation(|ForDeclaration|, |Statement|, _keyResult_, ~enumerate~, ~lexicalBinding~, _labelSet_).
+    </emu-alg>
+    <emu-grammar>IterationStatement : `for` `(` LeftHandSideExpression `of` AssignmentExpression `)` Statement</emu-grammar>
+    <emu-alg>
+      1. Let _keyResult_ be ? ForIn/OfHeadEvaluation(&laquo; &raquo;, |AssignmentExpression|, ~iterate~).
+      1. Return ? ForIn/OfBodyEvaluation(|LeftHandSideExpression|, |Statement|, _keyResult_, ~iterate~, ~assignment~, _labelSet_).
+    </emu-alg>
+    <emu-grammar>IterationStatement : `for` `(` `var` ForBinding `of` AssignmentExpression `)` Statement</emu-grammar>
+    <emu-alg>
+      1. Let _keyResult_ be ? ForIn/OfHeadEvaluation(&laquo; &raquo;, |AssignmentExpression|, ~iterate~).
+      1. Return ? ForIn/OfBodyEvaluation(|ForBinding|, |Statement|, _keyResult_, ~iterate~, ~varBinding~, _labelSet_).
+    </emu-alg>
+    <emu-grammar>IterationStatement : `for` `(` ForDeclaration `of` AssignmentExpression `)` Statement</emu-grammar>
+    <emu-alg>
+      1. Let _keyResult_ be ? ForIn/OfHeadEvaluation(BoundNames of |ForDeclaration|, |AssignmentExpression|, ~iterate~).
+      1. Return ? ForIn/OfBodyEvaluation(|ForDeclaration|, |Statement|, _keyResult_, ~iterate~, ~lexicalBinding~, _labelSet_).
+    </emu-alg>
+    <emu-grammar>
+      IterationStatement : `for` `await` `(` LeftHandSideExpression `of` AssignmentExpression `)` Statement
+    </emu-grammar>
+    <emu-alg>
+      1. Let _keyResult_ be ? ForIn/OfHeadEvaluation(&laquo; &raquo;, |AssignmentExpression|, ~async-iterate~).
+      1. Return ? ForIn/OfBodyEvaluation(|LeftHandSideExpression|, |Statement|, _keyResult_, ~iterate~, ~assignment~, _labelSet_, ~async~).
+    </emu-alg>
+    <emu-grammar>
+      IterationStatement : `for` `await` `(` `var` ForBinding `of` AssignmentExpression `)` Statement
+    </emu-grammar>
+    <emu-alg>
+      1. Let _keyResult_ be ? ForIn/OfHeadEvaluation(&laquo; &raquo;, |AssignmentExpression|, ~async-iterate~).
+      1. Return ? ForIn/OfBodyEvaluation(|ForBinding|, |Statement|, _keyResult_, ~iterate~, ~varBinding~, _labelSet_, ~async~).
+    </emu-alg>
+    <emu-grammar>
+      IterationStatement : `for` `await` `(` ForDeclaration `of` AssignmentExpression `)` Statement
+    </emu-grammar>
+    <emu-alg>
+      1. Let _keyResult_ be ? ForIn/OfHeadEvaluation(BoundNames of |ForDeclaration|, |AssignmentExpression|, ~async-iterate~).
+      1. Return ? ForIn/OfBodyEvaluation(|ForDeclaration|, |Statement|, _keyResult_, ~iterate~, ~lexicalBinding~, _labelSet_, ~async~).
+    </emu-alg>
+    <emu-note>
+      <p>This section is extended by Annex <emu-xref href="#sec-initializers-in-forin-statement-heads"></emu-xref>.</p>
+    </emu-note>
+    <emu-grammar>LabelledStatement : LabelIdentifier `:` LabelledItem</emu-grammar>
+    <emu-alg>
+      1. Let _label_ be the StringValue of |LabelIdentifier|.
+      1. Append _label_ as an element of _labelSet_.
+      1. Let _stmtResult_ be LabelledEvaluation of |LabelledItem| with argument _labelSet_.
+      1. If _stmtResult_.[[Type]] is ~break~ and SameValue(_stmtResult_.[[Target]], _label_) is *true*, then
+        1. Set _stmtResult_ to NormalCompletion(_stmtResult_.[[Value]]).
+      1. Return Completion(_stmtResult_).
+    </emu-alg>
+    <emu-grammar>LabelledItem : Statement</emu-grammar>
+    <emu-alg>
+      1. If |Statement| is either a |LabelledStatement| or a |BreakableStatement|, then
+        1. Return LabelledEvaluation of |Statement| with argument _labelSet_.
+      1. Else,
+        1. Return the result of evaluating |Statement|.
+    </emu-alg>
+    <emu-grammar>LabelledItem : FunctionDeclaration</emu-grammar>
+    <emu-alg>
+      1. Return the result of evaluating |FunctionDeclaration|.
+    </emu-alg>
+  </emu-clause>
 <!-- insert sdos here -->
 </emu-clause>
 
@@ -17261,33 +17417,6 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-statement-semantics-runtime-semantics-labelledevaluation">
-      <h1>Runtime Semantics: LabelledEvaluation</h1>
-      <p>With parameter _labelSet_.</p>
-      <emu-see-also-para op="LabelledEvaluation"></emu-see-also-para>
-      <emu-grammar>BreakableStatement : IterationStatement</emu-grammar>
-      <emu-alg>
-        1. Let _stmtResult_ be LabelledEvaluation of |IterationStatement| with argument _labelSet_.
-        1. If _stmtResult_.[[Type]] is ~break~, then
-          1. If _stmtResult_.[[Target]] is ~empty~, then
-            1. If _stmtResult_.[[Value]] is ~empty~, set _stmtResult_ to NormalCompletion(*undefined*).
-            1. Else, set _stmtResult_ to NormalCompletion(_stmtResult_.[[Value]]).
-        1. Return Completion(_stmtResult_).
-      </emu-alg>
-      <emu-grammar>BreakableStatement : SwitchStatement</emu-grammar>
-      <emu-alg>
-        1. Let _stmtResult_ be the result of evaluating |SwitchStatement|.
-        1. If _stmtResult_.[[Type]] is ~break~, then
-          1. If _stmtResult_.[[Target]] is ~empty~, then
-            1. If _stmtResult_.[[Value]] is ~empty~, set _stmtResult_ to NormalCompletion(*undefined*).
-            1. Else, set _stmtResult_ to NormalCompletion(_stmtResult_.[[Value]]).
-        1. Return Completion(_stmtResult_).
-      </emu-alg>
-      <emu-note>
-        <p>A |BreakableStatement| is one that can be exited via an unlabelled |BreakStatement|.</p>
-      </emu-note>
-    </emu-clause>
-
     <emu-clause id="sec-statement-semantics-runtime-semantics-evaluation">
       <h1>Runtime Semantics: Evaluation</h1>
       <emu-grammar>
@@ -18265,44 +18394,10 @@
 
     <emu-clause id="sec-do-while-statement">
       <h1>The `do`-`while` Statement</h1>
-
-      <emu-clause id="sec-do-while-statement-runtime-semantics-labelledevaluation">
-        <h1>Runtime Semantics: LabelledEvaluation</h1>
-        <p>With parameter _labelSet_.</p>
-        <emu-see-also-para op="LabelledEvaluation"></emu-see-also-para>
-        <emu-grammar>IterationStatement : `do` Statement `while` `(` Expression `)` `;`</emu-grammar>
-        <emu-alg>
-          1. Let _V_ be *undefined*.
-          1. Repeat,
-            1. Let _stmtResult_ be the result of evaluating |Statement|.
-            1. If LoopContinues(_stmtResult_, _labelSet_) is *false*, return Completion(UpdateEmpty(_stmtResult_, _V_)).
-            1. If _stmtResult_.[[Value]] is not ~empty~, set _V_ to _stmtResult_.[[Value]].
-            1. Let _exprRef_ be the result of evaluating |Expression|.
-            1. Let _exprValue_ be ? GetValue(_exprRef_).
-            1. If ! ToBoolean(_exprValue_) is *false*, return NormalCompletion(_V_).
-        </emu-alg>
-      </emu-clause>
     </emu-clause>
 
     <emu-clause id="sec-while-statement">
       <h1>The `while` Statement</h1>
-
-      <emu-clause id="sec-while-statement-runtime-semantics-labelledevaluation">
-        <h1>Runtime Semantics: LabelledEvaluation</h1>
-        <p>With parameter _labelSet_.</p>
-        <emu-see-also-para op="LabelledEvaluation"></emu-see-also-para>
-        <emu-grammar>IterationStatement : `while` `(` Expression `)` Statement</emu-grammar>
-        <emu-alg>
-          1. Let _V_ be *undefined*.
-          1. Repeat,
-            1. Let _exprRef_ be the result of evaluating |Expression|.
-            1. Let _exprValue_ be ? GetValue(_exprRef_).
-            1. If ! ToBoolean(_exprValue_) is *false*, return NormalCompletion(_V_).
-            1. Let _stmtResult_ be the result of evaluating |Statement|.
-            1. If LoopContinues(_stmtResult_, _labelSet_) is *false*, return Completion(UpdateEmpty(_stmtResult_, _V_)).
-            1. If _stmtResult_.[[Value]] is not ~empty~, set _V_ to _stmtResult_.[[Value]].
-        </emu-alg>
-      </emu-clause>
     </emu-clause>
 
     <emu-clause id="sec-for-statement">
@@ -18316,46 +18411,6 @@
             It is a Syntax Error if any element of the BoundNames of |LexicalDeclaration| also occurs in the VarDeclaredNames of |Statement|.
           </li>
         </ul>
-      </emu-clause>
-
-      <emu-clause id="sec-for-statement-runtime-semantics-labelledevaluation">
-        <h1>Runtime Semantics: LabelledEvaluation</h1>
-        <p>With parameter _labelSet_.</p>
-        <emu-see-also-para op="LabelledEvaluation"></emu-see-also-para>
-        <emu-grammar>IterationStatement : `for` `(` Expression? `;` Expression? `;` Expression? `)` Statement</emu-grammar>
-        <emu-alg>
-          1. If the first |Expression| is present, then
-            1. Let _exprRef_ be the result of evaluating the first |Expression|.
-            1. Perform ? GetValue(_exprRef_).
-          1. Return ? ForBodyEvaluation(the second |Expression|, the third |Expression|, |Statement|, &laquo; &raquo;, _labelSet_).
-        </emu-alg>
-        <emu-grammar>IterationStatement : `for` `(` `var` VariableDeclarationList `;` Expression? `;` Expression? `)` Statement</emu-grammar>
-        <emu-alg>
-          1. Let _varDcl_ be the result of evaluating |VariableDeclarationList|.
-          1. ReturnIfAbrupt(_varDcl_).
-          1. Return ? ForBodyEvaluation(the first |Expression|, the second |Expression|, |Statement|, &laquo; &raquo;, _labelSet_).
-        </emu-alg>
-        <emu-grammar>IterationStatement : `for` `(` LexicalDeclaration Expression? `;` Expression? `)` Statement</emu-grammar>
-        <emu-alg>
-          1. Let _oldEnv_ be the running execution context's LexicalEnvironment.
-          1. Let _loopEnv_ be NewDeclarativeEnvironment(_oldEnv_).
-          1. Let _isConst_ be IsConstantDeclaration of |LexicalDeclaration|.
-          1. Let _boundNames_ be the BoundNames of |LexicalDeclaration|.
-          1. For each element _dn_ of _boundNames_, do
-            1. If _isConst_ is *true*, then
-              1. Perform ! _loopEnv_.CreateImmutableBinding(_dn_, *true*).
-            1. Else,
-              1. Perform ! _loopEnv_.CreateMutableBinding(_dn_, *false*).
-          1. Set the running execution context's LexicalEnvironment to _loopEnv_.
-          1. Let _forDcl_ be the result of evaluating |LexicalDeclaration|.
-          1. If _forDcl_ is an abrupt completion, then
-            1. Set the running execution context's LexicalEnvironment to _oldEnv_.
-            1. Return Completion(_forDcl_).
-          1. If _isConst_ is *false*, let _perIterationLets_ be _boundNames_; otherwise let _perIterationLets_ be &laquo; &raquo;.
-          1. Let _bodyResult_ be ForBodyEvaluation(the first |Expression|, the second |Expression|, |Statement|, _perIterationLets_, _labelSet_).
-          1. Set the running execution context's LexicalEnvironment to _oldEnv_.
-          1. Return Completion(_bodyResult_).
-        </emu-alg>
       </emu-clause>
 
       <emu-clause id="sec-forbodyevaluation" aoid="ForBodyEvaluation">
@@ -18455,66 +18510,6 @@
             1. Else,
               1. Perform ! _environment_.CreateMutableBinding(_name_, *false*).
         </emu-alg>
-      </emu-clause>
-
-      <emu-clause id="sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation">
-        <h1>Runtime Semantics: LabelledEvaluation</h1>
-        <p>With parameter _labelSet_.</p>
-        <emu-see-also-para op="LabelledEvaluation"></emu-see-also-para>
-        <emu-grammar>IterationStatement : `for` `(` LeftHandSideExpression `in` Expression `)` Statement</emu-grammar>
-        <emu-alg>
-          1. Let _keyResult_ be ? ForIn/OfHeadEvaluation(&laquo; &raquo;, |Expression|, ~enumerate~).
-          1. Return ? ForIn/OfBodyEvaluation(|LeftHandSideExpression|, |Statement|, _keyResult_, ~enumerate~, ~assignment~, _labelSet_).
-        </emu-alg>
-        <emu-grammar>IterationStatement : `for` `(` `var` ForBinding `in` Expression `)` Statement</emu-grammar>
-        <emu-alg>
-          1. Let _keyResult_ be ? ForIn/OfHeadEvaluation(&laquo; &raquo;, |Expression|, ~enumerate~).
-          1. Return ? ForIn/OfBodyEvaluation(|ForBinding|, |Statement|, _keyResult_, ~enumerate~, ~varBinding~, _labelSet_).
-        </emu-alg>
-        <emu-grammar>IterationStatement : `for` `(` ForDeclaration `in` Expression `)` Statement</emu-grammar>
-        <emu-alg>
-          1. Let _keyResult_ be ? ForIn/OfHeadEvaluation(BoundNames of |ForDeclaration|, |Expression|, ~enumerate~).
-          1. Return ? ForIn/OfBodyEvaluation(|ForDeclaration|, |Statement|, _keyResult_, ~enumerate~, ~lexicalBinding~, _labelSet_).
-        </emu-alg>
-        <emu-grammar>IterationStatement : `for` `(` LeftHandSideExpression `of` AssignmentExpression `)` Statement</emu-grammar>
-        <emu-alg>
-          1. Let _keyResult_ be ? ForIn/OfHeadEvaluation(&laquo; &raquo;, |AssignmentExpression|, ~iterate~).
-          1. Return ? ForIn/OfBodyEvaluation(|LeftHandSideExpression|, |Statement|, _keyResult_, ~iterate~, ~assignment~, _labelSet_).
-        </emu-alg>
-        <emu-grammar>IterationStatement : `for` `(` `var` ForBinding `of` AssignmentExpression `)` Statement</emu-grammar>
-        <emu-alg>
-          1. Let _keyResult_ be ? ForIn/OfHeadEvaluation(&laquo; &raquo;, |AssignmentExpression|, ~iterate~).
-          1. Return ? ForIn/OfBodyEvaluation(|ForBinding|, |Statement|, _keyResult_, ~iterate~, ~varBinding~, _labelSet_).
-        </emu-alg>
-        <emu-grammar>IterationStatement : `for` `(` ForDeclaration `of` AssignmentExpression `)` Statement</emu-grammar>
-        <emu-alg>
-          1. Let _keyResult_ be ? ForIn/OfHeadEvaluation(BoundNames of |ForDeclaration|, |AssignmentExpression|, ~iterate~).
-          1. Return ? ForIn/OfBodyEvaluation(|ForDeclaration|, |Statement|, _keyResult_, ~iterate~, ~lexicalBinding~, _labelSet_).
-        </emu-alg>
-        <emu-grammar>
-          IterationStatement : `for` `await` `(` LeftHandSideExpression `of` AssignmentExpression `)` Statement
-        </emu-grammar>
-        <emu-alg>
-          1. Let _keyResult_ be ? ForIn/OfHeadEvaluation(&laquo; &raquo;, |AssignmentExpression|, ~async-iterate~).
-          1. Return ? ForIn/OfBodyEvaluation(|LeftHandSideExpression|, |Statement|, _keyResult_, ~iterate~, ~assignment~, _labelSet_, ~async~).
-        </emu-alg>
-        <emu-grammar>
-          IterationStatement : `for` `await` `(` `var` ForBinding `of` AssignmentExpression `)` Statement
-        </emu-grammar>
-        <emu-alg>
-          1. Let _keyResult_ be ? ForIn/OfHeadEvaluation(&laquo; &raquo;, |AssignmentExpression|, ~async-iterate~).
-          1. Return ? ForIn/OfBodyEvaluation(|ForBinding|, |Statement|, _keyResult_, ~iterate~, ~varBinding~, _labelSet_, ~async~).
-        </emu-alg>
-        <emu-grammar>
-          IterationStatement : `for` `await` `(` ForDeclaration `of` AssignmentExpression `)` Statement
-        </emu-grammar>
-        <emu-alg>
-          1. Let _keyResult_ be ? ForIn/OfHeadEvaluation(BoundNames of |ForDeclaration|, |AssignmentExpression|, ~async-iterate~).
-          1. Return ? ForIn/OfBodyEvaluation(|ForDeclaration|, |Statement|, _keyResult_, ~iterate~, ~lexicalBinding~, _labelSet_, ~async~).
-        </emu-alg>
-        <emu-note>
-          <p>This section is extended by Annex <emu-xref href="#sec-initializers-in-forin-statement-heads"></emu-xref>.</p>
-        </emu-note>
       </emu-clause>
 
       <emu-clause id="sec-runtime-semantics-forinofheadevaluation" oldids="sec-runtime-semantics-forin-div-ofheadevaluation-tdznames-expr-iterationkind" aoid="ForIn/OfHeadEvaluation">
@@ -19267,32 +19262,6 @@
       <emu-grammar>LabelledItem : FunctionDeclaration</emu-grammar>
       <emu-alg>
         1. Return a List whose sole element is |FunctionDeclaration|.
-      </emu-alg>
-    </emu-clause>
-
-    <emu-clause id="sec-labelled-statements-runtime-semantics-labelledevaluation">
-      <h1>Runtime Semantics: LabelledEvaluation</h1>
-      <p>With parameter _labelSet_.</p>
-      <emu-see-also-para op="LabelledEvaluation"></emu-see-also-para>
-      <emu-grammar>LabelledStatement : LabelIdentifier `:` LabelledItem</emu-grammar>
-      <emu-alg>
-        1. Let _label_ be the StringValue of |LabelIdentifier|.
-        1. Append _label_ as an element of _labelSet_.
-        1. Let _stmtResult_ be LabelledEvaluation of |LabelledItem| with argument _labelSet_.
-        1. If _stmtResult_.[[Type]] is ~break~ and SameValue(_stmtResult_.[[Target]], _label_) is *true*, then
-          1. Set _stmtResult_ to NormalCompletion(_stmtResult_.[[Value]]).
-        1. Return Completion(_stmtResult_).
-      </emu-alg>
-      <emu-grammar>LabelledItem : Statement</emu-grammar>
-      <emu-alg>
-        1. If |Statement| is either a |LabelledStatement| or a |BreakableStatement|, then
-          1. Return LabelledEvaluation of |Statement| with argument _labelSet_.
-        1. Else,
-          1. Return the result of evaluating |Statement|.
-      </emu-alg>
-      <emu-grammar>LabelledItem : FunctionDeclaration</emu-grammar>
-      <emu-alg>
-        1. Return the result of evaluating |FunctionDeclaration|.
       </emu-alg>
     </emu-clause>
 
